@@ -94,12 +94,14 @@ TEMPLATES = [
 SITE_ID = 1
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
+from .local_settings import *
+
 SOCIALACCOUNT_PROVIDERS = {
     "kakao": {
         "APP": {
-            "client_id": 'd954c28fe55d851cfe3e5fc56458ca3c',
+            "client_id": KAKAO_CLIENT_ID,
             #"client_id": 'os.getenv("KAKAO_CLIENT_ID")',
-            "secret": 'vBfNkpzkDyrNxbXqVmafYTe0c0zFovPU',
+            "secret": KAKAO_SECRET_SECRET,
             #"secret": os.getenv("KAKAO_SECRET_KEY"),
             "key": ""
         },
@@ -110,6 +112,36 @@ SOCIALACCOUNT_PROVIDERS = {
         "AUTH_PARAMS": {
             "access_type": "online",
         }
+    },
+    "naver": {
+        "APP": {
+            "client_id": NAVER_CLIENT_ID,
+            "secret": NAVER_CLIENT_SECRET,
+            "key": ""
+        },
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        }
+    },
+    "google": {
+        "APPS": [
+            {
+                "client_id": GOOGLE_CLIENT_ID,
+                "secret": GOOGLE_CLIENT_SECRET,
+                "key": ""
+            },
+        ],
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
     }
 }
 
