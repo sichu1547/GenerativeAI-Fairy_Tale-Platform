@@ -49,6 +49,17 @@ def get_session_data(request):
     value = request.session.get('key', 'No data found')
     return HttpResponse(f"Session data for user {request.user.username}: {value}")
 
+from django.utils.crypto import get_random_string
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_bytes, force_str
+from django.template.loader import render_to_string
+from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth import login
+from .forms import PasswordResetForm
 def password_reset_request(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -69,9 +80,9 @@ def password_reset_request(request):
     return render(request, 'registration/password_reset.html')
 
 @login_required
-def select_account(request):
+def password_reset_complete(request):
     profiles = request.user.profiles.all()
-    return render(request, 'registration/select_account.html', {'profiles': profiles})
+    return render(request, 'password/password_reset_complete.html', {'profiles': profiles})
 
 @login_required
 def profile(request):

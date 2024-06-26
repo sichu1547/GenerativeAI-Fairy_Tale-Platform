@@ -71,7 +71,7 @@
 						</div>
 
 						<div>
-							<a href="#" class="txt1">
+							<a href="{% url 'password_reset' %}" class="txt1">
 								비밀번호를 잊어버리셨나요?
 							</a>
 						</div>
@@ -91,11 +91,11 @@
 					</div>
 
 					<div class="login100-form-social flex-c-m">
-                        <a href="" class="login100-form-social-item flex-c-m bg1 m-r-5">
+                        <a href="{% provider_login_url 'google' %}" class="login100-form-social-item flex-c-m bg1 m-r-5">
                             <img src="{% static 'images/icons/google_icon.png' %}" alt="Google Image" style="width: 20px; height: 20px;">
                         </a>
 
-                        <a href="" class="login100-form-social-item flex-c-m bg2 m-r-5">
+						<a href="{% provider_login_url 'naver' %}" class="login100-form-social-item flex-c-m bg2 m-r-5">
                             <img src="{% static 'images/icons/naver_icon.png' %}" alt="Naver Image" style="width: 20px; height: 20px;">
                         </a>
 
@@ -116,21 +116,22 @@
 	
 
 <!--===============================================================================================-->
-	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/animsition/js/animsition.min.js"></script>
+	<script src="{% static 'vendor/animsition/js/animsition.min.js' %}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/bootstrap/js/popper.js"></script>
-	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="{% static 'vendor/bootstrap/js/popper.js' %}"></script>
+	<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/select2/select2.min.js"></script>
+	<script src="{% static 'vendor/select2/select2.min.js' %}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/daterangepicker/moment.min.js"></script>
-	<script src="vendor/daterangepicker/daterangepicker.js"></script>
+	<script src="{% static 'vendor/daterangepicker/moment.min.js' %}"></script>
+	<script src="{% static 'vendor/daterangepicker/daterangepicker.js' %}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/countdowntime/countdowntime.js"></script>
+	<script src="{% static 'vendor/countdowntime/countdowntime.js' %}"></script>
 <!--===============================================================================================-->
-	<script src="js/main.js"></script>
+	<script src="{% static 'js/main.js' %}"></script>
+
 </body>
 {% endblock %}
 </html>
