@@ -23,8 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-^x%9=jpc=rdh*uu)04cv@a$2d)o%lli$bc#8bf3nv+wc$)d8t="
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -159,8 +159,17 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+    },
+    'story': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'database/story_db.db',
     }
 }
+
+DATABASE_ROUTERS = ['common.db_router.AccountDBRouter',
+                    'common.db_router.StoryDBRouter',
+]
+
 
 
 # Password validation

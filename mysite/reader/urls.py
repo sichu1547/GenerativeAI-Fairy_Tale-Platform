@@ -4,6 +4,6 @@ from . import views
 from django.contrib.auth import views as auth_views
 app_name = 'reader'
 urlpatterns = [
-    path('', views.index, name='index'),
+    path('', views.list, name='list'),
     path('<int:id>', views.detail, name='detail'),
 ]
