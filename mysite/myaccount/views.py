@@ -68,17 +68,17 @@ def password_reset_request(request):
         if form.is_valid():
             user = User.objects.get(username=form.cleaned_data['username'], email=form.cleaned_data['email'])
             subject = "비밀번호 재설정 요청"
-            message = "비밀번호 재설정을 요청하셨습니다. 아래 링크를 클릭하여 비밀번호를 재설정해 주세요."
             email_template_name = "password/password_reset_email.txt"
             c = {
                 "email": user.email,
+                "user" : user,
                 'domain': request.get_host(),
                 "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': default_token_generator.make_token(user),
                 'protocol': 'http',
             }
             email = render_to_string(email_template_name, c)
-            send_mail(subject, email, 'dnjstjr539@gmail.com', [user.email], fail_silently=False)
+            send_mail(subject, email, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
             return redirect("password_reset_done")
     else:
         form = PasswordResetForm()
