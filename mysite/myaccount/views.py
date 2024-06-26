@@ -68,7 +68,8 @@ def password_reset_request(request):
         if form.is_valid():
             user = User.objects.get(username=form.cleaned_data['username'], email=form.cleaned_data['email'])
             subject = "비밀번호 재설정 요청"
-            email_template_name = "accounts/password/password_reset_email.txt"
+            message = "비밀번호 재설정을 요청하셨습니다. 아래 링크를 클릭하여 비밀번호를 재설정해 주세요."
+            email_template_name = "password/password_reset_email.txt"
             c = {
                 "email": user.email,
                 'domain': request.get_host(),
@@ -77,11 +78,11 @@ def password_reset_request(request):
                 'protocol': 'http',
             }
             email = render_to_string(email_template_name, c)
-            send_mail(subject, email, 'your_email@example.com', [user.email], fail_silently=False)
+            send_mail(subject, email, 'dnjstjr539@gmail.com', [user.email], fail_silently=False)
             return redirect("password_reset_done")
     else:
         form = PasswordResetForm()
-    return render(request, "accounts/password/password_reset.html", {"form": form})
+    return render(request, "password/password_reset.html", {"form": form})
 
 def password_reset_confirm(request, uidb64=None, token=None):
     try:
@@ -98,12 +99,12 @@ def password_reset_confirm(request, uidb64=None, token=None):
                 return redirect('password_reset_complete')
         else:
             form = SetPasswordForm(user)
-        return render(request, 'accounts/password/password_reset_confirm.html', {'form': form})
+        return render(request, 'password/password_reset_confirm.html', {'form': form})
     else:
         return HttpResponse('비밀번호 재설정 링크가 유효하지 않습니다!')
 
 def password_reset_done(request):
-    return render(request, "accounts/password/password_reset_done.html")
+    return render(request, "password/password_reset_done.html")
 
 def password_reset_complete(request):
-    return render(request, 'accounts/password/password_reset_complete.html')
+    return render(request, 'password/password_reset_complete.html')
