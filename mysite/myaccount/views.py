@@ -61,28 +61,56 @@ from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import login
 from .forms import PasswordResetForm
 def password_reset_request(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        user = User.objects.filter(email=email).first()
-        if user:
-            temp_password = get_random_string(8)
-            user.set_password(temp_password)
-            user.save()
+    if request.method == "POST":
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            user = User.objects.get(username=form.cleaned_data['username'], email=form.cleaned_data['email'])
+            subject = "비밀번호 재설정 요청"
+            email_template_name = "password/password_reset_email.txt"
+            c = {
+                "email": user.email,
+                "user" : user,
+                'domain': request.get_host(),
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user),
+                'protocol': 'http',
+            }
+            email = render_to_string(email_template_name, c)
+            send_mail(subject, email, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
+            return redirect("password_reset_done")
+    else:
+        form = PasswordResetForm()
+    return render(request, "password/password_reset.html", {"form": form})
 
-            send_mail(
-                '임시 비밀번호',
-                f'임시 비밀번호는 {temp_password}입니다. 로그인 후 비밀번호를 재설정하세요.',
-                settings.DEFAULT_FROM_EMAIL,
-                [email],
-                fail_silently=False,
-            )
-            return redirect('password_reset_done')
-    return render(request, 'registration/password_reset.html')
+def password_reset_confirm(request, uidb64=None, token=None):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == "POST":
+            form = SetPasswordForm(user, request.POST)
+            if form.is_valid():
+                form.save()
+                return redirect('password_reset_complete')
+        else:
+            form = SetPasswordForm(user)
+        return render(request, 'password/password_reset_confirm.html', {'form': form})
+    else:
+        return HttpResponse('비밀번호 재설정 링크가 유효하지 않습니다!')
+
+def password_reset_done(request):
+    return render(request, "password/password_reset_done.html")
+
+def password_reset_complete(request):
+    return render(request, 'password/password_reset_complete.html')
 
 @login_required
-def password_reset_complete(request):
+def select_account(request):
     profiles = request.user.profiles.all()
-    return render(request, 'password/password_reset_complete.html', {'profiles': profiles})
+    return render(request, 'registration/select_account.html', {'profiles': profiles}) 
 
 @login_required
 def profile(request):
