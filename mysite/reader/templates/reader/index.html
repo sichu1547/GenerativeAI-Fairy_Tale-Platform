@@ -5,4 +5,18 @@
 
 {% block content %}
     <h1> Here's STORY READER page </h1>
+    <h1> 동화(Story) 목록 보기</h1>
+
+    <form action='' method='GET'>
+        {% csrf_token %}
+        검색어: <input type='text' name='keyword'>
+                <input type='submit' value='검색'>
+    </form>
+
+    {% for story in story_all %}
+        {% comment %} <a href="/blog/{{post.id}}"> {{post.title}} </a> <br><br> {% endcomment %}
+        <a href="{% url 'reader:detail' story.id %}"> {{story.title}} </a> <br><br>
+    {% endfor %}
+
+    {% comment %} <a href="{% url 'reader:create'%}">[새 글 쓰기]<a> {% endcomment %}
 {% endblock %}
