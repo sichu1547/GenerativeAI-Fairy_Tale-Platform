@@ -1,0 +1,102 @@
+@font-face {
+    font-family: 'Ownglyph_noocar-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_noocar-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif; /* Fallback 폰트로 Arial, sans-serif를 지정 */
+}
+
+.generator-title h1 {
+    margin-bottom: 10px; 
+}
+
+.generator-title h4 {
+    margin-top: 10px;
+    margin-bottom: 0; 
+}
+
+.generator-container {
+    background-image: url("../images/generator-bg.jpg");
+    background-size: cover; /* 이미지가 화면 전체를 채우도록 조정 */
+    background-position: center; 
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 0 30px 0;
+}
+
+.generator-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Vertical alignment for child elements */
+    width: 100%;
+    margin: 0 auto;
+}
+
+.generator-title {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    text-align: center;
+    font-size: 50px;
+    opacity: 0; /* 초기에 투명 상태로 시작 */
+    animation: fadeInUp 1s forwards; /* fadeInUp 애니메이션 적용 */
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0; /* 시작 시 투명 */
+        transform: translateY(20px); /* 시작 시 위로 이동 */
+    }
+    100% {
+        opacity: 1; /* 끝나면 불투명 */
+        transform: translateY(0); /* 원래 위치로 이동 */
+    }
+}
+
+.generator-content {
+    display: flex;
+    flex-direction: column; /* 요소들을 세로로 정렬 */
+    justify-content: center; /* 세로 방향으로 가운데 정렬 */
+    align-items: center; /* 가로 방향으로 가운데 정렬 */
+    min-height: 450px;
+    padding: 10px 20px; /* 내부 여백 설정 */
+    width: 100%;
+    box-sizing: border-box; /* padding이 요소의 크기에 포함되도록 설정 */
+    margin: 0 auto; /* 가운데 정렬을 위한 margin 설정 */
+}
+
+.generator-model {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    padding: 20px;
+    height: 430px;
+    padding: 10px;
+    background-color: #ffffff;
+    opacity: 0.9;
+    margin-bottom: 20px;
+    width: 80%; /* generator-content의 너비를 따르도록 설정 */
+}
+
+.generate-start-button {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-size: 20px;
+    background-color: #745cf9;  /* 보라색 배경 */
+    color: rgb(255, 255, 255);  /* 텍스트 색상 */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
+}
+
+.generate-start-button:hover {
+    transform: scale(1.1); /* 호버 시 버튼이 105% 크기로 확대됨 */
+}
