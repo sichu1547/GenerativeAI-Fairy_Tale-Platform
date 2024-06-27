@@ -11,10 +11,6 @@ wikipedia
 Django==5.0.6
 scikit-learn
 django-allauth
-<<<<<<< HEAD
 pyJWT
 crptography
-=======
-PyJWT
-cryptography
->>>>>>> 6b530a5f93b2e6b412fe46f0a00dd8081a5f4f4a
+konlpy

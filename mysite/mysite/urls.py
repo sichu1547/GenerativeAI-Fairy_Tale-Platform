@@ -37,6 +37,8 @@ urlpatterns = [
     path('', account_views.index, name='index'),
     path('reader/', include('reader.urls')),
     path('generator/', include('generator.urls')),
+    path('quiz/', include('quiz.urls')),
+    #path('__debug__/', include('debug_toolbar.urls')),
 ]
 
 from django.conf import settings

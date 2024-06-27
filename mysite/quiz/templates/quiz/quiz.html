@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz</title>
+    <style>
+        .highlight {
+            font-weight: bold;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <h1>퀴즈</h1>
+    <form method="post">
+        {% csrf_token %}
+        {% for quiz in quizzes %}
+            <p>
+                {% if '____' in quiz %}
+                    <span class="highlight">{{ quiz }}</span><br>
+                    {% for choice in example %}
+                        <input type="radio" name="choice" value="{{ choice }}" onclick="document.getElementById('answer').value=this.value"> {{ choice }}<br>
+                    {% endfor %}
+                    <input type="text" id="answer" name="answer"><br>
+                    <input type="hidden" name="correct_answer" value="{{ answer }}"><br>
+                    <button type="submit">제출</button>
+                {% else %}
+                    {{ quiz }}
+                {% endif %}
+            </p>
+        {% endfor %}
+    </form>
+
+    <script>
+        function updateAnswer(value) {
+            document.getElementById('answer').value = value;
+        }
+    </script>
+</body>
+</html>

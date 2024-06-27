@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     "myaccount",
     "reader",
     "generator",
-    
+    'quiz',
+    #'debug_toolbar',
     # all auth
     "django.contrib.sites",
     'allauth',
@@ -68,11 +69,31 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "myaccount.custom_middleware.UserSessionMiddleware",  # 사용자 정의 미들웨어 추가
-    "allauth.account.middleware.AccountMiddleware"
+    "allauth.account.middleware.AccountMiddleware",
+    #"debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
-
+#INTERNAL_IPS = ['127.0.0.1',] #temp
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#         },
+#         'quiz': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#         },
+#     },
+# }
 ROOT_URLCONF = "mysite.urls"
-
 
 import os
 TEMPLATES = [
@@ -218,7 +239,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # 이메일 설정, manage.py와 같은 경로에 secret.json 파일을 만든 후 EMAIL_HOST_USER, EMAIL_HOST_PASSWORD 정의.
 import json
 
-SECRET_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#SECRET_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_FILE_PATH = os.path.join(BASE_DIR, 'secret.json')
 
 with open(SECRET_FILE_PATH) as f:
