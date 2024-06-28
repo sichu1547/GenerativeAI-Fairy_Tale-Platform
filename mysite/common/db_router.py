@@ -27,7 +27,7 @@ class AccountDBRouter:
         return None
 
 class StoryDBRouter:
-    route_app_labels = {'reader, generator'}
+    route_app_labels = {'reader', 'generator', 'quiz'}
 
     def db_for_read(self, model, **hints):
         if model._meta.app_label in self.route_app_labels:
