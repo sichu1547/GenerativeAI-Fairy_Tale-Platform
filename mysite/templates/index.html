@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %}꿈을 꾸는 아이들 Mealkid - 메인 페이지{% endblock %}
 
 {% block content %}
@@ -7,7 +7,7 @@
 <div id="main" class role="main">
     <div id="shapely_home_parallax-2" class="widget shapely_home_parallax">
         <section class="cover fullscreen image-bg">
-            <div class="parallax-window fullscreen" data-parallax="scroll" data-image-src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/03/photo-1443527216320-7e744084f5a7-1.jpg" data-ios-fix="true" data-over-scroll-fix="true" data-android-fix="true">
+            <div class="parallax-window fullscreen" data-parallax="scroll" data-image-src="{% static 'images/배경.png' %}" data-ios-fix="true" data-over-scroll-fix="true" data-android-fix="true">
                 <div class="align-transform">
                     <div class="row">
                         <div class="top-parallax-section">

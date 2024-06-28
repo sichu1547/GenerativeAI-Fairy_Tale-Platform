@@ -11,12 +11,12 @@
 </head>{% endblock %}
 {% block content %}
 <body>
-    <div class="parallax-window fullscreen" data-parallax="scroll" data-image-src="{% static 'images/배경.png' %}" data-ios-fix="true" data-over-scroll-fix="true" data-android-fix="true">
+    <div class="parallax-window fullscreen" data-parallax="scroll" data-image-src="{% static 'images/리드배경.jpg' %}" data-ios-fix="true" data-over-scroll-fix="true" data-android-fix="true">
         <div class="reader-container">
             <div class="reader-row">
                 <div class="reader-title">
-                    <h1>Here's STORY READER page</h1>
-                    <h1>동화(Story) 목록 보기</h1>
+                    <h1></h1>
+                    <h1 style= "color: white">📖장르를 골라보세요!</h1>
                 </div>
                 <div class="reader-content">
                     <div class="reader-model font">
@@ -25,16 +25,13 @@
                             검색어: <input type='text' name='keyword'>
                             <input type='submit' value='검색'>
                         </form>
-
                         <div class="button1-container">
                             <button class="button1">그림형제</button>
                             <button class="button1">이솝우화</button>
                             <button class="button1">전래동화</button>
-                            <button class="button1">샤를로페</button>
+                            <button class="button1">샤를페로</button>
                         </div>
-                        {% for story in story_all %}
-                            <a href="{% url 'reader:detail' story.id %}">{{story.title}}</a>
-                        {% endfor %}
+                        
                     </div>
                 </div>
             </div>
