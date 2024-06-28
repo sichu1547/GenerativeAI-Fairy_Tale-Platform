@@ -28,13 +28,17 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', index),
     path('base/', base),
-    path('account/', include('django.contrib.auth.urls')),  
-    path('account/', include('allauth.urls')),  
+    path('myaccount/', include('django.contrib.auth.urls')),  
+    path('myaccount/', include('myaccount.urls')),
+    path('myaccount/', include('allauth.urls')),  
+    path('myaccount/', include('myaccount.urls')),
     path('signup/', account_views.signup, name='signup'),  # 회원가입 URL
-    path('accounts/profile/', account_views.profile, name='profile'),
+    #path('myaccounts/profile/', account_views.profile, name='profile'),
     path('', account_views.index, name='index'),
     path('reader/', include('reader.urls')),
     path('generator/', include('generator.urls')),
+    path('quiz/', include('quiz.urls')),
+    #path('__debug__/', include('debug_toolbar.urls')),
 ]
 
 from django.conf import settings

@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
-<html lang="en">
+{% load socialaccount %}
+<html lang="ko">
 {% block title %}
 <head>
-	<title>Sign up</title>
+	<title>회원가입</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	{% load static %}
@@ -78,21 +79,22 @@
 					
 					<div class="text-center p-t-46 p-b-20">
 						<span class="txt2">
+							SNS 계정으로 로그인
 						</span>
 					</div>
 
 					<div class="login100-form-social flex-c-m">
-                        <a href="" class="login100-form-social-item flex-c-m bg1 m-r-5">
+                        <a href="{% provider_login_url 'google' %}" class="login100-form-social-item flex-c-m bg1 m-r-5">
                             <img src="{% static 'images/icons/google_icon.png' %}" alt="Google Image" style="width: 20px; height: 20px;">
                         </a>
 
-                        <a href="" class="login100-form-social-item flex-c-m bg2 m-r-5">
+						<a href="{% provider_login_url 'naver' %}" class="login100-form-social-item flex-c-m bg2 m-r-5">
                             <img src="{% static 'images/icons/naver_icon.png' %}" alt="Naver Image" style="width: 20px; height: 20px;">
                         </a>
 
-						<a href="#" class="login100-form-social-item flex-c-m bg3 m-r-5">
-							<img src="{% static 'images/icons/kakaotalk_icon.png' %}" alt="Kakaotalk Image" style="width: 20px; height: 20px;">
-						</a>
+                        <a href="{% provider_login_url 'kakao' %}" class="login100-form-social-item flex-c-m bg3 m-r-5">
+                            <img src="{% static 'images/icons/kakaotalk_icon.png' %}" alt="Kakaotalk Image" style="width: 18px; height: 18px;">
+                        </a>
 					</div>
 				</form>
 
@@ -107,21 +109,21 @@
 	
 	
 <!--===============================================================================================-->
-	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/animsition/js/animsition.min.js"></script>
+	<script src="{% static 'vendor/animsition/js/animsition.min.js' %}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/bootstrap/js/popper.js"></script>
-	<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="{% static 'vendor/bootstrap/js/popper.js' %}"></script>
+	<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/select2/select2.min.js"></script>
+	<script src="{% static 'vendor/select2/select2.min.js' %}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/daterangepicker/moment.min.js"></script>
-	<script src="vendor/daterangepicker/daterangepicker.js"></script>
+	<script src="{% static 'vendor/daterangepicker/moment.min.js' %}"></script>
+	<script src="{% static 'vendor/daterangepicker/daterangepicker.js' %}"></script>
 <!--===============================================================================================-->
-	<script src="vendor/countdowntime/countdowntime.js"></script>
+	<script src="{% static 'vendor/countdowntime/countdowntime.js' %}"></script>
 <!--===============================================================================================-->
-	<script src="js/main.js"></script>
+	<script src="{% static 'js/main.js' %}"></script>
 
 </body>
 {% endblock %}

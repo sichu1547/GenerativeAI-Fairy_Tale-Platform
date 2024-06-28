@@ -14,37 +14,20 @@
             <div id="main" role="main">
                 <h2>계정을 골라주세요!</h2>
                 <div class="account-selection">
-                    <div class="account" onclick="selectAccount('user1')">
-                        <img src="{% static 'images/ru8.jpg' %}">
-                        <p>홍길동</p>
+                    {% for profile in profiles %}
+                    <div class="account">
+                        <a href="{% url 'choose_profile' profile.id %}">
+                            <img src="{{ profile.avatar.url }}" alt="Profile Image" width="50" height="50">
+                            <p>{{ profile.name }}</p>
+                        </a>
                     </div>
-                    <div class="account" onclick="selectAccount('user2')">
-                        <img src="{% static 'images/ko7.jpg' %}">
-                        <p>아무개</p>
-                    </div>
-                    <div class="account" onclick="selectAccount('user3')">
-                        <img src="{% static 'images/puppie1.jpg' %}">
-                        <p>이소룡</p>
-                    </div>
-                    <div class="account" onclick="selectAccount('user4')">
-                        <img src="{% static 'images/puppie4.jpg' %}">
-                        <p>코끼리</p>
-                    </div>
+                    {% endfor %}
                 </div>
-                <button onclick="goBack()" class="back-button">Back</button>
+                <div class="profile-management">
+                    <a href="{% url 'profile' %}">프로필 관리</a>
+                </div>
             </div>
         </section>
     </div>
-    <script>
-        function selectAccount(userId) {
-            // 선택한 계정으로 로그인 처리
-            console.log('Selected account:', userId);
-            // 예를 들어, window.location.href = '/login/' + userId;
-        }
-        
-        function goBack() {
-            window.history.back();
-        }
-    </script>
 </body>
 </html>

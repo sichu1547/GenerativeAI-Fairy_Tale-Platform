@@ -1,0 +1,96 @@
+
+
+
+.coniner, .coniner2, .coniner3 {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    width: 0%;
+    height: 100vh; /* Ensure full height for animation */
+    text-align: center;
+}
+
+.hover-box {
+    white-space: nowrap;
+}
+.hidden-text {
+    display: none;
+    position: relative;
+    top: 62%;
+    left: -120px;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    color: #000;
+    white-space: nowrap;
+}
+.hidden-text2 {
+    display: none;
+    position: relative;
+    top:62%;
+    left:-40px;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    color: #000;
+    white-space: nowrap;
+}
+.hidden-text3 {
+    display: none;
+    position: relative;
+    top: 62%;
+    left: 35px;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    color: #000;
+    white-space: nowrap;
+}
+
+.iage {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    opacity: 0; /* Initially invisible */
+    animation: waterfall 3s forwards, spread 1s forwards 3s;
+    transition: transform 0.3s; /* Smooth transition for hover effect */
+}
+
+.iage1 {
+    animation-delay: 0s, 2s;
+    --spread-factor: -1;
+    left: calc(50% - 50px); /* Center horizontally */
+}
+
+.iage2 {
+    animation-delay: 0.5s, 2s;
+    --spread-factor: 0;
+    left: calc(50% - 50px); /* Center horizontally */
+}
+
+.iage3 {
+    animation-delay: 1s, 2s;
+    --spread-factor: 1;
+    left: calc(50% - 50px); /* Center horizontally */
+}
+
+@keyframes waterfall {
+    0% {
+        top: -150px;
+        opacity: 0;
+    }
+    50% {
+        top: 50%;
+        opacity: 1;
+    }
+    100% {
+        top: 50%;
+        opacity: 1;
+    }
+}
+
+@keyframes spread {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc(var(--spread-factor) * 75px));
+    }
+}

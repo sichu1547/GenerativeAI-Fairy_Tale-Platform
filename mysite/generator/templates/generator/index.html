@@ -1,7 +1,70 @@
 {% extends "base.html" %}
-{% block title %}<title>👽상상력이 세상을 만든다👾</title>{% endblock %}
+{% load static %}
+<html lang="ko">
+
+{% block title %}
+<head>
+    <title>🎨동화책 쓰기✏️</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/generator.css' %}">
+</head>
+{% endblock %}
 
 {% block content %}
+<body>
+    <div class="generator-container">
+        <div class="generator-row">
+            <div class="generator-title">
+                <h1>AI와 함께 동화 만들기 🎨</h1>
+                <h4 style="color:#6e6e6e;">상상력을 마음껏 펼쳐보세요!</h4>
+            </div>
+            <div class="generator-content">
+                <div class="generator-model">
+                    <p>설명설명~</p>
+                </div>
+                <button class="generate-start-button">시작하기</button>
+            </div>
+        </div>
+    </div>
 
-<h1> Here's STORY GENERATOR page </h1>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 시작 버튼 요소 가져오기
+            var startButton = document.querySelector('.generate-start-button');
+        
+            // 시작 버튼 클릭 시 처리할 함수 정의
+            startButton.addEventListener('click', function() {
+                // generator-title 요소 가져오기
+                var h1 = document.querySelector('.generator-title h1');
+                var h4 = document.querySelector('.generator-title h4');
+
+                // generator-title 텍스트 서서히 사라지기
+                h1.style.transition = 'opacity 1s'; // 투명도를 1초 동안 변화
+                h4.style.transition = 'opacity 1s'; // 투명도를 1초 동안 변화
+                startButton.style.transition = 'opacity 1s';
+                h1.style.opacity = '0'; // 투명하게 만듦
+                h4.style.opacity = '0'; // 투명하게 만듦
+                startButton.style.opacity = '0';
+
+                // 1초 대기 후 display를 none으로 설정
+                setTimeout(function() {
+                    h1.style.display = 'none';
+                    h4.style.display = 'none';
+                    startButton.display = 'none';
+                }, 1000); // 1000ms = 1초
+
+                // generator-model 요소 높이 증가
+                setTimeout(function() {
+                var model = document.querySelector('.generator-model');
+                model.style.height = '80vh'; // 원하는 높이로 설정
+                model.style.transition = 'height 1s'; // 높이를 1초 동안 부드럽게 변화
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+
 {% endblock %}
+</html>
+

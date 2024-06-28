@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserSessionData
+from .models import UserSessionData, Profile
 
 @admin.register(UserSessionData)
 class UserSessionDataAdmin(admin.ModelAdmin):
@@ -15,3 +15,6 @@ class UserSessionDataAdmin(admin.ModelAdmin):
         return f"User ID: {user_id}, Session Index: {session_index}"
 
     get_decoded.short_description = 'Decoded Data'
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'name', 'avatar')

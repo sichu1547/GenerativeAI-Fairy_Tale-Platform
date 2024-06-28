@@ -2,7 +2,35 @@
 {% block title %}  
 <title>📖동화책 읽기📖</title>
 {% endblock %}
+{% load static %}
 
-{% block content %}
-    <h1> Here's STORY READER page </h1>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{% static 'css/reader.css' %}">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    
+    <h1>Here's STORY READER page</h1>
+    <h1>동화(Story) 목록 보기</h1>
+
+    <form action='' method='GET'>
+        {% csrf_token %}
+        검색어: <input type='text' name='keyword'>
+                <input type='submit' value='검색'>
+    </form>{% block content %}
+    <div class="black-box"></div>
+    <div class="coniner">
+        <img src="{% static 'images/그림형제.png' %}" class="iage iage1" alt="Image 1">
+    </div>
+    <div class="coniner2">
+        <img src="{% static 'images/이솝우화.png' %}" class="iage iage2" alt="Image 2">
+    </div>
+    <div class="coniner3">
+        <img src="{% static 'images/전래동화.png' %}" class="iage iage3" alt="Image 3">
+    </div>
+    <script src="{% static 'js/reader.js' %}"></script>
+    {% for story in story_all %}
+        <a href="{% url 'reader:detail' story.id %}">{{story.title}}</a> <br><br>
+    {% endfor %}
 {% endblock %}

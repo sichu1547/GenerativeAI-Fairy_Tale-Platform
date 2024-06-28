@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz Result</title>
+</head>
+<body>
+    <h1>결과</h1>
+    <p>{{ result }}</p>
+    {% if result == "정답입니다!" %}
+        <a href="{% url 'quiz_view' %}">돌아가기</a>
+    {% else %}
+        <a href="{% url 'quiz_view' %}">다시 시도하기</a>
+    {% endif %}
+</body>
+</html>
