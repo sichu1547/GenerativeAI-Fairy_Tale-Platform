@@ -7,33 +7,50 @@
             font-weight: bold;
             color: black;
         }
+        .choices-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .choice-box {
+            border: 1px solid #000;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .choice-box:hover {
+            background-color: #f0f0f0;
+        }
     </style>
+    <script>
+        function selectChoice(value) {
+            document.getElementById('answer').value = value;
+            document.getElementById('quizForm').submit();
+        }
+    </script>
 </head>
 <body>
     <h1>퀴즈</h1>
-    <form method="post">
+    <form id="quizForm" method="post">
         {% csrf_token %}
         {% for quiz in quizzes %}
             <p>
                 {% if '____' in quiz %}
-                    <span class="highlight">{{ quiz }}</span><br>
-                    {% for choice in example %}
-                        <input type="radio" name="choice" value="{{ choice }}" onclick="document.getElementById('answer').value=this.value"> {{ choice }}<br>
-                    {% endfor %}
-                    <input type="text" id="answer" name="answer"><br>
-                    <input type="hidden" name="correct_answer" value="{{ answer }}"><br>
-                    <button type="submit">제출</button>
+                    <span class="highlight">{{ quiz }}</span>
                 {% else %}
                     {{ quiz }}
                 {% endif %}
             </p>
         {% endfor %}
+        <input type="hidden" id="answer" name="answer">
+        <input type="hidden" name="correct_answer" value="{{ answer }}">
+        <div class="choices-container">
+            {% for choice in example %}
+                <div class="choice-box" onclick="selectChoice('{{ choice }}')">{{ choice }}</div>
+            {% endfor %}
+        </div>
     </form>
-
-    <script>
-        function updateAnswer(value) {
-            document.getElementById('answer').value = value;
-        }
-    </script>
 </body>
 </html>
