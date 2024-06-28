@@ -21,9 +21,16 @@
             </div>
             <div class="generator-content">
                 <div class="generator-model">
-                    <p>설명설명~</p>
+                    <div class="manual">
+                        <div>AI와 질문-답변을 주고 받으면서 이야기를 만들어보세요 ✏️</div>
+                    </div>
+                    <div class="generator-story-image">
+                        <div class="generator-story" style="display: none;">이야기 들어갈 부분</div>
+                        <div class="generator-image" style="display: none;">생성한 그림 들어갈 부분</div>
+                    </div>
+                    <div class="generator-chatbox" style="display: none;">AI한테 챗 보낼 부분 / 음성 녹음</div>
                 </div>
-                <button class="generate-start-button">시작하기</button>
+                <button class="generator-start-button">시작하기</button>
             </div>
         </div>
     </div>
@@ -31,13 +38,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // 시작 버튼 요소 가져오기
-            var startButton = document.querySelector('.generate-start-button');
+            var startButton = document.querySelector('.generator-start-button');
         
             // 시작 버튼 클릭 시 처리할 함수 정의
             startButton.addEventListener('click', function() {
                 // generator-title 요소 가져오기
                 var h1 = document.querySelector('.generator-title h1');
                 var h4 = document.querySelector('.generator-title h4');
+                var manual = document.querySelector('.manual');
 
                 // generator-title 텍스트 서서히 사라지기
                 h1.style.transition = 'opacity 1s'; // 투명도를 1초 동안 변화
@@ -47,19 +55,42 @@
                 h4.style.opacity = '0'; // 투명하게 만듦
                 startButton.style.opacity = '0';
 
-                // 1초 대기 후 display를 none으로 설정
+                
+                // 1초 대기 후 manual 서서히 사라지기
                 setTimeout(function() {
-                    h1.style.display = 'none';
-                    h4.style.display = 'none';
-                    startButton.display = 'none';
+                    manual.style.transition = 'opacity 1s';
+                    manual.style.opacity = '0';
                 }, 1000); // 1000ms = 1초
 
+
                 // generator-model 요소 높이 증가
-                setTimeout(function() {
                 var model = document.querySelector('.generator-model');
-                model.style.height = '80vh'; // 원하는 높이로 설정
-                model.style.transition = 'height 1s'; // 높이를 1초 동안 부드럽게 변화
-                }, 1000);
+                setTimeout(function() {
+                    model.style.height = '80vh'; // 원하는 높이로 설정
+                    model.style.transition = 'height 1s'; // 높이를 1초 동안 부드럽게 변화
+                    
+                    // generator-title 텍스트 사라지기
+                    var titleContainer = document.querySelector('.generator-title');
+                    titleContainer.style.height = '0'; // 높이를 0으로 만들어 여백을 없앰
+                    titleContainer.style.transition = 'height 1s'; // 높이를 1초 동안 부드럽게 변화
+                    startButton.style.height = '0';
+                    startButton.style.transition = 'height 1s'; // 높이를 1초 동안 부드럽게 변화
+                }, 2000);
+
+                setTimeout(function() {
+                    // manual 텍스트 사라지기
+                    manual.style.display = 'none'; // display를 none으로 설정
+                }, 2000);
+
+                var generator_story = document.querySelector('.generator-story');
+                var generator_image = document.querySelector('.generator-image');
+                var generator_chatbox = document.querySelector('.generator-chatbox');
+
+                setTimeout(function() {
+                    generator_story.style.display = 'block'; // display를 block으로 설정
+                    generator_image.style.display = 'block'; 
+                    generator_chatbox.style.display = 'block'; 
+                }, 2000); // 이야기, 이미지 생성 부분 나타나기
             });
         });
     </script>
@@ -67,4 +98,3 @@
 
 {% endblock %}
 </html>
-

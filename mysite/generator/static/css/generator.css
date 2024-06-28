@@ -30,8 +30,8 @@ html, body {
     align-items: center;
     height: 100%;
     width: 100%;
-    min-height: 100vh;
-    padding: 30px 0 30px 0;
+    min-height: 95vh;
+    padding: 10px 0 10px 0;
 }
 
 .generator-row {
@@ -75,17 +75,20 @@ html, body {
 }
 
 .generator-model {
+    border-radius: 10px; /* 둥근 테두리 반경 설정 */
     font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-size: 30px;
     padding: 20px;
     height: 430px;
-    padding: 10px;
     background-color: #ffffff;
     opacity: 0.9;
     margin-bottom: 20px;
     width: 80%; /* generator-content의 너비를 따르도록 설정 */
+    display: flex;
+    flex-direction: column;
 }
 
-.generate-start-button {
+.generator-start-button {
     font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
     font-size: 20px;
     background-color: #745cf9;  /* 보라색 배경 */
@@ -97,6 +100,35 @@ html, body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
 }
 
-.generate-start-button:hover {
+.generator-start-button:hover {
     transform: scale(1.1); /* 호버 시 버튼이 105% 크기로 확대됨 */
+}
+
+.generator-story-image {
+    height: 80%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px; /* optional, adds space between story and image */
+}
+.generator-story, .generator-image {
+    border: 3px dashed #bbbbbb;
+    font-size: 20px;
+    padding: 10px;
+    width: 50%; /* adjust as needed */
+    height: 95%;
+    border-radius: 10px; /* 둥근 테두리 반경 설정 */
+}
+
+.generator-chatbox {
+    font-size: 20px;
+    border: 3px dashed #bbbbbb;
+    padding: 10px;
+    min-height: 50px;
+    height: 20%;
+    border-radius: 10px; /* 둥근 테두리 반경 설정 */
+}
+
+.manual {
+    line-height:1.5;
 }
