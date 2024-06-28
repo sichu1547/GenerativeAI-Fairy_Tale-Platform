@@ -5,7 +5,7 @@ from django.urls import reverse
 class Story(models.Model):
     title = models.CharField(max_length=250)
     body = models.TextField()
-    tag = models.ManyToManyField('Tag', null=True, blank=True)
+    tag = models.ManyToManyField('Tag', blank=True)
 
     def __str__(self):
         return self.title

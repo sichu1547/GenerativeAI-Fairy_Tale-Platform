@@ -28,10 +28,9 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', index),
     path('base/', base),
-    path('myaccount/', include('django.contrib.auth.urls')),  
+    # path('myaccount/', include('django.contrib.auth.urls')),  
     path('myaccount/', include('myaccount.urls')),
     path('myaccount/', include('allauth.urls')),  
-    path('myaccount/', include('myaccount.urls')),
     path('signup/', account_views.signup, name='signup'),  # 회원가입 URL
     #path('myaccounts/profile/', account_views.profile, name='profile'),
     path('', account_views.index, name='index'),

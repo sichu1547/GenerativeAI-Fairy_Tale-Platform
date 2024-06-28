@@ -9,7 +9,12 @@ class StoryAdmin(admin.ModelAdmin):
     ordering = ['title']
     list_filter = ['tag']
     search_fields = ['body']
-    list_per_page = 3
+    list_per_page = 10
     # action_form = ['insert', 'delete']
 
 admin.site.register(Story, StoryAdmin)
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)

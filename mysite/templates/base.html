@@ -62,6 +62,7 @@ ul.slides img {
                                 <ul id="menu" class="menu">
                                     {% if user.is_authenticated %}
                                         <li>
+                                            <a> 안녕하세요! </a>
                                             <a href="/" id="logout-link">로그아웃</a>
                                             <form id="logout-form" action="{% url 'logout' %}?next={{request.path}}" method="post" style="display: none;">
                                                 {% csrf_token %}
