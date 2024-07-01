@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>검색 결과</h1>
+<ul>
+    {% for story in stories %}
+        <li>
+            <a href="{% url 'reader:story_detail' story.id %}?keyword={{ keyword }}">{{ story.title }}</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

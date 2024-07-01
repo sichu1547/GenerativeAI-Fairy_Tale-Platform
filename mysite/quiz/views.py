@@ -1,10 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views import View
 from .models import ReaderStory
 from konlpy.tag import Okt
 import random
 import re
-#import pdb
+import pdb
 class QuizView(View):
     m_context = {}
     
@@ -32,28 +32,33 @@ class QuizView(View):
         ]
         self.pronoun_pattern = re.compile('|'.join(self.pronouns))
         self.adverbs_pattern = re.compile('|'.join(self.korean_adverbs))
-    def get(self, request):
+    def get(self, request, id):
+        keyword = request.GET.get('keyword', '')
         if 'quizzes' in QuizView.m_context:
+            QuizView.m_context['keyword'] = keyword
             return render(request, 'quiz/quiz.html', QuizView.m_context)
         else:    
-            story = ReaderStory.objects.first()
+            story = get_object_or_404(ReaderStory, id=id)
             if not story:
                 return render(request, 'quiz/no_story.html') 
-            paragraphs = story.body.split('\n\n')  # 문단으로 분리
-            quizze = [self.create_quiz_sentence(p) for p in paragraphs]
-        
-            for story, _, _ in quizze:
-                quizzes = story.split('\r\n\r\n')   
-            answer = quizze[0][1]      
-            example = quizze[0][2]  
-            context = {'quizzes': quizzes, 'answer' : answer, 'example' : example}
+            paragraphs = story.body.split('\n\n') 
+            sentences = []
+            for paragraph in paragraphs:
+                sentences.extend(re.split(r'(?<=\.) ', paragraph))
+
+            random_sentence = random.choice(sentences)
+            temp_sentence, answer, example = self.create_quiz_sentence(random_sentence)       
+
+            quiz_sentences = [temp_sentence if sentence == random_sentence else sentence for sentence in sentences]
+            context = {'quizzes': quiz_sentences, 'answer' : answer, 'example' : example, 'keyword' : keyword}
             QuizView.m_context = context
-            #pdb.set_trace()
+
             return render(request, 'quiz/quiz.html', context)
 
-    def post(self, request):
+    def post(self, request, id):
         answer = request.POST.get('answer')
         correct_answer = request.POST.get('correct_answer')
+        keyword = request.POST.get('keyword', '')
 
         if answer == correct_answer:
             result = "정답입니다!"
@@ -61,7 +66,7 @@ class QuizView(View):
         else:
             result = f"틀렸습니다. 정답은 {correct_answer}입니다."           
 
-        return render(request, 'quiz/quiz_result.html', {'result': result})
+        return render(request, 'quiz/quiz_result.html', {'result': result, 'quiz_id': id, 'keyword': keyword})
 
     def extract_nouns(self, sentence):
         okt = Okt()
