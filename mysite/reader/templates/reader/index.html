@@ -24,10 +24,22 @@
                         <input type='submit' value='검색'>
                     </form>
                     <div class="button1-container">
-                        <button class="button1">그림형제</button>
-                        <button class="button1">이솝우화</button>
-                        <button class="button1">전래동화</button>
-                        <button class="button1">샤를페로</button>
+                            <form action="{% url 'reader:search' %}" method="GET" style="display: inline;">
+                            <input type="hidden" name="keyword" value="그림형제">
+                            <button type="submit" class="button1">그림형제</button>
+                            </form>
+                            <form action="{% url 'reader:search' %}" method="GET" style="display: inline;">
+                            <input type="hidden" name="keyword" value="이솝우화">
+                            <button type="submit" class="button1">이솝우화</button>
+                            </form>
+                            <form action="{% url 'reader:search' %}" method="GET" style="display: inline;">
+                            <input type="hidden" name="keyword" value="전래동화">
+                            <button type="submit" class="button1">전래동화</button>
+                            </form>
+                            <form action="{% url 'reader:search' %}" method="GET" style="display: inline;">
+                            <input type="hidden" name="keyword" value="샤를페로">
+                            <button type="submit" class="button1">샤를페로</button>
+                            </form>
                     </div>
                 </div>
             </div>

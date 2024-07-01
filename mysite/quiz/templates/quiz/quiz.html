@@ -46,6 +46,7 @@
         {% endfor %}
         <input type="hidden" id="answer" name="answer">
         <input type="hidden" name="correct_answer" value="{{ answer }}">
+        <input type="hidden" name="keyword" value="{{ keyword }}">
         <div class="choices-container">
             {% for choice in example %}
                 <div class="choice-box" onclick="selectChoice('{{ choice }}')">{{ choice }}</div>
