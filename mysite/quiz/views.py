@@ -90,3 +90,6 @@ class QuizView(View):
         random.shuffle(choices)
         return quiz_sentence, chosen_noun, choices
 
+
+def index(request):
+    return render(request, 'quiz/quiz.html')

@@ -37,6 +37,7 @@ urlpatterns = [
     path('reader/', include('reader.urls')),
     path('generator/', include('generator.urls')),
     path('quiz/', include('quiz.urls')),
+    path('mine/', include('mine.urls')),
     #path('__debug__/', include('debug_toolbar.urls')),
 ]
 

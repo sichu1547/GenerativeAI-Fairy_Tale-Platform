@@ -18,11 +18,7 @@
             </div>
             <div class="reader-content">
                 <div class="reader-model font">
-                    <form action='' method='GET'>
-                        {% csrf_token %}
-                        검색어: <input type='text' name='keyword'>
-                        <input type='submit' value='검색'>
-                    </form>
+                   
                     <div class="button1-container">
                             <form action="{% url 'reader:search' %}" method="GET" style="display: inline;">
                             <input type="hidden" name="keyword" value="그림형제">
