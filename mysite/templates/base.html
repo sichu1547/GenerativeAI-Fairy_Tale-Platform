@@ -60,6 +60,11 @@ ul.slides img {
                         <div class="module left">
                             <div class="collapse navbar-collapse navbar-ex1-collapse">
                                 <ul id="menu" class="menu">
+                                    <li>
+                                    <a href = "{% url 'reader:list' %}">읽기</a></li>
+                                    <li>
+                                    <a href = "{% url 'generator:index' %}">만들기</a>
+                                    </li>
                                     {% if user.is_authenticated %}
                                         <li>
                                             <a href="/" id="logout-link">로그아웃</a>
@@ -78,19 +83,7 @@ ul.slides img {
                                 </ul>
                             </div> 
                         </div>
-                        <div class="module widget-handle search-widget-handle hidden-xs hidden-sm">
-                            <button class="search">
-                                <i class="fa fa-search"></i>
-                                <span class="title">Site Search</span>
-                            </button>
-                            <div class="function">
-                                <form role="search" method="get" id="searchform" class="search-form" action="https://colorlibhub.com/shapely/">
-                                    <label class="screen-reader-text" for="s">Search for:</label>
-                                    <input type="text" placeholder="Type Here" value name="s" id="s" />
-                                    <button type="submit" class="searchsubmit"><i class="fa fa-search" aria-hidden="true"></i><span class="screen-reader-text">Search</span></button>
-                                </form> 
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
