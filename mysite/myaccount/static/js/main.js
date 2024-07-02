@@ -262,7 +262,7 @@ slide.addEventListener("touchend", (e) => {
 // 기본적으로 슬라이드 루프 시작하기
 let loopInterval = setInterval(() => {
   nextMove();
-}, 5500);
+}, 5000);
 
 // 슬라이드에 마우스가 올라간 경우 루프 멈추기
 slide.addEventListener("mouseover", () => {
@@ -273,5 +273,44 @@ slide.addEventListener("mouseover", () => {
 slide.addEventListener("mouseout", () => {
   loopInterval = setInterval(() => {
     nextMove();
-  }, 3000);
+  }, 5000);
+});
+document.addEventListener('DOMContentLoaded', (event) => {
+  const itemsPerPage = 5;
+  const stories = document.querySelectorAll('.story-item');
+  const totalItems = stories.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const paginationControls = document.getElementById('pagination-controls');
+  
+  function showPage(page) {
+      stories.forEach((story, index) => {
+          story.style.display = 'none';
+      });
+      const start = (page - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      for (let i = start; i < end && i < totalItems; i++) {
+          stories[i].style.display = 'block';
+      }
+  }
+
+  function createPagination() {
+      paginationControls.innerHTML = '';
+
+      for (let i = 1; i <= totalPages; i++) {
+          const pageLink = document.createElement('a');
+          pageLink.href = '#';
+          pageLink.innerText = i;
+          pageLink.addEventListener('click', (e) => {
+              e.preventDefault();
+              showPage(i);
+          });
+          paginationControls.appendChild(pageLink);
+
+          if (i < totalPages) {
+              paginationControls.appendChild(document.createTextNode(' | '));
+          }
+      }
+  }
+  createPagination();
+  showPage(1);
 });
