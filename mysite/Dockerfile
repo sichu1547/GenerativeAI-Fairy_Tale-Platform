@@ -8,14 +8,16 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYECODE 1
 ENV PYTHONUNBUFFERED 1
 
+COPY requirements.txt ./
+RUN pip install --upgrade pip
+RUN pip install --no-cache-dir -r requirements.txt
+# 이 문장은 Django를 이미지내에서 실행시키기 위해 pip으로 설치해야할 내용들을 설치하는 명령을 실행합니다. 
+# requirements.txt에 적혀있는 pip들을 설치하게 됩니다.
+
 COPY . .
 # 이 문장은 현재 디렉토리의 모든 파일과 폴더를 현재 작업 디렉토리(`/usr/src/app`)로 복사합니다. 
 # 즉, 현재 디렉토리의 모든 파일과 폴더가 이미지 내의 `/usr/src/app` 디렉토리로 복사됩니다.
 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-# 이 문장은 Django를 이미지내에서 실행시키기 위해 pip으로 설치해야할 내용들을 설치하는 명령을 실행합니다. 
-# requirements.txt에 적혀있는 pip들을 설치하게 됩니다.
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 # 이 문장은 컨테이너가 실행될 때 기본으로 실행할 명령을 지정합니다. WORKDIR에서 지정한 디렉터리에서 실행되는 문장입니다. 
