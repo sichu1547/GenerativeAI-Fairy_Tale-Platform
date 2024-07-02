@@ -47,10 +47,10 @@ class QuizView(View):
                 sentences.extend(re.split(r'(?<=\.) ', paragraph))
 
             random_sentence = random.choice(sentences)
-            temp_sentence, answer, example = self.create_quiz_sentence(random_sentence)       
+            quiz_sentences, answer, example = self.create_quiz_sentence(random_sentence)       
 
-            quiz_sentences = [temp_sentence if sentence == random_sentence else sentence for sentence in sentences]
-            context = {'quizzes': quiz_sentences, 'answer' : answer, 'example' : example, 'keyword' : keyword}
+            #quiz_sentences = [temp_sentence if sentence == random_sentence else sentence for sentence in sentences]
+            context = {'quizzes': quiz_sentences, 'answer' : answer, 'example' : example, 'keyword' : keyword, 'story' : story}
             QuizView.m_context = context
 
             return render(request, 'quiz/quiz.html', context)
