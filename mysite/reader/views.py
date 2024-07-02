@@ -21,10 +21,15 @@ def detail(request, id):
 
 def search(request):
     keyword = request.GET.get('keyword')
+    search_type = request.GET.get('search_type', 'title')
     if keyword:
-        stories = Story.objects.filter(category__icontains=keyword)
+        if search_type == 'title':
+            stories = Story.objects.filter(title__icontains=keyword)
+        else:
+            stories = Story.objects.filter(category__icontains=keyword)
     else:
-        stories = Story.objects.all()
+        stories = Story.objects.all()      
+         
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
 
 def story_detail(request, id):
