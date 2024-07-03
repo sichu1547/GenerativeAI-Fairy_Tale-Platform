@@ -1,72 +1,79 @@
-{% comment %} <!DOCTYPE html>
-{% load static %}
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>내 정보</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}">
-</head>
-<body>
-    <div class="profile">
-        <h2>내 정보</h2>
-        <p>안녕하세요, {{ user.username }}님!</p>
-        <p>이메일: {{ user.email }}</p>
-    </div>
-</body>
-</html> {% endcomment %}
 <!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+<html lang="ko">
+
 <head>
+    <title>{% block title %}👤내 정보👤</title>
+
     <meta charset="UTF-8">
-    <title>계정관리</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+   
     {% load static %}
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
 </head>
+{% endblock %}
+
+{% block content %}
 <body>
-    <div id="content" class="main-container">
-        <section class="content-area">
-            <div id="main" role="main">
-                <h2>내 계정</h2>
-                <h3 id="form-title">계정 추가</h3>
+    <div class="my-container">
+        <div class="profile-container">
+            <h2 class="profile-h2">내 정보</h2>
+            <p class="info-text">안녕하세요😊 <br>{{ user.username }}님!</p>
+            <p class="info-text">이메일: {{ user.email }}</p>
+        </div>
+        <div id="content" class="account-container">
+            <section class="content-area">
+                <h2 class="profile-h2">내 계정</h2>
+                <h3 class = "profile-h3" id="form-title">프로필 추가</h3>
                 <form id="profile-form" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" id="save-button">저장하기</button>
+                    <div class = "add-profile">
+                        <p class = id-name-p>
+                            <label class="id-name-label" for="id_name">이름:</label>
+                            <input type="text" name="name" maxlength="255" required="" id="id_name">
+                        </p>
+                        <p class = id-avatar-p>
+                            <label class="id-avatar-label" for="id_avatar">프로필 사진:</label>
+                            <input type="file" name="avatar" accept="image/*" id="id_avatar">
+                        </p>
+                        <button type="submit" id="save-button">저장하기</button>
+                    </div>
                 </form>
 
-                <h3>내 계정 목록</h3>
-                <ul>
+                <h3 class="profile-h3">내 프로필 목록</h3>
+                <ul class="profile-list">
                     {% for profile in profiles %}
-                    <li>
-                        <img src="{{ profile.avatar.url }}" alt="Profile Image" width="50" height="50">
-                        {{ profile.name }}
-                        <button type="button" onclick="editProfile({{ profile.id }}, '{{ profile.name }}')">수정하기</button>
+                    <li class="profile-item">
+                        <img class = 'profile-img' src="{{ profile.avatar.url }}" alt="Profile Image" width="50" height="50">
+                        <label class="profile-name">{{ profile.name }}</label>
+                        <button type="button" id="edit-button" onclick="editProfile('{{ profile.id }}', '{{ profile.name }}')">수정하기</button>
                         <form method="post" action="{% url 'profile_delete' profile.id %}" style="display:inline;">
                             {% csrf_token %}
-                            <button type="submit">삭제하기</button>
+                            <button type="submit" id="delete-button">삭제하기</button>
                         </form>
                     </li>
                     {% endfor %}
                 </ul>
 
-                <a href="{% url 'select_account' %}">돌아가기</a>
-            </div>
-        </section>
+                <a class ="profile-select" href="{% url 'select_account' %}">➡️ 프로필 선택</a>
+            </section>
+        </div>
     </div>
-
     <script>
         function editProfile(profileId, profileName) {
             document.getElementById('id_name').value = profileName;
-            document.getElementById('profile-form').action = `/myaccount/profile/`;
-            document.getElementById('form-title').textContent = "Edit Profile";
-            document.getElementById('save-button').textContent = "Update";
+            document.getElementById('profile-form').action = '/myaccount/profile/' + profileId + '/edit/';
+            document.getElementById('form-title').textContent = "프로필 수정";
+            document.getElementById('save-button').textContent = "업데이트";
         }
         window.onload = function() {
             document.getElementById('profile-form').reset();
-            document.getElementById('form-title').textContent = "Add Profile";
+            document.getElementById('form-title').textContent = "프로필 추가";
             document.getElementById('save-button').textContent = "저장하기";
             document.getElementById('profile-form').action = "/myaccount/profile/";
         };
     </script>
 </body>
+
+{% endblock %}
 </html>
