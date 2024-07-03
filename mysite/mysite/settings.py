@@ -22,16 +22,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-env = environ.Env(DEBUG=(bool, True))
+denv = environ.Env(DEBUG=(bool, True))
 environ.Env.read_env(
     env_file=os.path.join(BASE_DIR, '.env.dev')
 )
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = denv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = denv('DEBUG')
 # DEBUG = False
 
 ALLOWED_HOSTS = ['*']
@@ -125,14 +125,14 @@ TEMPLATES = [
 SITE_ID = 1
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
-from .local_settings import *
-
 SOCIALACCOUNT_PROVIDERS = {
     "kakao": {
         "APP": {
-            "client_id": KAKAO_CLIENT_ID,
+            "client_id": denv('KAKAO_CLIENT_ID'),
+            # "client_id": KAKAO_CLIENT_ID,
             #"client_id": 'os.getenv("KAKAO_CLIENT_ID")',
-            "secret": KAKAO_SECRET_SECRET,
+            "secret": denv('KAKAO_SECRET_SECRET'),
+            # "secret": KAKAO_SECRET_SECRET,
             #"secret": os.getenv("KAKAO_SECRET_KEY"),
             "key": ""
         },
@@ -146,8 +146,10 @@ SOCIALACCOUNT_PROVIDERS = {
     },
     "naver": {
         "APP": {
-            "client_id": NAVER_CLIENT_ID,
-            "secret": NAVER_CLIENT_SECRET,
+            "client_id": denv('NAVER_CLIENT_ID'),
+            # "client_id": NAVER_CLIENT_ID,
+            "secret": denv('NAVER_CLIENT_SECRET'),
+            # "secret": NAVER_CLIENT_SECRET,
             "key": ""
         },
         "SCOPE": [
@@ -161,8 +163,10 @@ SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APPS": [
             {
-                "client_id": GOOGLE_CLIENT_ID,
-                "secret": GOOGLE_CLIENT_SECRET,
+                "client_id": denv('GOOGLE_CLIENT_ID'),
+                # "client_id": GOOGLE_CLIENT_ID,
+                "secret": denv('GOOGLE_CLIENT_SECRET'),
+                # "secret": GOOGLE_CLIENT_SECRET,
                 "key": ""
             },
         ],
