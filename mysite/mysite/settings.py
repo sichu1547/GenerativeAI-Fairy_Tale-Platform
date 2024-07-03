@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'quiz',
     #'debug_toolbar',
     # all auth
-    "django.contrib.sites",
+    # "django.contrib.sites",
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
