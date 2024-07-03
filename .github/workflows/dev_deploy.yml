@@ -49,5 +49,5 @@ jobs:
           sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/dev-web:latest
           sudo docker stop meal_kid_dev || true
           sudo docker rm meal_kid_dev || true
-          sudo docker rmi $(docker images -q)
+          sudo docker rmi $(sudo docker images -q)
           sudo docker run -d -p 8000:8000 --name meal_kid_dev ${{ secrets.DOCKER_HUB_USERNAME }}/dev-web:latest
