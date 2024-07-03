@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .o{
+        display: inline-block;
+        margin-right: 10px; /* 옆 여백 조절 */
+        background-color: #f0f0f0;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    .h {
+        font-family: 'Pacifico', cursive;
+        font-size: 6em;
+        font-weight: bold;
+        color: #000;
+        text-align: center;
+        padding: 20px;
+        margin: 10;
+        position: relative;
+    }
+    
+</style>
+<h1 class='h'>검색 결과</h1>
+<ul>
+    {% for story in stories %}
+        <li class='o'>
+            <a href="{% url 'reader:story_detail' story.id %}?keyword={{ keyword }}">{{ story.title }}</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock %}

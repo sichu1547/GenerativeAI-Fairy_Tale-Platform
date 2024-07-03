@@ -1,4 +1,16 @@
-
+.reader-container {
+    background-image: url("../images/리드배경.jpg");
+    background-size: cover; /* 이미지가 화면 전체를 채우도록 조정 */
+    background-position: center; 
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    min-height: 95vh;
+    padding: 10px 0 10px 0;
+}
 .button1 {
     position: absolute;
     left: 50%;
@@ -84,8 +96,17 @@
 }
 form {
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.reader-title {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+
 }
 h1{
     font-family: 'Ownglyph_noocar-Rg', sans-serif !important;
@@ -93,7 +114,7 @@ h1{
     justify-content: center; /* 중앙 정렬 */
     align-items: center;
     position: relative; /* 상대적 위치 지정 */
-    
+    color: white !important;
 }
 .font{
     font-family: 'Ownglyph_noocar-Rg', sans-serif !important;

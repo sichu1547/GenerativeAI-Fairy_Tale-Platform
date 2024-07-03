@@ -7,9 +7,13 @@
     <h1>결과</h1>
     <p>{{ result }}</p>
     {% if result == "정답입니다!" %}
-        <a href="{% url 'quiz_view' %}">돌아가기</a>
+        <a href="{% url 'quiz:quiz_view' id=quiz_id %}?keyword={{ keyword }}">다른문제</a>
+        <a href="{% url 'reader:search'%}?keyword={{ keyword }}">동화 리스트</a>
+        <a href="{% url 'index'%}?keyword={{ keyword }}">메인 페이지</a>
     {% else %}
-        <a href="{% url 'quiz_view' %}">다시 시도하기</a>
+        <a href="{% url 'quiz:quiz_view' id=quiz_id %}?keyword={{ keyword }}">다시 시도하기</a>
+        <a href="{% url 'reader:search'%}?keyword={{ keyword }}">동화 리스트</a>
+        <a href="{% url 'index'%}?keyword={{ keyword }}">메인 페이지</a>
     {% endif %}
 </body>
 </html>

@@ -18,11 +18,19 @@ from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import render
 from myaccount import views as account_views
+from reader.models import Story
 def base(request):
     return render(request,'base.html')
 
 def index(request):
-    return render(request,'index.html')
+    keyword = request.GET.get('keyword', '')
+    #search_type = request.GET.get('search_type', 'title')
+
+    if keyword:
+        stories = Story.objects.filter(title__icontains=keyword)   
+        return render(request, 'index.html', {'stories': stories, 'keyword': keyword})
+    else: 
+        return render(request, 'index.html')
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -37,6 +45,7 @@ urlpatterns = [
     path('reader/', include('reader.urls')),
     path('generator/', include('generator.urls')),
     path('quiz/', include('quiz.urls')),
+    path('mine/', include('mine.urls')),
     #path('__debug__/', include('debug_toolbar.urls')),
 ]
 

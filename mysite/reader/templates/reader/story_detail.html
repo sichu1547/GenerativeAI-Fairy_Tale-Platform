@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/reader.css' %}">
+    <title>{{ title }}</title>
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <div>
+        {% for sentence in story %}
+            <p>{{ sentence }}</p>
+        {% endfor %}
+    </div>
+    <a href="{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}">퀴즈 시작</a>
+</body>
+</html>
