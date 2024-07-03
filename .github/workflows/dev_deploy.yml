@@ -30,14 +30,14 @@ jobs:
         push: true
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/dev-web:latest
 
-    - name: Copy docker-compose.yml to server
-      uses: appleboy/scp-action@v0.1.6
-      with:
-        host: ${{ secrets.SERVER_IP }}
-        username: ${{ secrets.SERVER_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: 'docker-compose.yml'
-        target: '~/app/docker-compose.yml'
+    # - name: Copy docker-compose.yml to server
+    #   uses: appleboy/scp-action@v0.1.6
+    #   with:
+    #     host: ${{ secrets.SERVER_IP }}
+    #     username: ${{ secrets.SERVER_USER }}
+    #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+    #     source: 'docker-compose.yml'
+    #     target: '~/app/docker-compose.yml'
 
     - name: Deploy to server
       uses: appleboy/ssh-action@v0.1.6
@@ -49,4 +49,5 @@ jobs:
           sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/dev-web:latest
           sudo docker stop meal_kid_dev || true
           sudo docker rm meal_kid_dev || true
+          sudo docker rmi $(docker images -q)
           sudo docker run -d -p 8000:8000 --name meal_kid_dev ${{ secrets.DOCKER_HUB_USERNAME }}/dev-web:latest
