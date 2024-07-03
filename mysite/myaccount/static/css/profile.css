@@ -65,8 +65,9 @@ html, body {
     height: 50px;
     letter-spacing: 1px;
     line-height: 48px;
+    min-width:150px;
     width: 150px;
-    margin: 0 0 30px 0;
+    margin: 0 50px 30px 0;
 }
 
 #edit-button, #delete-button {
@@ -90,30 +91,53 @@ html, body {
     font-family: 'CookieRun-Regular', Arial, sans-serif;
 }
 
+.profile-h2 {
+    font-size: 40px;
+}
+
 .profile-h3 {
+    font-size: 28px;
     margin-top: 5px;
 }
 
 
-.profile-container {
-    padding: 20px;
+.info-container {
+    padding: 10px;
+    flex: 1 1 20%; /* Adjust the width as needed */
 }
 
 .my-container {
-    padding-top: 30px;
-    padding-bottom: 30px;
-    padding-left: calc(40px + 7vw);
-    padding-right: calc(40px + 7vw);
     display: flex;
     flex-wrap: wrap;
     justify-content: left; /* Center content horizontally */
     max-width: 100%; /* Ensure it does not exceed the viewport width */
+    padding: 40px 150px;
+    min-height: 67vh;
 }
 
 .account-container {
-    flex: 1 1 100%; /* Take full width available */
+    flex: 1 1 75%; /* Take 75% of the width available */
     max-width: 80%; /* Example maximum width */
-    padding: 20px;
+    padding: 10px;
+}
+
+/* Media Query for smaller screens */
+@media (max-width: 1000px) {
+    .profile-container, .account-container {
+        flex: 1 1 100%; /* Take full width available */
+        max-width: 100%; /* Ensure it does not exceed the viewport width */
+    }
+
+    .my-container {
+        padding: 40px 40px;
+    }
+    .profile-list {
+        justify-content: center;
+    }
+
+    #id_name {
+        width: 35vw;
+    }
 }
 
 .info-text {
@@ -167,9 +191,10 @@ html, body {
 }
 
 #id_name {
-    width: 25vw;
+    width: 18vw;
     margin-right: 20px;
     margin-left: 10px;
+    min-width: 150px;
 }
 
 #id_avatar {
