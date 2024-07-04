@@ -15,3 +15,4 @@ pyJWT
 cryptography
 konlpy
 django-environ
+google-cloud-texttospeech
