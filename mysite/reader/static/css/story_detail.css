@@ -1,0 +1,266 @@
+@font-face {
+    font-family: 'Ownglyph_noocar-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_noocar-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'CookieRun-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ownglyph_ryuttung-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_ryuttung-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+.story-detail-container {
+    background-image: url("../images/리드배경.jpg");
+    background-size: cover; /* 이미지가 화면 전체를 채우도록 조정 */
+    background-position: center; 
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    min-height: 95vh;
+    padding: 10px 0 10px 0;
+    display:flex;
+    flex-direction: column;
+}
+
+.story-title {
+    font-family: 'Ownglyph_noocar-Rg', cursive;
+    font-size: 60px;
+    color: white;
+    text-align: center;
+    padding: 5px 20px;
+    margin-top: 15px;
+    position: relative;
+    text-shadow: 5px 5px 4px rgb(59, 59, 58);
+    opacity: 0; /* 초기에 투명 상태로 시작 */
+    animation: fadeInUp 1s forwards; /* fadeInUp 애니메이션 적용 */
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0; /* 시작 시 투명 */
+        transform: translateY(20px); /* 시작 시 위로 이동 */
+    }
+    100% {
+        opacity: 1; /* 끝나면 불투명 */
+        transform: translateY(0); /* 원래 위치로 이동 */
+    }
+}
+
+.book {
+    display: flex;
+    width: 80%;
+    max-width: 1200px;
+    height: 58vh;
+    min-height: 400px;
+    background-color: #ffffff;
+    border: 15px solid #3b3012;
+    border-radius: 15px;
+    box-shadow: 5px 5px 10px black;
+}
+
+.left-page, .right-page {
+    background-image: url("../images/paper_texture.jpg");
+    background-size: cover; /* 이미지가 화면 전체를 채우도록 조정 */
+    background-position: center; 
+    background-repeat: no-repeat;
+    flex: 1;
+    padding: 30px 40px;
+    width: 40%;
+}
+
+
+.spine {
+    width: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    background-color: #3b3012;
+    border-left: 2px solid #3b3012;
+    border-right: 2px solid #3b3012;
+}
+
+.spiral {
+    width: 45px;
+    height: 4px;
+    background-color: #cecbc3;
+    border-radius: 2px;
+    box-shadow: 5px 5px 7px black;
+    position: relative; /* 스프링 가장 앞에 보이도록*/
+}
+
+.image-container {
+    text-align: center;
+}
+
+.image-container img {
+    width: 150px;
+    height: auto;
+}
+
+.image-container p {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.text-container {
+    font-family: 'Ownglyph_ryuttung-Rg';
+    font-size: 26px;
+    line-height: 1.5;
+    color: rgb(104, 104, 104);
+}
+
+.reader-button {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-size: 20px;
+    background-color: #745cf9;  /* 보라색 배경 */
+    color: rgb(255, 255, 255);  /* 텍스트 색상 */
+    margin-top: 30px;
+    margin-bottom: 40px;
+    margin-left: 30px;
+    margin-right: 30px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
+}
+
+.arrow-button {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-size: 20px;
+    background-color: #745cf9;  /* 보라색 배경 */
+    color: rgb(255, 255, 255);  /* 텍스트 색상 */
+    margin-top: 30px;
+    margin-bottom: 40px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
+}
+
+#previous_button {
+    margin-right: auto;
+}
+
+#next_button{
+    margin-left:auto;
+}
+
+.arrow-button:hover, .reader-button:hover {
+    transform: scale(1.1); /* 호버 시 버튼이 105% 크기로 확대됨 */
+}
+
+
+.buttons {
+    display: flex;
+    width: 80%;
+    max-width: 1150px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    margin-bottom: 20px;
+}
+
+
+/* 텍스트 드래그 시 효과*/
+::selection{ 
+  color: transparent; 
+  text-shadow: 0 0 2px #000; 
+  transition: all 250ms ease-in; 
+} 
+::-moz-selection{ 
+  color: transparent; 
+  text-shadow: 0 0 2px #000; 
+  transition: all 250ms ease-in; 
+} 
+
+@media (max-width: 1200px) {
+    .text-container {
+        font-size: 23px;
+    }
+    .left-page, .right-page {
+        flex: 1;
+        padding: 25px 30x;
+    }
+    .story-title {
+        font-size: 50px;
+    }
+    .reader-button, .arrow-button {
+        font-size: 15px;
+    }
+
+    .spiral {
+        width: 40px;
+    }
+}
+
+@media (max-width: 1000px) {
+    .text-container {
+        font-size: 17px;
+    }
+    .left-page, .right-page {
+        flex: 1;
+        padding: 20px 23px;
+    }
+    .story-title {
+        font-size: 40px;
+    }
+    .reader-button, .arrow-button {
+        font-size: 10x;
+    }
+    .spiral {
+        width: 35px;
+    }
+}
+
+.book.turn-right .right-page {
+    animation: turnPageRight 1s forwards;
+    transform-origin: left center;
+}
+
+.book.turn-left .left-page {
+    animation: turnPageLeft 1s forwards;
+    transform-origin: right center;
+}
+
+@keyframes turnPageRight {
+    0% {
+        transform: rotateY(0deg);
+    }
+    100% {
+        transform: rotateY(-180deg);
+    }
+}
+
+@keyframes turnPageLeft {
+    0% {
+        transform: rotateY(0deg);
+    }
+    100% {
+        transform: rotateY(180deg);
+    }
+}
