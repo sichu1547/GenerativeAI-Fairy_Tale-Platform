@@ -15,7 +15,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000 # csv파일 수정 개수 제한
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -186,6 +186,10 @@ DATABASES = {
     'story': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'database/story_db.db',
+    },
+        'new': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "database/story_copy.db",
     }
 }
 

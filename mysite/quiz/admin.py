@@ -1,7 +1,7 @@
-from django.contrib import admin
-from .models import ReaderStory
+# from django.contrib import admin
+# from .models import ReaderStory
 
-class ReaderStoryAdmin(admin.ModelAdmin):
-    list_display = ('category', 'title')
+# class ReaderStoryAdmin(admin.ModelAdmin):
+#     list_display = ('category', 'title')
 
-admin.site.register(ReaderStory, ReaderStoryAdmin)
+# admin.site.register(ReaderStory, ReaderStoryAdmin)

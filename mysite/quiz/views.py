@@ -45,10 +45,11 @@ class QuizView(View):
             sentences = []
             for paragraph in paragraphs:
                 sentences.extend(re.split(r'(?<=\.) ', paragraph))
-
-            random_sentence = random.choice(sentences)
-            quiz_sentences, answer, example = self.create_quiz_sentence(random_sentence)       
-
+            example = []
+            while len(example) < 3 and len(sentences) > 0:
+                random_sentence = random.choice(sentences)
+                quiz_sentences, answer, example = self.create_quiz_sentence(random_sentence)    
+                sentences.remove(random_sentence)                      
             #quiz_sentences = [temp_sentence if sentence == random_sentence else sentence for sentence in sentences]
             context = {'quizzes': quiz_sentences, 'answer' : answer, 'example' : example, 'keyword' : keyword, 'story' : story}
             QuizView.m_context = context
@@ -88,6 +89,7 @@ class QuizView(View):
         quiz_sentence = paragraph.replace(chosen_noun, "____", 1)
         choices = [chosen_noun] + other_nouns
         random.shuffle(choices)
+        
         return quiz_sentence, chosen_noun, choices
 
 

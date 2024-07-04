@@ -32,6 +32,9 @@ class StoryAdmin(admin.ModelAdmin):
             reader = csv.reader(csv_file.read().decode('utf-8').splitlines())
             next(reader)  # Skip the header
             for row in reader:
+                if len(row[1]) < 50:
+                    continue
+                #print(row[0], len(row[1]))
                 Story.objects.create(
                     title=row[0],
                     body=row[1],

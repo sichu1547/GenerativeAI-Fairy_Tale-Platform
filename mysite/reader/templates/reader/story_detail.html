@@ -6,14 +6,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/reader.css' %}">
     <title>{{ title }}</title>
+    <style>
+        .book-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+            perspective: 1500px;
+        }
+        .book {
+            width: 70%;
+            max-width: 800px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s;
+            height: 80vh;
+            overflow-y: auto;
+        }
+        .page-content {
+            padding: 1px;
+            font-size: 1.2em;
+            line-height: 1.6em;
+            color: #000;
+        }
+        .story-title {
+            font-size: 2em;
+            color: #000;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        h1.story-title {
+            font-size: 2em;
+            color: #000 !important;
+            margin-bottom: 20px;
+            text-align: center;
+        }        
+        .story-content p {
+            margin-bottom: 20px;
+        }
+        .quiz-button {
+            display: block;
+            width: 200px;
+            margin: 40px auto 0;
+            padding: 10px 20px;
+            background-color: #2d6a4f;
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1.2em;
+        }
+        .quiz-button:hover {
+            background-color: #1b4332;
+        }
+    </style>
 </head>
 <body>
-    <h1>{{ title }}</h1>
-    <div>
-        {% for sentence in story %}
-            <p>{{ sentence }}</p>
-        {% endfor %}
+    {% include 'base_header.html' %}
+    <div class="book-container">
+        <h1 class="story-title">{{ title }}</h1>
+        <div class="book" id="book">
+            <div class="page">
+                <div class="page-content">
+                    <div class="story-content">
+                        {% for sentence in story %}
+                            <p>{{ sentence }}</p>
+                        {% endfor %}
+                    </div>
+                    <a class="quiz-button" href="{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}">퀴즈 시작</a>
+                </div>
+            </div>
+        </div>
     </div>
-    <a href="{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}">퀴즈 시작</a>
+    <script>
+        document.querySelector('.book').addEventListener('click', function() {
+            this.classList.toggle('flipped');
+        });
+    </script>
 </body>
 </html>
