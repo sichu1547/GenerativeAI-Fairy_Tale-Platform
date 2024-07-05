@@ -64,27 +64,52 @@
         }
     </style>
 </head>
+
 <body>
-    {% include 'base_header.html' %}
-    <div class="book-container">
-        <h1 class="story-title">{{ title }}</h1>
-        <div class="book" id="book">
-            <div class="page">
-                <div class="page-content">
-                    <div class="story-content">
-                        {% for sentence in story %}
-                            <p>{{ sentence }}</p>
-                        {% endfor %}
-                    </div>
-                    <a class="quiz-button" href="{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}">퀴즈 시작</a>
-                </div>
-            </div>
-        </div>
+    
+    <h1>{{ title }}</h1>
+    
+    <div>
+        {% for sentence in story %}
+            <p>{{ sentence }}</p>
+        {% endfor %}
     </div>
+    <a href="{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}">퀴즈 시작</a>
+
+    <div>
+        <button onclick="playAudio('ko-KR-Standard-A')">Standard A</button>
+        <button onclick="playAudio('ko-KR-Standard-B')">Standard B</button>
+        <button onclick="playAudio('ko-KR-Standard-C')">Standard C</button>
+        <button onclick="playAudio('ko-KR-Standard-D')">Standard D</button>
+        <button onclick="playAudio('ko-KR-Wavenet-A')">Wavenet A</button>
+        <button onclick="playAudio('ko-KR-Wavenet-B')">Wavenet B</button>
+        <button onclick="playAudio('ko-KR-Wavenet-C')">Wavenet C</button>
+        <button onclick="playAudio('ko-KR-Wavenet-D')">Wavenet D</button>
+    </div>
+
+    <audio id="ttsAudio" controls>
+        <source id="audioSource" src="" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+    
+    <a href="?tts=true" download="audio.mp3" id="downloadLink">오디오 다운받기!</a>
+
     <script>
-        document.querySelector('.book').addEventListener('click', function() {
-            this.classList.toggle('flipped');
-        });
+        function playAudio(voice) {
+            const audioElement = document.getElementById('ttsAudio');
+            const sourceElement = document.getElementById('audioSource');
+            const downloadLink = document.getElementById('downloadLink');
+            
+            // 오디오 소스 URL 업데이트
+            const ttsUrl = `?tts=true&voice=${voice}`;
+            sourceElement.src = ttsUrl;
+            audioElement.load();
+            audioElement.play();
+            
+            // 다운로드 링크 업데이트
+            downloadLink.href = ttsUrl;
+        }
     </script>
+
 </body>
 </html>
