@@ -3,6 +3,7 @@
 <head>
     <title>Quiz</title>
     <style>
+        /* 기존 스타일 유지 */
         body {
             font-family: Arial, sans-serif;
             background-color: #dff3e3;
@@ -62,11 +63,41 @@
             cursor: pointer;
             border-radius: 5px;
         }
+        .audio-buttons {
+            margin-top: 20px;
+        }
+        .inner-audio-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 10px;
+        }
+        .audio-button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
     </style>
     <script>
         function selectChoice(value) {
             document.getElementById('answer').value = value;
             document.getElementById('quizForm').submit();
+        }
+
+        function playAudio(voice) {
+            const text = '{{ quizzes }}';
+            const audioElement = document.getElementById('ttsAudio');
+            const sourceElement = document.getElementById('audioSource');
+            const downloadLink = document.getElementById('downloadLink');
+            
+            const ttsUrl = `/generate-tts?text=${encodeURIComponent(text)}&voice=${voice}`;
+            sourceElement.src = ttsUrl;
+            audioElement.load();
+            audioElement.play();
+            
+            downloadLink.href = ttsUrl;
         }
     </script>
 </head>
@@ -93,6 +124,41 @@
             <input type="hidden" name="keyword" value="{{ keyword }}">
             <button type="submit" class="submit-button">본문내용 보러가기</button>
         </form>
+        <div class="audio-buttons">
+            <div class="inner-audio-buttons">
+                <button class="audio-button" onclick="playAudio('ko-KR-Standard-A')">A1</button>
+                <button class="audio-button" onclick="playAudio('ko-KR-Standard-B')">B1</button>
+                <button class="audio-button" onclick="playAudio('ko-KR-Standard-C')">C1</button>
+                <button class="audio-button" onclick="playAudio('ko-KR-Standard-D')">D1</button>
+            </div>
+            <div class="inner-audio-buttons">
+                <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-A')">A2</button>
+                <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-B')">B2</button>
+                <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-C')">C2</button>
+                <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-D')">D2</button>
+            </div>
+        </div>
+        <audio id="ttsAudio" controls>
+            <source id="audioSource" src="" type="audio/mpeg">
+            브라우저가 오디오 기능을 제공하지 않습니다
+        </audio>
+        <a href="?tts=true" download="audio.mp3" id="downloadLink">⬇️</a>
     </div>
+    <script>
+            function playAudio(voice) {
+            const audioElement = document.getElementById('ttsAudio');
+            const sourceElement = document.getElementById('audioSource');
+            const downloadLink = document.getElementById('downloadLink');
+            
+            // 오디오 소스 URL 업데이트
+            const ttsUrl = `?tts=true&voice=${voice}`;
+            sourceElement.src = ttsUrl;
+            audioElement.load();
+            audioElement.play();
+            
+            // 다운로드 링크 업데이트
+            downloadLink.href = ttsUrl;
+        }
+    </script>
 </body>
 </html>

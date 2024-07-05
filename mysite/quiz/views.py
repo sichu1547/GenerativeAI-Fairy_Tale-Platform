@@ -7,6 +7,10 @@ import pdb
 import sqlite3
 import os
 
+from django.http import HttpResponse
+from google.cloud import texttospeech
+import io
+
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage#, AIMessage
 #from langchain.memory import ConversationBufferMemory
@@ -16,11 +20,12 @@ class QuizView(View):
 
     def get(self, request, id):
         keyword = request.GET.get('keyword', '')
-
+            
         if 'quizzes' in QuizView.m_context:
             QuizView.m_context['keyword'] = keyword
         else:
             story = get_object_or_404(ReaderStory, id=id)
+
             if not story:
                 return render(request, 'quiz/no_story.html')
 
@@ -33,7 +38,27 @@ class QuizView(View):
             self.save_question(id, question, answer)
             QuizView.m_context = {'quizzes': question, 'answer': answer, 'example': example, 'keyword': keyword, 'story': story}
 
+        if 'tts' in request.GET:
+            return self.generate_tts(request, id)
+        
         return render(request, 'quiz/quiz.html', QuizView.m_context)
+    
+    def generate_tts(self, request, id):
+        try:
+            client = texttospeech.TextToSpeechClient.from_service_account_json('service_account.json')
+            selected_voice = request.GET.get('voice', 'ko-KR-Standard-A')
+            ssml_text = f"""<speak>{QuizView.m_context['quizzes'] + '<break time="1s"/>' + ''.join([f'{i+1}번. {item}<break time="1s"/>' for i, item in enumerate(QuizView.m_context['example'])])}</speak>"""
+
+            synthesis_input = texttospeech.SynthesisInput(ssml=ssml_text)
+            voice = texttospeech.VoiceSelectionParams(language_code="ko-KR", name=selected_voice, ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL)
+            audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
+
+            response = client.synthesize_speech(input=synthesis_input, voice=voice, audio_config=audio_config)
+            audio_stream = io.BytesIO(response.audio_content)
+
+            return HttpResponse(audio_stream.getvalue(), content_type='audio/mpeg')
+        except Exception as e:
+            return HttpResponse(f"Error: {e}", status=500)    
 
     def post(self, request, id):
         answer = request.POST.get('answer')
@@ -110,7 +135,7 @@ class QuizView(View):
         for i in range(1, len(temp)):
             example.append(temp[i].split('. ')[1])
 
-        return question, answer, example
-
+        return question, answer, example          
+        
 def index(request):
     return render(request, 'quiz/quiz.html')
