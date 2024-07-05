@@ -1,60 +1,39 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from .models import ReaderStory
-from konlpy.tag import Okt
-import random
+
 import re
 import pdb
+import sqlite3
+import os
+
+from langchain.chat_models import ChatOpenAI
+from langchain.schema import HumanMessage#, AIMessage
+#from langchain.memory import ConversationBufferMemory
 class QuizView(View):
     m_context = {}
-    
-    def __init__(self):       
-        self.pronouns = [
-            '나', '너', '그', '그녀', '우리', '너희', '그들',
-            '나를', '너를', '그를', '그녀를', '우리를', '너희를', '그들을',
-            '나의', '너의', '그의', '그녀의', '우리의', '너희의', '그들의',
-            '나 자신', '너 자신', '그 자신', '그녀 자신', '우리 자신', '너희 자신', '그들 자신'
-        ]
-        self.korean_adverbs = [
-            '매우', '아주', '몹시', '너무', '정말', '참', '진짜', '거의', '대부분', '항상', '자주', '가끔',
-            '종종', '별로', '전혀', '결코', '절대로', '특히', '더욱', '더', '덜', '그나마', '다행히', '당장',
-            '곧', '금방', '이미', '벌써', '지금', '이제', '방금', '마침', '결국', '드디어', '끝내', '점점',
-            '차츰', '천천히', '갑자기', '문득', '가만히', '고요히', '살짝', '서서히', '조금', '한참', '꽤',
-            '아예', '일찍', '늦게', '나중에', '미리', '빠르게', '느리게', '온전히', '가득', '다소', '대체로',
-            '전부', '모두', '전혀', '적극적으로', '부지런히', '게으르게', '성실히', '거의', '항상', '계속',
-            '잠시', '이따가', '모처럼', '결코', '종일', '불과', '방금', '끝내', '간신히', '차라리', '오히려',
-            '함께', '따로', '다시', '새로', '확실히', '마구', '꼭', '절대', '제발', '별로', '약간', '대충',
-            '충분히', '가령', '비교적', '무척', '진정', '과연', '혹시', '어쩌면', '마치', '따라서', '또는',
-            '그리고', '그렇지만', '그러나', '그래서', '그러므로', '게다가', '그런데', '하지만', '따라서',
-            '더구나', '즉', '이른바', '곧', '이내', '역시', '바로', '일단', '종종', '우선', '결국', '다시',
-            '계속', '당연히', '절대로', '결코', '과연', '오히려', '마치', '하필', '함부로', '저절로', '따로',
-            '대신', '똑같이', '비록', '심지어', '잦다', '즉시', '천천히', '대개', '아마도', '상당히', '과감히'
-        ]
-        self.pronoun_pattern = re.compile('|'.join(self.pronouns))
-        self.adverbs_pattern = re.compile('|'.join(self.korean_adverbs))
+    path = './database/quiz_history.db'
+
     def get(self, request, id):
         keyword = request.GET.get('keyword', '')
+
         if 'quizzes' in QuizView.m_context:
             QuizView.m_context['keyword'] = keyword
-            return render(request, 'quiz/quiz.html', QuizView.m_context)
-        else:    
+        else:
             story = get_object_or_404(ReaderStory, id=id)
             if not story:
-                return render(request, 'quiz/no_story.html') 
-            paragraphs = story.body.split('\n\n') 
+                return render(request, 'quiz/no_story.html')
+
+            paragraphs = story.body.split('\n\n')
             sentences = []
             for paragraph in paragraphs:
                 sentences.extend(re.split(r'(?<=\.) ', paragraph))
-            example = []
-            while len(example) < 3 and len(sentences) > 0:
-                random_sentence = random.choice(sentences)
-                quiz_sentences, answer, example = self.create_quiz_sentence(random_sentence)    
-                sentences.remove(random_sentence)                      
-            #quiz_sentences = [temp_sentence if sentence == random_sentence else sentence for sentence in sentences]
-            context = {'quizzes': quiz_sentences, 'answer' : answer, 'example' : example, 'keyword' : keyword, 'story' : story}
-            QuizView.m_context = context
 
-            return render(request, 'quiz/quiz.html', context)
+            question, answer, example = self.generate_questions_with_gpt(sentences, id)
+            self.save_question(id, question, answer)
+            QuizView.m_context = {'quizzes': question, 'answer': answer, 'example': example, 'keyword': keyword, 'story': story}
+
+        return render(request, 'quiz/quiz.html', QuizView.m_context)
 
     def post(self, request, id):
         answer = request.POST.get('answer')
@@ -65,33 +44,73 @@ class QuizView(View):
             result = "정답입니다!"
             QuizView.m_context = {}
         else:
-            result = f"틀렸습니다. 정답은 {correct_answer}입니다."           
+            result = f"틀렸습니다. 정답은 {correct_answer}입니다."
 
         return render(request, 'quiz/quiz_result.html', {'result': result, 'quiz_id': id, 'keyword': keyword})
 
-    def extract_nouns(self, sentence):
-        okt = Okt()
-        nouns = okt.pos(sentence)
-        filtered_nouns = [word for word, pos in nouns if pos in ['Noun'] and not self.is_valid_noun(word) and len(word) > 1]
-        #pdb.set_trace()
-        return filtered_nouns
-    
-    def is_valid_noun(self, word):
-        return bool(self.pronoun_pattern.match(word) or self.adverbs_pattern.match(word))
-    
-    def create_quiz_sentence(self, paragraph):
-        nouns = self.extract_nouns(paragraph)
-        if not nouns:
-            return paragraph, None, []
-        chosen_noun = random.choice(nouns)
-        other_nouns = list(set([n for n in nouns if n != chosen_noun]))
-        other_nouns = random.sample(other_nouns, min(2, len(other_nouns)))
-        quiz_sentence = paragraph.replace(chosen_noun, "____", 1)
-        choices = [chosen_noun] + other_nouns
-        random.shuffle(choices)
-        
-        return quiz_sentence, chosen_noun, choices
+    def is_answer_asked(self, question):
+        conn = sqlite3.connect(self.path)
+        cursor = conn.cursor()
 
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS history(
+            id INTEGER PRIMARY KEY,
+            question TEXT NOT NULL,
+            answer TEXT NOT NULL
+        )
+        ''')
+        conn.commit()
+
+        cursor.execute('SELECT * FROM history WHERE question = ?', (question, ))
+        result = cursor.fetchone()
+        conn.close()
+        return result is not None
+
+    def save_question(self, story_id, question, answer):
+        conn = sqlite3.connect(self.path)
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO history (story_id, question, answer) VALUES (?, ?, ?)', (story_id, question, answer))
+        conn.commit()
+        conn.close()
+
+    def generate_questions_with_gpt(self, paragraph, story_id):
+        api_key = os.getenv('OPENAI_API_KEY')
+        chat = ChatOpenAI(model="gpt-4o", openai_api_key=api_key)
+
+        # memory = ConversationBufferMemory(memory_key="chat_history", input_key="question", output_key="answer", return_messages=True)
+
+        # conn = sqlite3.connect(self.path)
+        # cursor = conn.cursor()
+        # cursor.execute('SELECT question, answer FROM history WHERE story_id = ?', (story_id,))
+        # db_history = cursor.fetchall()
+        # conn.close()
+
+        # for message in db_history:
+        #     memory.chat_memory.add_message(HumanMessage(content=message[0]))
+        #     memory.chat_memory.add_message(AIMessage(content=message[1]))
+        
+        prompt = f"다음 문단을 읽고 최대한 간단하고 본문에 명시된 답변이 나오게 질문을 하나 만들고 그에 대한 정답 1개와 정답과 비슷한 보기를 정답을 포함해서 3개를 제시해라:\n\n{paragraph}"
+        response = chat(messages=[HumanMessage(content=prompt)])
+
+        lines = response.content.split('\n\n')     
+        question = lines[0].replace("질문: ", "")
+        cnt = 0
+        while self.is_answer_asked(question) and cnt < 5:
+            cnt += 1
+            response = chat(messages=[HumanMessage(content=prompt)])
+            lines = response.content.split('\n\n')     
+            question = lines[0].replace("질문: ", "")
+
+        lines = [re.sub(r'[###|%%%|\$\$\$|\*\*\*]', '', item).strip() for item in lines]
+        question = lines[0].replace("질문: ", "")
+        answer = lines[1].replace("정답: ", "")
+        temp = lines[2].split('\n')
+        example = []
+
+        for i in range(1, len(temp)):
+            example.append(temp[i].split('. ')[1])
+
+        return question, answer, example
 
 def index(request):
     return render(request, 'quiz/quiz.html')

@@ -3,6 +3,7 @@ from .models import *
 from quiz.views import QuizView
 import re
 from django.db.models import Q
+import sqlite3
 
 def index(request):
     return render(request, 'reader/index.html')
@@ -52,7 +53,19 @@ def story_detail(request, id):
     sentences = []
     for paragraph in paragraphs:
         sentences.extend(re.split(r'(?<=\.) ', paragraph))
-    QuizView.m_context = {}
+
+    previous_story_id = request.session.get('previous_story_id')
+
+    if previous_story_id != id:
+        QuizView.m_context = {}
+        path = './database/quiz_history.db'
+        conn = sqlite3.connect(path)
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM history')
+        conn.commit()
+        conn.close()    
+        request.session['previous_story_id'] = id
+
     return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': story.title, 'id': id})
 
 def redirect_to_quiz(request, id):
