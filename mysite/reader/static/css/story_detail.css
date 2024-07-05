@@ -26,6 +26,41 @@
     font-style: normal;
 }
 
+.audio-buttons {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.inner-audio-buttons {
+    display: flex;
+    flex-direction: row;
+    margin-left: auto;
+    margin-right: 15px;
+}
+
+.audio-button {
+    font-family: 'Pretendard-Regular', Arial, sans-serif;
+    font-size: 10px;
+    background-color: #745cf9;  /* 보라색 배경 */
+    color: rgb(255, 255, 255);  /* 텍스트 색상 */
+    margin: 1px;
+    padding: 4px 8px;
+    width: 30px;
+    height: 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
+}
+
+.header {
+    display: flex;
+    width: 80%;
+    max-width: 1200px;
+    justify-content: space-between;
+    align-items: center;
+}
 
 .story-detail-container {
     background-image: url("../images/리드배경.jpg");
@@ -39,7 +74,6 @@
     width: 100%;
     min-height: 95vh;
     padding: 10px 0 10px 0;
-    display:flex;
     flex-direction: column;
 }
 
@@ -50,10 +84,15 @@
     text-align: center;
     padding: 5px 20px;
     margin-top: 15px;
-    position: relative;
     text-shadow: 5px 5px 4px rgb(59, 59, 58);
     opacity: 0; /* 초기에 투명 상태로 시작 */
     animation: fadeInUp 1s forwards; /* fadeInUp 애니메이션 적용 */
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+}
+
+#downloadLink {
+    margin: 10px;
+    font-size: 18px;
 }
 
 @keyframes fadeInUp {
@@ -87,6 +126,27 @@
     flex: 1;
     padding: 30px 40px;
     width: 40%;
+    overflow-y: auto; /* 세로 스크롤바 추가 */
+    scrollbar-width: thin;  /* 스크롤바 얇게 설정 */
+    scrollbar-color: #bfb4ff transparent;  /* 스크롤바 색상 및 트랙 색상 */
+}
+
+/* 웹킷 기반 브라우저에서 스크롤바 숨기기 */
+.left-page::-webkit-scrollbar, .right-page::-webkit-scrollbar {
+    width: 8px;  /* 스크롤바 너비 */
+}
+
+.left-page::-webkit-scrollbar-track, .right-page::-webkit-scrollbar-track {
+    background: transparent;  /* 스크롤바 트랙 배경색 */
+}
+
+.left-page::-webkit-scrollbar-thumb, .right-page::-webkit-scrollbar-thumb {
+    background: #bfb4ff;  /* 스크롤바 핸들 색상 (갈색) */
+    border-radius: 4px;  /* 핸들 모서리 둥글게 */
+}
+
+.left-page::-webkit-scrollbar-thumbhover, .right-page::-webkit-scrollbar-thumb:hover {
+    background: #bfb4ff;  /* 스크롤바 핸들 호버 색상 */
 }
 
 
@@ -182,7 +242,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: row;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 

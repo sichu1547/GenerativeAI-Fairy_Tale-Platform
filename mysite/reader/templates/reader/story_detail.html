@@ -3,7 +3,7 @@
 {% load static %}
 <html lang="ko">
 <head>
-    <title>{% block title %}{{ title }}</title>
+    <title>{% block title %}📖 {{ title }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/story_detail.css' %}">
@@ -11,7 +11,28 @@
 {% block content %}
 <body>
     <div class="story-detail-container">
-        <h1 class="story-title">{{ title }}</h1>
+        <div class="header">
+            <h1 class="story-title">📖 {{ title }}</h1>
+            <div class="audio-buttons">
+                <div class="inner-audio-buttons">
+                    <button class="audio-button" onclick="playAudio('ko-KR-Standard-A')">A1</button>
+                    <button class="audio-button" onclick="playAudio('ko-KR-Standard-B')">B1</button>
+                    <button class="audio-button" onclick="playAudio('ko-KR-Standard-C')">C1</button>
+                    <button class="audio-button" onclick="playAudio('ko-KR-Standard-D')">D1</button>
+                </div>
+                <div class="inner-audio-buttons">
+                    <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-A')">A2</button>
+                    <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-B')">B2</button>
+                    <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-C')">C2</button>
+                    <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-D')">D2</button>
+                </div>
+            </div>
+            <audio id="ttsAudio" controls>
+                <source id="audioSource" src="" type="audio/mpeg">
+                브라우저가 오디오 기능을 제공하지 않습니다
+            </audio>
+            <a href="?tts=true" download="audio.mp3" id="downloadLink">⬇️</a>
+        </div>
         <div class="book">
             <div class="left-page">
                 <div class="text-container"></div>
@@ -33,29 +54,11 @@
             </div>
         </div>
         <div class = "buttons">
-            <button class="arrow-button" id="previous_button">←</button>
+            <button class="arrow-button" id="previous_button">←  이전 페이지로</button>
             <button class="reader-button" id="picture_generate_button">그림 생성</button>
             <button class="reader-button" id="quiz_button" onclick="window.location.href='{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}'">퀴즈 시작</button>
-            <button class="arrow-button" id="next_button">→</button>
+            <button class="arrow-button" id="next_button">다음 페이지로  →</button>
         </div>
-
-        <div>
-            <button onclick="playAudio('ko-KR-Standard-A')">Standard A</button>
-            <button onclick="playAudio('ko-KR-Standard-B')">Standard B</button>
-            <button onclick="playAudio('ko-KR-Standard-C')">Standard C</button>
-            <button onclick="playAudio('ko-KR-Standard-D')">Standard D</button>
-            <button onclick="playAudio('ko-KR-Wavenet-A')">Wavenet A</button>
-            <button onclick="playAudio('ko-KR-Wavenet-B')">Wavenet B</button>
-            <button onclick="playAudio('ko-KR-Wavenet-C')">Wavenet C</button>
-            <button onclick="playAudio('ko-KR-Wavenet-D')">Wavenet D</button>
-        </div>
-    
-        <audio id="ttsAudio" controls>
-            <source id="audioSource" src="" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
-        
-        <a href="?tts=true" download="audio.mp3" id="downloadLink">오디오 다운받기!</a>
 
     </div>
     <script>
@@ -92,7 +95,7 @@
             }
         
             // 마지막 페이지에서 뒤로 넘기려고 하는지 체크 
-            if (direction === 2 && currentPage === totalPages - 1) {
+            if (direction === 2 && (currentPage === totalPages - 1 || currentPage === totalPages - 2)) {
                 return;
             }
         
