@@ -146,7 +146,7 @@ def profile_delete(request, pk):
 def choose_profile(request, profile_id):
     profile = get_object_or_404(Profile, id=profile_id, user=request.user)
     request.session['selected_profile_id'] = profile.id
-    return redirect('select_account')
+    return redirect('index')
 
 # @login_required
 # def current_profile(request):
