@@ -1,33 +1,27 @@
+<!DOCTYPE html>
 {% extends "base.html" %}
+{% load static %}
+<html lang="ko">
+<head>
+    <title>{% block title %}🔍 검색 결과</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search_results.css' %}">
+</head>{% endblock %}
 {% block content %}
-<style>
-    .o{
-        display: inline-block;
-        margin-right: 10px; /* 옆 여백 조절 */
-        background-color: #f0f0f0;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-    }
-    .h {
-        font-family: 'Pacifico', cursive;
-        font-size: 6em;
-        font-weight: bold;
-        color: #000;
-        text-align: center;
-        padding: 20px;
-        margin: 10;
-        position: relative;
-    }
-    
-</style>
-<h1 class='h'>검색 결과</h1>
-<ul>
-    {% for story in stories %}
-        <li class='o'>
-            <a href="{% url 'reader:story_detail' story.id %}?keyword={{ keyword }}">{{ story.title }}</a>
-        </li>
-    {% endfor %}
-</ul>
+<body>
+    <div class="search-results-container">
+        <h1 class='h'>🔍 검색 결과</h1>
+        <div class="books">
+            <ul>
+                {% for story in stories %}
+                    <li class='book'>
+                        <a href="{% url 'reader:story_detail' story.id %}?keyword={{ keyword }}" class = "book-title">{{ story.title }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
 {% endblock %}
