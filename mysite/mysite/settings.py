@@ -180,7 +180,7 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     }
 }
-
+OPENAI_API_KEY = denv('OPENAI_API_KEY')
 
 WSGI_APPLICATION = "mysite.wsgi.application"
 

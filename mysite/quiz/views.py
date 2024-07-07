@@ -10,7 +10,7 @@ import os
 from django.http import HttpResponse
 from google.cloud import texttospeech
 import io
-
+from django.conf import settings
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage#, AIMessage
 #from langchain.memory import ConversationBufferMemory
@@ -99,7 +99,7 @@ class QuizView(View):
         conn.close()
 
     def generate_questions_with_gpt(self, paragraph, story_id):
-        api_key = os.getenv('OPENAI_API_KEY')
+        api_key = settings.OPENAI_API_KEY
         chat = ChatOpenAI(model="gpt-4o", openai_api_key=api_key)
 
         # memory = ConversationBufferMemory(memory_key="chat_history", input_key="question", output_key="answer", return_messages=True)
