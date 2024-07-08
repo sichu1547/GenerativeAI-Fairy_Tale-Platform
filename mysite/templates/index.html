@@ -5,6 +5,7 @@
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.6.0.min.js"></script>
 <div id="main" class role="main">
     <div id="shapely_home_parallax-2" class="widget shapely_home_parallax">
         <section class="cover fullscreen image-bg">
@@ -47,34 +48,32 @@
             <button class="slide_item item1" onclick="location.href = '{% url 'reader:list' %}';"></button>
             <button class="slide_item item2" onclick="location.href = '{% url 'generator:index' %}';"></button>
             <button class="slide_item item3" onclick="location.href = '{% url 'quiz:index' %}';"></button>
-            <button class="slide_item item4" onclick="location.href = '{% url 'mine:index' %}';"></button>
+            <!--<button class="slide_item item4" onclick="location.href = '{% url 'mine:index' %}';"></button>-->
             <div class="slide_prev_button slide_button">◀</div>
             <div class="slide_next_button slide_button">▶</div>
             <ul class="slide_pagination"></ul>
           </div>
         <div class="clearfix"></div>
     </div>
-<!--왼쪽 사진 오른쪽 멘트-->
-    <div id="shapely_home_parallax-3" class="widget shapely_home_parallax">
-        <section class>
-            <div class="container">
-                <div class="row align-children">
-                    <div class="col-md-7 col-sm-6 text-center mb-xs-24">
-                        <img class="img-responsive" alt="SEO Friendly" src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/03/macbook-preview-flexible.png">
-                    </div>
-                    <div class="col-md-4 col-md-offset-1 col-sm-5 col-sm-offset-1">
-                        <div class>
-                            <h3>SEO Friendly</h3>
-                            <div class="mb32"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam pulvinar luctus sem, eget porta orci. Maecenas molestie dui id diam feugiat, eu tincidunt mauris aliquam. Duis commodo vitae ligula et interdum. Maecenas faucibus mattis imperdiet. In rhoncus ac ligula id ultricies.</p></div>
-                            <a class="btn btn-lg btn-filled" href="#">Read more</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <div class="clearfix"></div>
+<!--수치-->
+<div class="num-container" id="num-container">
+    <div class="num-item">
+        <img class="in-title" alt="Portfolio Section" src="{% static 'images/팀원.png' %}" style="width: 120px; height: 120px;"><br>
+        <span class="nums" data-count="8">0</span><span id="num-unit">명</span><br>
+        <span class="sub-title">팀원</span><br>
     </div>
-<!--왼쪽 맨트 오른쪽 사진 -->
+    <div class="num-item">
+        <img class="in-title" alt="Portfolio Section" src="{% static 'images/동화책.png' %}" style="width: 120px; height: 120px;"><br>
+        <span class="nums" data-count="916">0</span><span id="num-unit">편</span><br>
+        <span class="sub-title">총 동화 수</span><br>
+    </div>
+    <div class="num-item">
+        <img class="in-title" alt="Portfolio Section" src="{% static 'images/시간.png' %}" style="width: 120px; height: 120px;"><br>
+        <span class="nums" data-count="1031">0</span><span id="num-unit">시간</span><br>
+        <span class="sub-title">제작 기간</span><br>
+    </div>
+</div>
+<!--왼쪽 맨트 오른쪽 사진 
     <div id="shapely_home_parallax-4" class="widget shapely_home_parallax">
         <section class="bg-secondary">
             <div class="container">
@@ -93,8 +92,8 @@
             </div>
         </section>
         <div class="clearfix"></div>
-    </div>
-<!-- 배경 사진안에 맨트-->
+    </div>-->
+<!-- 배경 사진안에 맨트
     <div id="shapely_home_parallax-5" class="widget shapely_home_parallax">
         <section class="small-screen image-bg p0">
             <div class="parallax-window " data-parallax="scroll" data-image-src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/12/photo-1452723312111-3a7d0db0e024.jpg" data-ios-fix="true" data-over-scroll-fix="true" data-android-fix="true">
@@ -112,8 +111,8 @@
             </div>
         </section>
         <div class="clearfix"></div>
-    </div>
-<!-- 위에 맨트 아래 큰사진-->
+    </div>-->
+<!-- 위에 맨트 아래 큰사진
     <div id="shapely_home_parallax-6" class="widget shapely_home_parallax">
         <section class="bg-secondary pb0">
             <div class="container">
@@ -132,8 +131,8 @@
             </div>
         </section>
         <div class="clearfix"></div>
-    </div>
-<!--여러 사진-->
+    </div>-->
+<!--여러 사진
     <div id="shapely_home_portfolio-2" class="widget shapely_home_portfolio">
         <section class="projects pb0" style="background-color:#0e1015">
             <div class="container">
@@ -250,8 +249,8 @@
                 </div>
             </div>
         </section>
-    </div>
-<!--제작자 표시-->
+    </div>-->
+<!--제작자 표시
     <div id="shapely_home_testimonial-2" class="widget shapely_home_testimonial">
         <section class="parallax-section testimonial-section">
             <div class="parallax-window" data-parallax="scroll" data-image-src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/12/photo-1451417379553-15d8e8f49cde.jpg" style="height: 500px;">
@@ -288,8 +287,8 @@
                 </div>
             </div>
         </section>
-    </div>
-<!--맨 아래 랭귀지 표시-->
+    </div>-->
+<!--맨 아래 랭귀지 표시
     <div id="shapely_home_clients-2" class="widget shapely_home_clients">
         <section>
             <div class="container">
@@ -316,7 +315,8 @@
             </div>
         </section>
     </div>
-</div>
+</div>-->
+
 <script src="{% static 'js/main.js' %}">
     // 슬라이크 전체 크기(width 구하기)
 const slide = document.querySelector(".slide");
@@ -523,6 +523,49 @@ slide.addEventListener("mouseout", () => {
   loopInterval = setInterval(() => {
     nextMove();
   }, 3000);
+});
+</script>
+<script>
+    
+//숫자 카운트 애니메이션
+$(document).ready(function () {
+    function isElementInViewport(el) {
+        var rect = el.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    }
+
+    function checkAnimation() {
+        $('.nums').each(function () {
+            const $this = $(this),
+                countTo = $this.attr('data-count');
+
+            if (isElementInViewport(this) && !$this.hasClass('counted')) {
+                $this.addClass('counted');
+                $({
+                    countNum: $this.text()
+                }).animate({
+                    countNum: countTo
+                }, {
+                    duration: 3000,
+                    easing: 'linear',
+                    step: function () {
+                        $this.text(Math.floor(this.countNum));
+                    },
+                    complete: function () {
+                        $this.text(this.countNum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+                    }
+                });
+            }
+        });
+    }
+
+    $(window).on('scroll', checkAnimation);
+    $(window).on('load', checkAnimation); // Initial check on page load
 });
 </script>
 {% endblock %}
