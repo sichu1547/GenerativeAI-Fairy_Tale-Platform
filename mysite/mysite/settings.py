@@ -117,6 +117,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'myaccount.context_processors.profile_name',
             ],
         },
     },
@@ -179,7 +180,7 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     }
 }
-
+OPENAI_API_KEY = denv('OPENAI_API_KEY')
 
 WSGI_APPLICATION = "mysite.wsgi.application"
 
@@ -272,4 +273,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = denv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = denv('EMAIL_HOST_PASSWORD')
+print(EMAIL_HOST_USER)
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

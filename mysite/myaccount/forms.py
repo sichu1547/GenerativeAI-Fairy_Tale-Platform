@@ -28,6 +28,7 @@ class PasswordResetForm(forms.Form):
         if not User.objects.filter(username=username, email=email).exists():
             raise forms.ValidationError("사용자 이름 또는 이메일이 잘못되었습니다.")
         return cleaned_data
+    
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile

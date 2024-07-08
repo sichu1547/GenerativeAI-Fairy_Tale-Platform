@@ -60,19 +60,26 @@ ul.slides img {
                         <div class="module left">
                             <div class="collapse navbar-collapse navbar-ex1-collapse">
                                 <ul id="menu" class="menu">
+                                    {% if user.is_authenticated %}
+                                        {% if request.path != '/myaccount/select_account/'%}
+                                            {% if profile_name %}
+                                            <li>
+                                                어서오세요{{ profile_name }}님!
+                                            </li>
+                                            {% endif %}
+                                        {% endif %}
                                     <li>
                                     <a href = "{% url 'reader:list' %}">읽기</a></li>
                                     <li>
                                     <a href = "{% url 'generator:index' %}">만들기</a>
                                     </li>
-                                    {% if user.is_authenticated %}
-                                        <li>
-                                            <a href="/" id="logout-link">로그아웃</a>
-                                            <form id="logout-form" action="{% url 'logout' %}?next={{request.path}}" method="post" style="display: none;">
-                                                {% csrf_token %}
-                                            </form>
-                                        </li>
-                                        <li><a href="{% url 'profile' %}">내 정보</a></li>
+                                    <li>
+                                        <a href="/" id="logout-link">로그아웃</a>
+                                        <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                                            {% csrf_token %}
+                                        </form>
+                                    </li>
+                                    <li><a href="{% url 'profile' %}">내 정보</a></li>
                                     {% else %}
                                         <li><a href="{% url 'login' %}">로그인</a></li>
                                         <li><a href="{% url 'signup' %}">회원가입</a></li>
