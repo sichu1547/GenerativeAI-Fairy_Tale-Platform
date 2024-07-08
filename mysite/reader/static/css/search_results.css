@@ -1,0 +1,73 @@
+@font-face {
+    font-family: 'Ownglyph_noocar-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_noocar-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+.search-results-container {
+    background-image: url("../images/리드배경.jpg");
+    background-size: cover; /* 이미지가 화면 전체를 채우도록 조정 */
+    background-position: center; 
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    min-height: 95vh;
+    padding: 10px 0 10px 0;
+    display:flex;
+    flex-direction: column;
+}
+
+.book{
+    display: inline-block;
+    margin-right: 10px; /* 옆 여백 조절 */
+    background-color: #ffffff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: 'Pretendard-Regular';
+}
+
+.book-title {
+    color: black;
+}
+
+.h {
+    font-family: 'Ownglyph_noocar-Rg', cursive;
+    font-size: 60px;
+    color: white;
+    text-align: center;
+    padding: 15px 20px;
+    margin-top: 30px;
+    position: relative;
+    text-shadow: 5px 5px 4px rgb(59, 59, 58);
+    opacity: 0; /* 초기에 투명 상태로 시작 */
+    animation: fadeInUp 1s forwards; /* fadeInUp 애니메이션 적용 */
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0; /* 시작 시 투명 */
+        transform: translateY(20px); /* 시작 시 위로 이동 */
+    }
+    100% {
+        opacity: 1; /* 끝나면 불투명 */
+        transform: translateY(0); /* 원래 위치로 이동 */
+    }
+}
+
+.books {
+    padding: 20px;
+}

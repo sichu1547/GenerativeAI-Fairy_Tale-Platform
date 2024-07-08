@@ -3,25 +3,81 @@
 <head>
     <title>Quiz</title>
     <style>
-        .highlight {
-            font-weight: bold;
-            color: black;
+        /* 기존 스타일 유지 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #dff3e3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            width: 400px;
+            background-color: #fff;
+            border: 2px solid #000;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .quiz-header {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        .quiz-question {
+            font-size: 1.2em;
+            margin-bottom: 20px;
         }
         .choices-container {
             display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 20px;
+            flex-direction: column;
+            gap: 10px;
         }
         .choice-box {
+            background-color: #e3e3e3;
             border: 1px solid #000;
             padding: 10px;
-            margin: 5px;
             cursor: pointer;
             user-select: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
         .choice-box:hover {
-            background-color: #f0f0f0;
+            background-color: #c3c3c3;
+        }
+        .hidden-inputs {
+            display: none;
+        }
+        .submit-button {
+            background-color: #ff6347;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .audio-buttons {
+            margin-top: 20px;
+        }
+        .inner-audio-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 10px;
+        }
+        .audio-button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
         }
     </style>
     <script>
@@ -29,29 +85,80 @@
             document.getElementById('answer').value = value;
             document.getElementById('quizForm').submit();
         }
+
+        function playAudio(voice) {
+            const text = '{{ quizzes }}';
+            const audioElement = document.getElementById('ttsAudio');
+            const sourceElement = document.getElementById('audioSource');
+            const downloadLink = document.getElementById('downloadLink');
+            
+            const ttsUrl = `/generate-tts?text=${encodeURIComponent(text)}&voice=${voice}`;
+            sourceElement.src = ttsUrl;
+            audioElement.load();
+            audioElement.play();
+            
+            downloadLink.href = ttsUrl;
+        }
     </script>
 </head>
 <body>
-    <h1>퀴즈</h1>
-    <form id="quizForm" method="post">
-        {% csrf_token %}
-        {% for quiz in quizzes %}
-            <p>
-                {% if '____' in quiz %}
-                    <span class="highlight">{{ quiz }}</span>
-                {% else %}
-                    {{ quiz }}
-                {% endif %}
-            </p>
-        {% endfor %}
-        <input type="hidden" id="answer" name="answer">
-        <input type="hidden" name="correct_answer" value="{{ answer }}">
-        <input type="hidden" name="keyword" value="{{ keyword }}">
-        <div class="choices-container">
-            {% for choice in example %}
-                <div class="choice-box" onclick="selectChoice('{{ choice }}')">{{ choice }}</div>
-            {% endfor %}
+    <div class="quiz-container">
+        <div class="quiz-header">Quiz</div>
+        <div class="quiz-question">
+            {{ quizzes }}
         </div>
-    </form>
+        <form id="quizForm" method="post">
+            {% csrf_token %}
+            <div class="choices-container">
+                {% for choice in example %}
+                    <div class="choice-box" onclick="selectChoice('{{ choice }}')">{{ forloop.counter }}. {{ choice }}</div>
+                {% endfor %}
+            </div>
+            <div class="hidden-inputs">
+                <input type="hidden" id="answer" name="answer">
+                <input type="hidden" name="correct_answer" value="{{ answer }}">
+                <input type="hidden" name="keyword" value="{{ keyword }}">
+            </div>
+        </form>
+        <form method="get" action="{% url 'reader:story_detail' story.id %}">
+            <input type="hidden" name="keyword" value="{{ keyword }}">
+            <button type="submit" class="submit-button">본문내용 보러가기</button>
+        </form>
+        <div class="audio-buttons">
+            <div class="inner-audio-buttons">
+                <button class="audio-button" onclick="playAudio('ko-KR-Standard-A')">A1</button>
+                <button class="audio-button" onclick="playAudio('ko-KR-Standard-B')">B1</button>
+                <button class="audio-button" onclick="playAudio('ko-KR-Standard-C')">C1</button>
+                <button class="audio-button" onclick="playAudio('ko-KR-Standard-D')">D1</button>
+            </div>
+            <div class="inner-audio-buttons">
+                <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-A')">A2</button>
+                <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-B')">B2</button>
+                <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-C')">C2</button>
+                <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-D')">D2</button>
+            </div>
+        </div>
+        <audio id="ttsAudio" controls>
+            <source id="audioSource" src="" type="audio/mpeg">
+            브라우저가 오디오 기능을 제공하지 않습니다
+        </audio>
+        <a href="?tts=true" download="audio.mp3" id="downloadLink">⬇️</a>
+    </div>
+    <script>
+            function playAudio(voice) {
+            const audioElement = document.getElementById('ttsAudio');
+            const sourceElement = document.getElementById('audioSource');
+            const downloadLink = document.getElementById('downloadLink');
+            
+            // 오디오 소스 URL 업데이트
+            const ttsUrl = `?tts=true&voice=${voice}`;
+            sourceElement.src = ttsUrl;
+            audioElement.load();
+            audioElement.play();
+            
+            // 다운로드 링크 업데이트
+            downloadLink.href = ttsUrl;
+        }
+    </script>
 </body>
 </html>

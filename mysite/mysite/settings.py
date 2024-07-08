@@ -11,19 +11,27 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import environ
+import os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000 # csv파일 수정 개수 제한
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
+denv = environ.Env(DEBUG=(bool, True))
+environ.Env.read_env(
+    env_file=os.path.join(BASE_DIR, '.env.dev')
+)
+
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-^x%9=jpc=rdh*uu)04cv@a$2d)o%lli$bc#8bf3nv+wc$)d8t="
+SECRET_KEY = denv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = denv('DEBUG')
 # DEBUG = False
 
 ALLOWED_HOSTS = ['*']
@@ -44,7 +52,7 @@ INSTALLED_APPS = [
     'quiz',
     #'debug_toolbar',
     # all auth
-    "django.contrib.sites",
+    #"django.contrib.sites",
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -97,7 +105,6 @@ MIDDLEWARE = [
 # }
 ROOT_URLCONF = "mysite.urls"
 
-import os
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -110,6 +117,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'myaccount.context_processors.profile_name',
             ],
         },
     },
@@ -118,14 +126,14 @@ TEMPLATES = [
 SITE_ID = 1
 SOCIALACCOUNT_LOGIN_ON_GET = True
 
-from .local_settings import *
-
 SOCIALACCOUNT_PROVIDERS = {
     "kakao": {
         "APP": {
-            "client_id": KAKAO_CLIENT_ID,
+            "client_id": denv('KAKAO_CLIENT_ID'),
+            # "client_id": KAKAO_CLIENT_ID,
             #"client_id": 'os.getenv("KAKAO_CLIENT_ID")',
-            "secret": KAKAO_SECRET_SECRET,
+            "secret": denv('KAKAO_SECRET_SECRET'),
+            # "secret": KAKAO_SECRET_SECRET,
             #"secret": os.getenv("KAKAO_SECRET_KEY"),
             "key": ""
         },
@@ -139,8 +147,10 @@ SOCIALACCOUNT_PROVIDERS = {
     },
     "naver": {
         "APP": {
-            "client_id": NAVER_CLIENT_ID,
-            "secret": NAVER_CLIENT_SECRET,
+            "client_id": denv('NAVER_CLIENT_ID'),
+            # "client_id": NAVER_CLIENT_ID,
+            "secret": denv('NAVER_CLIENT_SECRET'),
+            # "secret": NAVER_CLIENT_SECRET,
             "key": ""
         },
         "SCOPE": [
@@ -154,8 +164,10 @@ SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APPS": [
             {
-                "client_id": GOOGLE_CLIENT_ID,
-                "secret": GOOGLE_CLIENT_SECRET,
+                "client_id": denv('GOOGLE_CLIENT_ID'),
+                # "client_id": GOOGLE_CLIENT_ID,
+                "secret": denv('GOOGLE_CLIENT_SECRET'),
+                # "secret": GOOGLE_CLIENT_SECRET,
                 "key": ""
             },
         ],
@@ -168,7 +180,7 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     }
 }
-
+OPENAI_API_KEY = denv('OPENAI_API_KEY')
 
 WSGI_APPLICATION = "mysite.wsgi.application"
 
@@ -186,7 +198,7 @@ DATABASES = {
     'story': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'database/story_db.db',
-    }
+    },
 }
 
 DATABASE_ROUTERS = ['common.db_router.AccountDBRouter',
@@ -244,21 +256,21 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 import json
 
 #SECRET_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SECRET_FILE_PATH = os.path.join(BASE_DIR, 'secret.json')
+# SECRET_FILE_PATH = os.path.join(BASE_DIR, 'secret.json')
 
-with open(SECRET_FILE_PATH) as f:
-    secrets = json.load(f)
+# with open(SECRET_FILE_PATH) as f:
+#     secrets = json.load(f)
 
-def get_secret(secret_name):
-    try:
-        return secrets[secret_name]
-    except KeyError:
-        raise Exception(f"Set the {secret_name} environment variable")
+# def get_secret(secret_name):
+#     try:
+#         return secrets[secret_name]
+#     except KeyError:
+#         raise Exception(f"Set the {secret_name} environment variable")
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' 
 EMAIL_HOST = 'smtp.gmail.com' 
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = get_secret("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = get_secret("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = denv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = denv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

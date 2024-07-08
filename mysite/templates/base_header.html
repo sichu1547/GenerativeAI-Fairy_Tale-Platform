@@ -43,43 +43,31 @@ ul.slides img {
 </head>
 <body class="home page-template page-template-page-templates page-template-template-home page-template-page-templatestemplate-home-php page page-id-1863 has-sidebar-right elementor-default elementor-kit-2257">
 <div id="page" class="site">
-<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
-
 <header id="masthead" class="site-header" role="banner">
     <div class="nav-container">
         <nav id="site-navigation" class="main-navigation" role="navigation">
             <div class="container nav-bar">
                 <div class="flex-row">
                     <div class="module left site-title-container">
-                        <a href="/" class="main-link"><span class="site-title">Meal kid</span></a> 
+                        <a href="/" class="main-link"><span class="site-title">Meal kid</span></a>
                     </div>
-                    <button class="module widget-handle mobile-toggle right visible-sm visible-xs">
+                    <button class="module widget-handle mobile-toggle right visible-sm visible-xs" onclick="toggleMenu()">
                         <i class="fa fa-bars"></i>
                     </button>
                     <div class="module-group right">
                         <div class="module left">
-                            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                            <div class="collapse navbar-collapse navbar-ex1-collapse" id="navbarMenu">
                                 <ul id="menu" class="menu">
+                                    <li><a href="{% url 'reader:list' %}">읽기</a></li>
+                                    <li><a href="{% url 'generator:index' %}">만들기</a></li>
                                     {% if user.is_authenticated %}
-                                        {% if request.path != '/myaccount/select_account/'%}
-                                            {% if profile_name %}
-                                            <li>
-                                                어서오세요{{ profile_name }}님!
-                                            </li>
-                                            {% endif %}
-                                        {% endif %}
-                                    <li>
-                                    <a href = "{% url 'reader:list' %}">읽기</a></li>
-                                    <li>
-                                    <a href = "{% url 'generator:index' %}">만들기</a>
-                                    </li>
-                                    <li>
-                                        <a href="/" id="logout-link">로그아웃</a>
-                                        <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
-                                            {% csrf_token %}
-                                        </form>
-                                    </li>
-                                    <li><a href="{% url 'profile' %}">내 정보</a></li>
+                                        <li>
+                                            <a href="/" id="logout-link">로그아웃</a>
+                                            <form id="logout-form" action="{% url 'logout' %}?next={{request.path}}" method="post" style="display: none;">
+                                                {% csrf_token %}
+                                            </form>
+                                        </li>
+                                        <li><a href="{% url 'profile' %}">내 정보</a></li>
                                     {% else %}
                                         <li><a href="{% url 'login' %}">로그인</a></li>
                                         <li><a href="{% url 'signup' %}">회원가입</a></li>
@@ -88,9 +76,8 @@ ul.slides img {
                                         <li><a href="/admin/">관리자 페이지</a></li>
                                     {% endif %}
                                 </ul>
-                            </div> 
+                            </div>
                         </div>
-                        
                     </div>
                 </div>
             </div>
@@ -102,34 +89,6 @@ ul.slides img {
     {% block content %}{% endblock %}
 </div>
 
-<footer id="colophon" class="site-footer footer bg-dark" role="contentinfo">
-    <div class="container footer-inner">
-        <div class="row">
-        </div>
-        <div class="row">
-            <div class="site-info col-sm-6">
-                <div class="copyright-text">
-                </div>
-                <div class="footer-credits">
-                    Theme by <a href="https://colorlib.com/" target="_blank" rel="nofollow noopener" title="Colorlib">Colorlib</a> Powered by <a href="http://wordpress.org/" target="_blank" title="WordPress.org">WordPress</a>
-                </div>
-            </div>
-            <div class="col-sm-6 text-right">
-                <nav id="social" class="social-icons">
-                    <ul id="menu-social-items" class="list-inline social-list">
-                        <li id="menu-item-1893" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1893"><a href="https://facebook.com/colorlib"><i class="social_icon fa"><span>Colorlib</span></i></a></li>
-                        <li id="menu-item-1894" class="twitter"><a href="https://twitter.com/colorlib"><i class="social_icon fa"><span>Twitter</span></i></a></li>
-                        <li id="menu-item-1895" class="linkedin"><a href="https://www.linkedin.com/company-beta/18049034/"><i class="social_icon fa"><span>Linkedin</span></i></a></li>
-                        <li id="menu-item-1923" class="youtube"><a href="https://youtube.com/c/Colorlib"><i class="social_icon fa"><span>Youtube</span></i></a></li>
-                        <li id="menu-item-1924" class="insta"><a href="https://www.instagram.com/colorlib/"><i class="social_icon fa"><span>Instagram</span></i></a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </div>
-    <a class="btn btn-sm fade-half back-to-top inner-link" href="#top"><i class="fa fa-angle-up"></i></a>
-</footer>
-
 <script type="text/javascript">
     jQuery(document).ready(function($) {
         if ($(window).width() >= 767) {
@@ -139,7 +98,6 @@ ul.slides img {
         }
     });
 </script>
-
 <script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/plugins/contact-form-7/includes/swv/js/index.js?ver=5.8" id="swv-js"></script>
 <script type="text/javascript" id="contact-form-7-js-extra">
     var wpcf7 = {"api":{"root":"https:\/\/colorlibhub.com\/shapely\/wp-json\/","namespace":"contact-form-7\/v1"},"cached":"1"};

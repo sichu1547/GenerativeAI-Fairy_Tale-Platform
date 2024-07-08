@@ -14,3 +14,5 @@ django-allauth
 pyJWT
 cryptography
 konlpy
+django-environ
+google-cloud-texttospeech
