@@ -13,4 +13,3 @@ class ChatHistory(models.Model):
 
     def __str__(self):
         return f"Story ID: {self.story_id}, Question: {self.question}"
-    

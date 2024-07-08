@@ -17,8 +17,20 @@ class PasswordResetRequest(models.Model):
     
 class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profiles')
+    profile_id = models.PositiveIntegerField(editable=False)
     name = models.CharField(max_length=255)
     avatar = models.ImageField(upload_to='avatars/', default='avatars/ru8.jpg')
+    full_profile_id = models.CharField(max_length=255, editable=False, unique=True, default=1)
+
+    class Meta:
+        unique_together = ('user', 'profile_id')
+
+    def save(self, *args, **kwargs):
+        if not self.pk: 
+            max_profile_id = Profile.objects.filter(user=self.user).aggregate(models.Max('profile_id'))['profile_id__max']
+            self.profile_id = (max_profile_id or 0) + 1
+        self.full_profile_id = f"{self.user.id}-{self.profile_id}"
+        super(Profile, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.name
+        return f"{self.user.username} - {self.name}"

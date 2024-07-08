@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.naver',
     'allauth.socialaccount.providers.kakao',
     "mine",
-
+    'review',
 ]
 
 AUTHENTICATION_BACKENDS = [
