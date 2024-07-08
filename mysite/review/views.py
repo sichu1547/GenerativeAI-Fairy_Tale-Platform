@@ -8,6 +8,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy
+from myaccount.models import Profile
 
 class ReviewView(LoginRequiredMixin, View):
     login_url = '/myaccount/login/'
@@ -27,6 +28,12 @@ class ReviewView(LoginRequiredMixin, View):
             review.user = request.user
             review.story = story
             review.story_title = story.title
+            
+            selected_profile_id = request.session.get('selected_profile_id')
+            if selected_profile_id:
+                profile = get_object_or_404(Profile, id=selected_profile_id)
+                review.profile = profile
+                
             review.save()
             return redirect('review:review_success')
         return render(request, 'review/write_review.html', {'form': form, 'story': story})
