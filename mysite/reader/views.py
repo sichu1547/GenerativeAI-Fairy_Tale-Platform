@@ -58,7 +58,7 @@ def story_detail(request, id):
     sentences = []
     for paragraph in paragraphs:
         sentences.extend(re.split(r'(?<=\.) ', paragraph))
-    
+
     if 'tts' in request.GET:
         try:
             # Google TTS 클라이언트 설정
