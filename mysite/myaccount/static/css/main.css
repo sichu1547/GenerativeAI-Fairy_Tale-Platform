@@ -260,7 +260,7 @@ iframe {
   min-height: 100vh;
   display: block;
   background-color: #f7f7f7;
-  padding: 90px 55px 55px 60px;
+  padding: 60px 60px 60px 60px;
 }
 
 .login100-form-title {
@@ -515,13 +515,6 @@ input.input100 {
   }
 }
 
-@media (max-width: 576px) {
-  .login100-form {
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 70px;
-  }
-}
 
 
 /*------------------------------------------------------------------
@@ -758,5 +751,11 @@ li {
   border: 1px solid purple;
 }
 .p {
+  padding: 5px;
+}
+
+.errorlist {
+  font-size: 11px;
+  margin: 0;
   padding: 5px;
 }

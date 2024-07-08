@@ -40,7 +40,6 @@
 			<div class="wrap-login100">
 				<form method="post" class="login100-form validate-form">
 					{% csrf_token%}
-					{% include 'registration/form_errors.html' %} <!-- 오류 검증 추가 -->
 					<span class="login100-form-title p-b-43">
 						회원가입
 					</span>
@@ -69,6 +68,7 @@
 						<span class="label-input100">이메일</span>
 					</div>
 
+					{% include 'registration/form_errors.html' %} <!-- 오류 검증 추가 -->
 
 					<div class="container-login100-form-btn">
 						<button type="summit" class="login100-form-btn">
