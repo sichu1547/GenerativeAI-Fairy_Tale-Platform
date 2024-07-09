@@ -7,6 +7,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/story_detail.css' %}">
+    <style>
+        .highlight {
+            background-color: yellow;
+        }
+    </style>
 </head>{% endblock %}
 {% block content %}
 <body>
@@ -15,23 +20,24 @@
             <h1 class="story-title">📖 {{ title }}</h1>
             <div class="audio-buttons">
                 <div class="inner-audio-buttons">
-                    <button class="audio-button" onclick="playAudio('ko-KR-Standard-A')">A1</button>
-                    <button class="audio-button" onclick="playAudio('ko-KR-Standard-B')">B1</button>
-                    <button class="audio-button" onclick="playAudio('ko-KR-Standard-C')">C1</button>
-                    <button class="audio-button" onclick="playAudio('ko-KR-Standard-D')">D1</button>
+                    <button class="audio-button" onclick="selectVoice('ko-KR-Standard-A')">A1</button>
+                    <button class="audio-button" onclick="selectVoice('ko-KR-Standard-B')">B1</button>
+                    <button class="audio-button" onclick="selectVoice('ko-KR-Standard-C')">C1</button>
+                    <button class="audio-button" onclick="selectVoice('ko-KR-Standard-D')">D1</button>
                 </div>
                 <div class="inner-audio-buttons">
-                    <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-A')">A2</button>
-                    <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-B')">B2</button>
-                    <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-C')">C2</button>
-                    <button class="audio-button" onclick="playAudio('ko-KR-Wavenet-D')">D2</button>
+                    <button class="audio-button" onclick="selectVoice('ko-KR-Wavenet-A')">A2</button>
+                    <button class="audio-button" onclick="selectVoice('ko-KR-Wavenet-B')">B2</button>
+                    <button class="audio-button" onclick="selectVoice('ko-KR-Wavenet-C')">C2</button>
+                    <button class="audio-button" onclick="selectVoice('ko-KR-Wavenet-D')">D2</button>
                 </div>
+                <button class="audio-button" onclick="readFullStory()">전체 읽기</button>
             </div>
             <audio id="ttsAudio" controls>
                 <source id="audioSource" src="" type="audio/mpeg">
                 브라우저가 오디오 기능을 제공하지 않습니다
             </audio>
-            <a href="?tts=true" download="audio.mp3" id="downloadLink">⬇️</a>
+            <a href="?tts=true&voice=ko-KR-Standard-A&text=full" download="audio.mp3" id="downloadLink">⬇️</a>
         </div>
         <div class="book">
             <div class="left-page">
@@ -56,8 +62,7 @@
         <div class="buttons">
             <button class="arrow-button" id="previous_button">← 이전 페이지로</button>
             <button class="reader-button" id="picture_generate_button">그림 생성</button>
-            <button class="reader-button" id="quiz_button" onclick="window.location.href='{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}'" style="display:none;">퀴즈 시작</button>
-            <button class="reader-button" id="review_button" onclick="window.location.href='{% url 'review:write_review' id %}'" style="display:none;">독후감 쓰기</button>
+            <button class="reader-button" id="quiz_button" onclick="window.location.href='{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}'">퀴즈 시작</button>
             <button class="arrow-button" id="next_button">다음 페이지로 →</button>
         </div>
     </div>
@@ -65,51 +70,41 @@
         let currentPage = 0;
         const sentences = {{ story|safe }};
         const totalPages = sentences.length;
-    
+        let selectedVoice = 'ko-KR-Standard-A'; // 기본 목소리 설정
+
         function showPage(page) {
             const leftPage = document.querySelector(".left-page .text-container");
             const rightPage = document.querySelector(".right-page .text-container");
-            const quizButton = document.getElementById("quiz_button");
-            const reviewButton = document.getElementById("review_button");
 
             leftPage.innerHTML = "";
             rightPage.innerHTML = "";
-    
-            if (page % 2 === 0) {
-                leftPage.innerHTML = `<p>${sentences[page]}</p>`;
-                if (page + 1 < totalPages) {
-                    rightPage.innerHTML = `<p>${sentences[page + 1]}</p>`;
-                }
-            } else {
-                rightPage.innerHTML = `<p>${sentences[page]}</p>`;
-                if (page + 1 < totalPages) {
-                    leftPage.innerHTML = `<p>${sentences[page + 1]}</p>`;
-                }
-            }
 
-            // 마지막 페이지에서만 퀴즈 버튼과 독후감 버튼 보이기
-            if (page >= totalPages - 2) {
-                quizButton.style.display = "inline-block";
-                reviewButton.style.display = "inline-block";
+            if (page % 2 === 0) {
+                leftPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
+                if (page + 1 < totalPages) {
+                    rightPage.innerHTML = `<p onclick="readSentence(${page + 1})" id="sentence-${page + 1}">${sentences[page + 1]}</p>`;
+                }
             } else {
-                quizButton.style.display = "none";
-                reviewButton.style.display = "none";
+                rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
+                if (page + 1 < totalPages) {
+                    leftPage.innerHTML = `<p onclick="readSentence(${page + 1})" id="sentence-${page + 1}">${sentences[page + 1]}</p>`;
+                }
             }
         }
-    
+
         function turnPage(direction) {
             const book = document.querySelector('.book');
-        
+
             // 첫번째 페이지에서 앞으로 넘기려고 하는지 체크
             if (direction === -2 && currentPage === 0) {
                 return; 
             }
-        
+
             // 마지막 페이지에서 뒤로 넘기려고 하는지 체크 
             if (direction === 2 && (currentPage === totalPages - 1 || currentPage === totalPages - 2)) {
                 return;
             }
-        
+
             if (direction === 2) {
                 book.classList.add('turn-right');
                 book.classList.remove('turn-left');
@@ -117,7 +112,7 @@
                 book.classList.add('turn-left');
                 book.classList.remove('turn-right');
             }
-        
+
             setTimeout(() => {
                 currentPage += direction;
                 if (currentPage < 0) currentPage = 0;
@@ -127,28 +122,78 @@
                 book.classList.remove('turn-left');
             }, 500);
         }
-    
+
         document.getElementById("previous_button").addEventListener("click", () => turnPage(-2));
         document.getElementById("next_button").addEventListener("click", () => turnPage(2));
-    
+
         // 첫번째 페이지
         showPage(currentPage);
+
+        function selectVoice(voice) {
+            selectedVoice = voice;
+            updateDownloadLink();
+        }
+
+        function updateDownloadLink() {
+            const downloadLink = document.getElementById('downloadLink');
+            downloadLink.href = `?tts=true&voice=${selectedVoice}&text=full`;
+            downloadLink.download = "{{ title }}.mp3";
+        }
 
         function playAudio(voice) {
             const audioElement = document.getElementById('ttsAudio');
             const sourceElement = document.getElementById('audioSource');
-            const downloadLink = document.getElementById('downloadLink');
-            
+
             // 오디오 소스 URL 업데이트
             const ttsUrl = `?tts=true&voice=${voice}`;
             sourceElement.src = ttsUrl;
             audioElement.load();
             audioElement.play();
-            
-            // 다운로드 링크 업데이트
-            downloadLink.href = ttsUrl;
         }
 
+        function readSentence(index) {
+            const sentence = sentences[index];
+            const audioElement = document.getElementById('ttsAudio');
+            const sourceElement = document.getElementById('audioSource');
+
+            // 오디오 소스 URL 업데이트
+            const ttsUrl = `?tts=true&voice=${selectedVoice}&text=${encodeURIComponent(sentence)}`;
+            sourceElement.src = ttsUrl;
+            audioElement.load();
+            audioElement.play();
+
+            // 모든 문장에서 하이라이트 제거
+            sentences.forEach((_, i) => {
+                const sentenceElement = document.getElementById(`sentence-${i}`);
+                if (sentenceElement) {
+                    sentenceElement.classList.remove('highlight');
+                }
+            });
+
+            // 클릭된 문장에 하이라이트 추가
+            document.getElementById(`sentence-${index}`).classList.add('highlight');
+        }
+
+        function readFullStory() {
+            const audioElement = document.getElementById('ttsAudio');
+            const sourceElement = document.getElementById('audioSource');
+
+            // 오디오 소스 URL 업데이트
+            const ttsUrl = `?tts=true&voice=${selectedVoice}&text=full`;
+            sourceElement.src = ttsUrl;
+            audioElement.load();
+            audioElement.play();
+
+            // 모든 문장에서 하이라이트 제거
+            sentences.forEach((_, i) => {
+                const sentenceElement = document.getElementById(`sentence-${i}`);
+                if (sentenceElement) {
+                    sentenceElement.classList.remove('highlight');
+                }
+            });
+        }
+
+        updateDownloadLink(); // 페이지 로드 시 다운로드 링크 초기화
     </script>
 </body>
 </html>

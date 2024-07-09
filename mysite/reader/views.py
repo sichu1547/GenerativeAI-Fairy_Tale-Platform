@@ -66,7 +66,12 @@ def story_detail(request, id):
 
             # 선택된 목소리 가져오기
             selected_voice = request.GET.get('voice', 'ko-KR-Standard-A')
-            ssml_text = f"""<speak>{story.title+'<break time="1s"/>'+story.body}</speak>"""
+            text = request.GET.get('text', '')
+            if text == 'full':
+                text = story.title+'<break time="1s"/>'+story.body
+
+            ssml_text = f"""<speak>{text}</speak>"""
+            # ssml_text = f"""<speak>{story.title+'<break time="1s"/>'+story.body}</speak>"""
 
             # TTS 요청 설정
             synthesis_input = texttospeech.SynthesisInput(ssml=ssml_text)
