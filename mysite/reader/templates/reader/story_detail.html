@@ -53,13 +53,13 @@
                 <div class="text-container"></div>
             </div>
         </div>
-        <div class = "buttons">
-            <button class="arrow-button" id="previous_button">←  이전 페이지로</button>
+        <div class="buttons">
+            <button class="arrow-button" id="previous_button">← 이전 페이지로</button>
             <button class="reader-button" id="picture_generate_button">그림 생성</button>
-            <button class="reader-button" id="quiz_button" onclick="window.location.href='{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}'">퀴즈 시작</button>
-            <button class="arrow-button" id="next_button">다음 페이지로  →</button>
+            <button class="reader-button" id="quiz_button" onclick="window.location.href='{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}'" style="display:none;">퀴즈 시작</button>
+            <button class="reader-button" id="review_button" onclick="window.location.href='{% url 'review:write_review' id %}'" style="display:none;">독후감 쓰기</button>
+            <button class="arrow-button" id="next_button">다음 페이지로 →</button>
         </div>
-
     </div>
     <script>
         let currentPage = 0;
@@ -69,7 +69,9 @@
         function showPage(page) {
             const leftPage = document.querySelector(".left-page .text-container");
             const rightPage = document.querySelector(".right-page .text-container");
-    
+            const quizButton = document.getElementById("quiz_button");
+            const reviewButton = document.getElementById("review_button");
+
             leftPage.innerHTML = "";
             rightPage.innerHTML = "";
     
@@ -83,6 +85,15 @@
                 if (page + 1 < totalPages) {
                     leftPage.innerHTML = `<p>${sentences[page + 1]}</p>`;
                 }
+            }
+
+            // 마지막 페이지에서만 퀴즈 버튼과 독후감 버튼 보이기
+            if (page >= totalPages - 2) {
+                quizButton.style.display = "inline-block";
+                reviewButton.style.display = "inline-block";
+            } else {
+                quizButton.style.display = "none";
+                reviewButton.style.display = "none";
             }
         }
     

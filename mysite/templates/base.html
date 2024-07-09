@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="profile" href="https://gmpg.org/xfn/11">
 <link rel="pingback" href="https://colorlibhub.com/shapely/xmlrpc.php">
-
+{% load static %}
 <meta name="robots" content="noindex,nofollow" />
 
 <title>{% block title %}꿈을 꾸는 아이들 Mealkid{% endblock %}</title>
@@ -38,6 +38,102 @@ span.dropdown-toggle.shapely-dropdown {
 }
 ul.slides img {
     width: auto;
+}
+.vs1-container {
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    z-index: 1000;
+  }
+  
+  .vs1-container img {
+    width: 70px;
+    height: 70px;
+    cursor: pointer;
+    border: transparent;
+  }
+  
+  .vs1-container img:hover {
+    transform: scale(1.4);
+  }
+  #openModalBtn {
+    position: fixed;
+    bottom: 60px;
+    right: 60px;
+    z-index: 1000;
+    background-color: transparent; 
+    border-color: transparent;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    width: 500px;
+    height: 700px;
+    /* 추가된 속성 */
+    top: auto;
+    left: auto;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 70%;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.chat-header {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.chat-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.chat-footer {
+    display: flex;
+}
+
+#chatInput {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    
+    background-color: gray;
+}
+
+#sendBtn {
+    padding: 10px;
+    margin-left: 10px;
+    font-size: 16px;
 }
 </style>
 </head>
@@ -103,7 +199,30 @@ ul.slides img {
 </div>
 
 <footer id="colophon" class="site-footer footer bg-dark" role="contentinfo">
-    <div class="container footer-inner">
+   <!--<div class="container footer-inner">
+    <div class="vs1-container">
+    <a href="/admin/">
+      <img src="{% static 'images/젖소.png' %}" alt="문의"/>
+    </a>
+  </div>-->
+
+  <button id="openModalBtn" class="vs1-container"><img src="{% static 'images/젖소.png' %}" alt="문의"/></button>
+
+  <div id="chatModal" class="modal">
+      <div class="modal-content">
+          <span class="close">&times;</span>
+          <div class="chat-header">
+              <h2>Chat</h2>
+          </div>
+          <div class="chat-body" id="chatBody">
+              <!-- Chat messages will go here -->
+          </div>
+          <div class="chat-footer">
+              <input type="text" id="chatInput" placeholder="Type a message...">
+              <button id="sendBtn">Send</button>
+          </div>
+      </div>
+  </div>
         <div class="row">
         </div>
         <div class="row">
@@ -127,7 +246,6 @@ ul.slides img {
             </div>
         </div>
     </div>
-    <a class="btn btn-sm fade-half back-to-top inner-link" href="#top"><i class="fa fa-angle-up"></i></a>
 </footer>
 
 <script type="text/javascript">
@@ -168,6 +286,46 @@ ul.slides img {
         event.preventDefault();
         document.getElementById('logout-form').submit();
     });
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const modal = document.getElementById("chatModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalSpan = document.getElementsByClassName("close")[0];
+        const sendBtn = document.getElementById("sendBtn");
+        const chatInput = document.getElementById("chatInput");
+        const chatBody = document.getElementById("chatBody");
+    
+        openModalBtn.onclick = function() {
+            modal.style.display = "block";
+        }
+    
+        closeModalSpan.onclick = function() {
+            modal.style.display = "none";
+        }
+    
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    
+        sendBtn.onclick = function() {
+            const message = chatInput.value.trim();
+            if (message !== "") {
+                const messageElement = document.createElement("div");
+                messageElement.textContent = message;
+                chatBody.appendChild(messageElement);
+                chatInput.value = "";
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+        }
+    
+        chatInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendBtn.click();
+            }
+        });
+    });
+    
 </script>
 </body>
 </html>

@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.naver',
     'allauth.socialaccount.providers.kakao',
     "mine",
-
+    'review',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -180,7 +180,7 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     }
 }
-
+OPENAI_API_KEY = denv('OPENAI_API_KEY')
 
 WSGI_APPLICATION = "mysite.wsgi.application"
 

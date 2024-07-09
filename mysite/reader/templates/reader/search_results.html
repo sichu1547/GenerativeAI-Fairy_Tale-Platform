@@ -7,21 +7,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'css/search_results.css' %}">
+    <style>
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 10px; /* 각 요소 사이에 여백을 주기 위해 추가 */
+            list-style: none; /* 리스트 스타일 제거 */
+        }
+        
+        .container1 {
+            width: 260px;
+            height: 320px;
+            position: relative;
+            overflow: hidden; /* 요소 내부의 콘텐츠가 넘치는 경우를 방지하기 위해 추가 */
+        }
+        .overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(105deg,
+                transparent 40%,
+                rgba(255, 219, 112, 0.8) 45%,
+                rgba(132, 50, 255 ,0.6) 50%,
+                transparent 54%);
+            filter: brightness(1.1) opacity(0.8);
+            mix-blend-mode: color-dodge;
+            background-size: 150% 150%;
+            background-position: 100%;
+            transition: all 0.3s;
+        }
+        .card {
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            position: relative;
+        }
+        
+        .book-title {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 5px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            pointer-events: none; /* 링크를 클릭할 수 없도록 설정 */
+        }
+    </style>
+
 </head>{% endblock %}
 {% block content %}
 <body>
     <div class="search-results-container">
         <h1 class='h'>🔍 검색 결과</h1>
         <div class="books">
-            <ul>
+            <ul class="gallery">
                 {% for story in stories %}
-                    <li class='book'>
-                        <a href="{% url 'reader:story_detail' story.id %}?keyword={{ keyword }}" class = "book-title">{{ story.title }}</a>
-                    </li>
-                {% endfor %}
+                <li class='book container1'>
+                    <div class="overlay"></div>
+                    <a href="{% url 'reader:story_detail' story.id %}?keyword={{ keyword }}">
+                        {% if story.image %}
+                            <img class="card" src="{{ story.image.url }}" alt="{{ story.title }}">
+                        {% else %}
+                            <img class="card" src="{% static 'images/상자.png' %}" alt="{{ story.title }}">  <!-- 기본 이미지 경로 설정 -->
+                        {% endif %}
+                        <span class="book-title">{{ story.title }}</span>
+                    </a>
+                </li>
+            {% endfor %}
             </ul>
+            
         </div>
     </div>
+    <script>// 모든 .container1 요소를 선택합니다.
+        var containers = document.querySelectorAll('.container1');
+        
+        // 각 .container1 요소에 대해 반복합니다.
+        containers.forEach(function(container) {
+            var overlay = container.querySelector('.overlay');
+            var timeout;
+        
+            // 마우스가 요소 위에서 움직일 때 발생하는 이벤트 리스너를 추가합니다.
+            container.addEventListener('mousemove', function(e) {
+                var x = e.offsetX;
+                var y = e.offsetY;
+                var rotateY = -1 / 5 * x + 20;
+                var rotateX = 4 / 30 * y - 20;
+        
+                overlay.style.backgroundPosition = `${x / 5 + y / 5}%`;
+                overlay.style.filter = `opacity(${x / 200}) brightness(1.2)`;
+        
+                container.style.transition = 'transform 0.1s ease'; // transform 속성에 transition을 추가합니다.
+                container.style.transform = `perspective(350px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        
+                // 이전에 설정된 timeout을 초기화합니다.
+                clearTimeout(timeout);
+            });
+        
+            // 마우스가 요소를 벗어날 때 발생하는 이벤트 리스너를 추가합니다.
+            container.addEventListener('mouseout', function() {
+                overlay.style.filter = 'opacity(0)';
+                // 0.2초 후에 transform 속성을 원래 상태로 되돌리도록 setTimeout을 사용합니다.
+                timeout = setTimeout(function() {
+                    container.style.transition = 'transform 0.1s ease'; // transform 속성에 transition을 추가합니다.
+                    container.style.transform = 'perspective(350px) rotateY(0deg) rotateX(0deg)';
+                }, 150); // 0.2초(200밀리초) 후에 실행됩니다.
+            });
+        });
+        
+      </script>
 </body>
 </html>
 {% endblock %}
