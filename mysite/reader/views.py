@@ -86,7 +86,7 @@ def story_detail(request, id):
         sentences.extend(re.split(r'(?<=\.) ', paragraph))
     
     # 이미지
-    image_urls = [generate_image(sentence) for sentence in sentences]
+    image_urls = [generate_image(sentences[0])] if sentences else []
 
     if 'tts' in request.GET:
         try:
@@ -131,9 +131,18 @@ def story_detail(request, id):
         request.session['previous_story_id'] = id
 
     return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': story.title, 'id': id, 'image_urls': image_urls})
-    #return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': story.title, 'id': id})
 
 def redirect_to_quiz(request, id):
     keyword = request.GET.get('keyword')
 
     return redirect(f"{reverse('quiz:quiz_view', args=[id])}?keyword={keyword}")
+
+from django.http import JsonResponse
+
+def generate_image_view(request):
+    sentence = request.GET.get('sentence')
+    if sentence:
+        image_url = generate_image(sentence)
+        return JsonResponse({'image_url': image_url})
+    return JsonResponse({'error': 'No sentence provided'}, status=400)
+
