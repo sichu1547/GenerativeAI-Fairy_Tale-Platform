@@ -12,6 +12,7 @@
             background-color: yellow;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>{% endblock %}
 {% block content %}
 <body>
@@ -41,7 +42,7 @@
         </div>
         <div class="book">
             <div class="left-page">
-                <div class="text-container"></div>
+                <div class="image-container" style="background-image: url('{{ image_urls.0 }}');"></div>
             </div>
             <div class="spine">
                 <div class="spiral"></div>
@@ -69,50 +70,51 @@
     <script>
         let currentPage = 0;
         const sentences = {{ story|safe }};
+        let imageUrls = {{ image_urls|safe }};
         const totalPages = sentences.length;
+
         let selectedVoice = 'ko-KR-Standard-A'; // 기본 목소리 설정
 
         function showPage(page) {
-            const leftPage = document.querySelector(".left-page .text-container");
+            const leftPage = document.querySelector(".left-page .image-container");
             const rightPage = document.querySelector(".right-page .text-container");
 
             leftPage.innerHTML = "";
             rightPage.innerHTML = "";
+            leftPage.style.backgroundImage = ""; // 이전 배경이미지 clear
 
-            if (page % 2 === 0) {
-                leftPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
-                if (page + 1 < totalPages) {
-                    rightPage.innerHTML = `<p onclick="readSentence(${page + 1})" id="sentence-${page + 1}">${sentences[page + 1]}</p>`;
-                }
+            rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
+            
+            if (imageUrls[page]) { // 이미지 URL이 유효한지 확인
+                leftPage.style.backgroundImage = `url(${imageUrls[page]})`;
             } else {
-                rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
-                if (page + 1 < totalPages) {
-                    leftPage.innerHTML = `<p onclick="readSentence(${page + 1})" id="sentence-${page + 1}">${sentences[page + 1]}</p>`;
-                }
+                generateImage(page); // 이미지가 없으면 생성
             }
+
+            generateImage(currentPage + 1); // 다음 페이지의 이미지 생성
         }
 
         function turnPage(direction) {
             const book = document.querySelector('.book');
-
+        
             // 첫번째 페이지에서 앞으로 넘기려고 하는지 체크
-            if (direction === -2 && currentPage === 0) {
+            if (direction === -1 && currentPage === 0) {
                 return; 
             }
-
+        
             // 마지막 페이지에서 뒤로 넘기려고 하는지 체크 
-            if (direction === 2 && (currentPage === totalPages - 1 || currentPage === totalPages - 2)) {
+            if (direction === 1 && (currentPage === totalPages - 1)) {
                 return;
             }
-
-            if (direction === 2) {
+        
+            if (direction === 1) {
                 book.classList.add('turn-right');
                 book.classList.remove('turn-left');
-            } else if (direction === -2) {
+            } else if (direction === -1) {
                 book.classList.add('turn-left');
                 book.classList.remove('turn-right');
             }
-
+        
             setTimeout(() => {
                 currentPage += direction;
                 if (currentPage < 0) currentPage = 0;
@@ -123,9 +125,26 @@
             }, 500);
         }
 
-        document.getElementById("previous_button").addEventListener("click", () => turnPage(-2));
-        document.getElementById("next_button").addEventListener("click", () => turnPage(2));
-
+        function generateImage(page) {
+            if (page < totalPages && !imageUrls[page]) {
+                $.ajax({
+                    url: "{% url 'reader:generate_image' %}",
+                    method: "GET",
+                    data: { sentence: sentences[page] },
+                    success: function(response) {
+                        imageUrls[page] = response.image_url;
+                        if (currentPage === page) {
+                            const leftPage = document.querySelector(".left-page .image-container");
+                            leftPage.style.backgroundImage = `url(${response.image_url})`;
+                        }
+                    }
+                });
+            }
+        }
+    
+        document.getElementById("previous_button").addEventListener("click", () => turnPage(-1));
+        document.getElementById("next_button").addEventListener("click", () => turnPage(1));
+    
         // 첫번째 페이지
         showPage(currentPage);
 
