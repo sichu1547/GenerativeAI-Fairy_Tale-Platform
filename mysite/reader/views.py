@@ -58,7 +58,7 @@ def search(request):
 def generate_image(sentence):
     api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
     client = OpenAI(api_key = api_key)
-    print(api_key)
+    print('이미지 생성 중')
     
     try:
         response = client.images.generate(

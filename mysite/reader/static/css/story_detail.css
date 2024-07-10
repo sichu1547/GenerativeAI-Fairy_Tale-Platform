@@ -30,28 +30,64 @@
     margin-left: auto;
     display: flex;
     flex-direction: column;
+    max-width: 170px;
+}
+
+.audio-buttons-label
+{
+    font-family: 'Pretendard-Regular', Arial, sans-serif;
 }
 
 .inner-audio-buttons {
     display: flex;
     flex-direction: row;
     margin-left: auto;
-    margin-right: 15px;
+    margin-right: 12px;
 }
 
 .audio-button {
-    font-family: 'Pretendard-Regular', Arial, sans-serif;
-    font-size: 10px;
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-size: 13px;
     background-color: #745cf9;  /* 보라색 배경 */
     color: rgb(255, 255, 255);  /* 텍스트 색상 */
     margin: 1px;
-    padding: 4px 8px;
-    width: 30px;
+    padding: 2px 6px;
+    width: 90%;
     height: 25px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+}
+
+.audio-button-label {
+    font-family: 'Ownglyph_ryuttung-Rg', Arial, sans-serif;
+    font-size: 11px;
+    color: white;
+    margin: 0 3px;
+}
+
+input[type="radio"][name="voice"] {
+    -webkit-appearance: none; /* 웹킷 브라우저에서 기본 스타일 제거 */
+    -moz-appearance: none; /* 모질라 브라우저에서 기본 스타일 제거 */
+    appearance: none; /* 기본 브라우저에서 기본 스타일 제거 */
+    width: 12px;
+    height: 12px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    outline: none; 
+    cursor: pointer;
+    margin: 0;
+}
+
+input[type="radio"][name="voice"]:checked {
+    border-color: #ffffff;
+    background-color: #745cf9;
+}
+
+.highlight {
+    background-color: yellow;
 }
 
 .header {
@@ -84,6 +120,7 @@
     text-align: center;
     padding: 5px 20px;
     margin-top: 15px;
+    margin-bottom: 15px;
     text-shadow: 5px 5px 4px rgb(59, 59, 58);
     opacity: 0; /* 초기에 투명 상태로 시작 */
     animation: fadeInUp 1s forwards; /* fadeInUp 애니메이션 적용 */
@@ -124,12 +161,19 @@
     background-position: center; 
     background-repeat: no-repeat;
     flex: 1;
-    padding: 30px 40px;
     width: 40%;
     overflow-y: auto; /* 세로 스크롤바 추가 */
     scrollbar-width: thin;  /* 스크롤바 얇게 설정 */
     scrollbar-color: #bfb4ff transparent;  /* 스크롤바 색상 및 트랙 색상 */
     display: flex;
+}
+
+.left-page {
+    padding: 15px 20px;
+}
+
+.right-page {
+    padding: 30px 40px;
 }
 
 /* 웹킷 기반 브라우저에서 스크롤바 숨기기 */
@@ -207,6 +251,7 @@
     border-radius: 5px;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
 }
 
 .arrow-button {
@@ -221,6 +266,7 @@
     border-radius: 5px;
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
 }
 
 #previous_button {
@@ -243,17 +289,17 @@
     justify-content: center;
     align-items: center;
     flex-direction: row;
-    margin-bottom: 15px;
+    margin-bottom: 10x;
 }
 
 
 /* 텍스트 드래그 시 효과*/
-::selection{ 
+.book::selection{ 
   color: transparent; 
   text-shadow: 0 0 2px #000; 
   transition: all 250ms ease-in; 
 } 
-::-moz-selection{ 
+.book::-moz-selection{ 
   color: transparent; 
   text-shadow: 0 0 2px #000; 
   transition: all 250ms ease-in; 
@@ -263,9 +309,11 @@
     .text-container {
         font-size: 23px;
     }
-    .left-page, .right-page {
-        flex: 1;
-        padding: 25px 30x;
+    .left-page {
+        padding: 15px 10px;
+    }
+    .right-page {
+        padding: 25px 30px;
     }
     .story-title {
         font-size: 50px;
@@ -283,8 +331,10 @@
     .text-container {
         font-size: 17px;
     }
-    .left-page, .right-page {
-        flex: 1;
+    .left-page {
+        padding: 10px 7px;
+    }
+    .right-page {
         padding: 20px 23px;
     }
     .story-title {

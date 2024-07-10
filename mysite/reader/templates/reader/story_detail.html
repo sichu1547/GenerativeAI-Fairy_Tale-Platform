@@ -7,11 +7,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/story_detail.css' %}">
-    <style>
-        .highlight {
-            background-color: yellow;
-        }
-    </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>{% endblock %}
 {% block content %}
@@ -20,18 +15,41 @@
         <div class="header">
             <h1 class="story-title">📖 {{ title }}</h1>
             <div class="audio-buttons">
-                <div class="inner-audio-buttons">
-                    <button class="audio-button" onclick="selectVoice('ko-KR-Standard-A')">A1</button>
-                    <button class="audio-button" onclick="selectVoice('ko-KR-Standard-B')">B1</button>
-                    <button class="audio-button" onclick="selectVoice('ko-KR-Standard-C')">C1</button>
-                    <button class="audio-button" onclick="selectVoice('ko-KR-Standard-D')">D1</button>
-                </div>
-                <div class="inner-audio-buttons">
-                    <button class="audio-button" onclick="selectVoice('ko-KR-Wavenet-A')">A2</button>
-                    <button class="audio-button" onclick="selectVoice('ko-KR-Wavenet-B')">B2</button>
-                    <button class="audio-button" onclick="selectVoice('ko-KR-Wavenet-C')">C2</button>
-                    <button class="audio-button" onclick="selectVoice('ko-KR-Wavenet-D')">D2</button>
-                </div>
+
+            <div class="inner-audio-buttons">
+                <label class="audio-button-label">
+                    <span>A1</span>
+                    <input type="radio" name="voice" value="ko-KR-Standard-A" onclick="selectVoice('ko-KR-Standard-A')">
+                </label>
+                <label class="audio-button-label">
+                    <span>B1</span>
+                    <input type="radio" name="voice" value="ko-KR-Standard-B" onclick="selectVoice('ko-KR-Standard-B')">
+                </label>
+                <label class="audio-button-label">
+                    <span>C1</span>
+                    <input type="radio" name="voice" value="ko-KR-Standard-C" onclick="selectVoice('ko-KR-Standard-C')">
+                </label>
+                <label class="audio-button-label">
+                    <span>D1</span>
+                    <input type="radio" name="voice" value="ko-KR-Standard-D" onclick="selectVoice('ko-KR-Standard-D')">
+                </label>
+                <label class="audio-button-label">
+                    <span>A2</span>
+                    <input type="radio" name="voice" value="ko-KR-Wavenet-A" onclick="selectVoice('ko-KR-Wavenet-A')">
+                </label>
+                <label class="audio-button-label">
+                    <span>B2</span>
+                    <input type="radio" name="voice" value="ko-KR-Wavenet-B" onclick="selectVoice('ko-KR-Wavenet-B')">
+                </label>
+                <label class="audio-button-label">
+                    <span>C2</span>
+                    <input type="radio" name="voice" value="ko-KR-Wavenet-C" onclick="selectVoice('ko-KR-Wavenet-C')">
+                </label>
+                <label class="audio-button-label">
+                    <span>D2</span>
+                    <input type="radio" name="voice" value="ko-KR-Wavenet-D" onclick="selectVoice('ko-KR-Wavenet-D')">
+                </label>
+            </div>
                 <button class="audio-button" onclick="readFullStory()">전체 읽기</button>
             </div>
             <audio id="ttsAudio" controls>
