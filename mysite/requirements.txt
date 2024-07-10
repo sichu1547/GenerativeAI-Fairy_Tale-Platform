@@ -1,5 +1,5 @@
 seaborn==0.12.2
-openai==0.28
+openai
 langchain==0.1.20
 numpy
 pandas
@@ -16,4 +16,3 @@ cryptography
 konlpy
 django-environ
 google-cloud-texttospeech
-openai
