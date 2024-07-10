@@ -58,13 +58,12 @@ def search(request):
 def generate_image(sentence):
     api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
     client = OpenAI(api_key = api_key)
-    print(api_key)
+    print('이미지 생성 중')
     
     try:
         response = client.images.generate(
             model="dall-e-3",
             prompt=f"다음은 동화 내용이야: {sentence}. 이 내용을 기반으로 그림을 그려줘. 귀여운 그림체로 부드러운 색조와 간단한 형태를 사용해 그려줘.",
-            #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
             size="1024x1024",
             n=1,
             quality="standard",
@@ -74,7 +73,8 @@ def generate_image(sentence):
         return image_url
 
     except Exception as e:
-        return HttpResponse(f"Error: {e}", status=500)
+        return ""
+
 
 def story_detail(request, id):
     
