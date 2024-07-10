@@ -289,7 +289,7 @@ input[type="radio"][name="voice"]:checked {
     justify-content: center;
     align-items: center;
     flex-direction: row;
-    margin-bottom: 10x;
+    margin-bottom: 10px;
 }
 
 
@@ -340,11 +340,25 @@ input[type="radio"][name="voice"]:checked {
     .story-title {
         font-size: 40px;
     }
-    .reader-button, .arrow-button {
-        font-size: 10x;
-    }
     .spiral {
         width: 35px;
+    }
+}
+
+@media (max-width: 700px) {
+    #previous_button::before {
+        content: "←"; 
+        font-size: 15px;
+    }
+    #next_button::before {
+        content: "→";
+        font-size: 15px;
+    }
+    #previous_button, #next_button {
+        font-size: 0; /* Hide original text */
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 }
 

@@ -85,33 +85,35 @@
             <button class="arrow-button" id="next_button">다음 페이지로 →</button>
         </div>
     </div>
+    {% load static %}
+
     <script>
         let currentPage = 0;
         const sentences = {{ story|safe }};
         let imageUrls = {{ image_urls|safe }};
         const totalPages = sentences.length;
-
+    
         let selectedVoice = 'ko-KR-Standard-A'; // 기본 목소리 설정
-
+        const defaultImageUrl = "{% static 'images/default_image.jpg' %}"; // 기본 이미지 경로 설정
+    
         function showPage(page) {
             const leftPage = document.querySelector(".left-page .image-container");
             const rightPage = document.querySelector(".right-page .text-container");
-
+    
             leftPage.innerHTML = "";
             rightPage.innerHTML = "";
             leftPage.style.backgroundImage = ""; // 이전 배경이미지 clear
-
+    
             rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
-            
             if (imageUrls[page]) { // 이미지 URL이 유효한지 확인
                 leftPage.style.backgroundImage = `url(${imageUrls[page]})`;
             } else {
                 generateImage(page); // 이미지가 없으면 생성
             }
-
+    
             generateImage(currentPage + 1); // 다음 페이지의 이미지 생성
         }
-
+    
         function turnPage(direction) {
             const book = document.querySelector('.book');
         
@@ -142,7 +144,7 @@
                 book.classList.remove('turn-left');
             }, 500);
         }
-
+    
         function generateImage(page) {
             if (page < totalPages && !imageUrls[page]) {
                 $.ajax({
@@ -150,11 +152,16 @@
                     method: "GET",
                     data: { sentence: sentences[page] },
                     success: function(response) {
-                        imageUrls[page] = response.image_url;
+                        const imageUrl = response.image_url || defaultImageUrl; // 기본 이미지 URL 설정
+                        imageUrls[page] = imageUrl;
                         if (currentPage === page) {
                             const leftPage = document.querySelector(".left-page .image-container");
-                            leftPage.style.backgroundImage = `url(${response.image_url})`;
+                            leftPage.style.backgroundImage = `url(${imageUrl})`;
                         }
+                    },
+                    error: function() {
+                        const leftPage = document.querySelector(".left-page .image-container");
+                        leftPage.style.backgroundImage = `url(${defaultImageUrl})`; // 기본 이미지 URL 설정
                     }
                 });
             }
@@ -165,40 +172,40 @@
     
         // 첫번째 페이지
         showPage(currentPage);
-
+    
         function selectVoice(voice) {
             selectedVoice = voice;
             updateDownloadLink();
         }
-
+    
         function updateDownloadLink() {
             const downloadLink = document.getElementById('downloadLink');
             downloadLink.href = `?tts=true&voice=${selectedVoice}&text=full`;
             downloadLink.download = "{{ title }}.mp3";
         }
-
+    
         function playAudio(voice) {
             const audioElement = document.getElementById('ttsAudio');
             const sourceElement = document.getElementById('audioSource');
-
+    
             // 오디오 소스 URL 업데이트
             const ttsUrl = `?tts=true&voice=${voice}`;
             sourceElement.src = ttsUrl;
             audioElement.load();
             audioElement.play();
         }
-
+    
         function readSentence(index) {
             const sentence = sentences[index];
             const audioElement = document.getElementById('ttsAudio');
             const sourceElement = document.getElementById('audioSource');
-
+    
             // 오디오 소스 URL 업데이트
             const ttsUrl = `?tts=true&voice=${selectedVoice}&text=${encodeURIComponent(sentence)}`;
             sourceElement.src = ttsUrl;
             audioElement.load();
             audioElement.play();
-
+    
             // 모든 문장에서 하이라이트 제거
             sentences.forEach((_, i) => {
                 const sentenceElement = document.getElementById(`sentence-${i}`);
@@ -206,21 +213,21 @@
                     sentenceElement.classList.remove('highlight');
                 }
             });
-
+    
             // 클릭된 문장에 하이라이트 추가
             document.getElementById(`sentence-${index}`).classList.add('highlight');
         }
-
+    
         function readFullStory() {
             const audioElement = document.getElementById('ttsAudio');
             const sourceElement = document.getElementById('audioSource');
-
+    
             // 오디오 소스 URL 업데이트
             const ttsUrl = `?tts=true&voice=${selectedVoice}&text=full`;
             sourceElement.src = ttsUrl;
             audioElement.load();
             audioElement.play();
-
+    
             // 모든 문장에서 하이라이트 제거
             sentences.forEach((_, i) => {
                 const sentenceElement = document.getElementById(`sentence-${i}`);
@@ -229,9 +236,10 @@
                 }
             });
         }
-
+    
         updateDownloadLink(); // 페이지 로드 시 다운로드 링크 초기화
     </script>
+    
 </body>
 </html>
 {% endblock %}
