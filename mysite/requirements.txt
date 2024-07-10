@@ -16,3 +16,4 @@ cryptography
 konlpy
 django-environ
 google-cloud-texttospeech
+openai
