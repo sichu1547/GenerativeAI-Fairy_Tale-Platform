@@ -63,7 +63,7 @@ def search(request):
 
 def generate_image(sentence):
     print('생성중')
-    api_key = 'sk-proj-4qbJgbghHHkSL77Q5ZseT3BlbkFJ7YP7vme3RehUBc1ACbPi'
+    api_key = settings.OPENAI_API_KEY
     client = OpenAI(api_key = api_key)
     
     try:

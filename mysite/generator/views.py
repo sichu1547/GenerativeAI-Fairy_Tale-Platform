@@ -12,14 +12,12 @@ import io
 import pandas as pd
 import openai
 
-# Create your views here.
-
-# new
 import os
 from openai import OpenAI
+from django.conf import settings
 
 client = OpenAI(
-  api_key=os.environ['OPENAI_API_KEY'],  # this is also the default, it can be omitted
+    api_key=settings.OPENAI_API_KEY
 )
 
 def index(request):
@@ -42,7 +40,7 @@ def generate_question_prompt(last_sentence, stage):
 # GPT-3.5 API를 사용하여 응답 생성 함수
 def generate_response(prompt, role, max_tokens=110):
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4",
         messages=[
             {"role": "system", "content": role},
             {"role": "user", "content": prompt}
@@ -52,6 +50,7 @@ def generate_response(prompt, role, max_tokens=110):
         temperature=0.7
     )
     return response.choices[0].message.content.strip()
+
 def paginate_story(story, max_length=500):
     words = story.split()
     parts = []
@@ -74,6 +73,7 @@ def create_story(request):
         initial_story = request.POST.get('initial_story')
         story = request.POST.get('story', initial_story)
         generated_stories = request.POST.getlist('generated_stories', [])
+        generated_images = request.POST.getlist('generated_images', [])
         stage = int(request.POST.get('stage', 0))
         user_input = request.POST.get('user_input', '')
 
@@ -85,6 +85,11 @@ def create_story(request):
             response = generate_response(story, role)
             story += " " + response
             generated_stories.append(response)
+            
+            image_url = generate_image(response)
+            if not image_url:
+                image_url = ""
+            generated_images.append(image_url)
 
             last_sentence = response.split('.')[-1].strip()
             question_prompt = generate_question_prompt(last_sentence, stage + 1)
@@ -93,7 +98,8 @@ def create_story(request):
                 'story': story,
                 'generated_stories': generated_stories,
                 'stage': stage + 1,
-                'question_prompt': question_prompt
+                'question_prompt': question_prompt,
+                'generated_images': generated_images
             }
             return render(request, 'generator/create_story.html', context)
         else:
@@ -106,8 +112,30 @@ def create_story(request):
             context = {
                 'final_story': story,
                 'final_story_parts': final_story_parts,
-                'generated_stories': generated_stories
+                'generated_stories': generated_stories,
+                'generated_images': generated_images
             }
             return render(request, 'generator/story_result.html', context)
     else:
         return render(request, 'generator/create_story.html')
+    
+def generate_image(sentence):
+    print('이미지 생성 중')
+    api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
+    client = OpenAI(api_key = api_key)
+    
+    try:
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=f"다음은 동화 내용이야: {sentence}. 이 내용을 기반으로 그림을 그려줘. 귀여운 그림체로 부드러운 색조와 간단한 형태를 사용해 그려줘.",
+            #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
+            size="1024x1024",
+            n=1,
+            quality="standard",
+            style="natural"
+        )
+        image_url = response.data[0].url
+        return image_url
+
+    except Exception as e:
+        return ""

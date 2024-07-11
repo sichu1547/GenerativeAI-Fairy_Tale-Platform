@@ -1,49 +1,100 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
 <html lang="ko">
+
 <head>
-    {% load static %}
+    <title>{% block title %}🎨동화 만들기✏️</title>
     <meta charset="UTF-8">
-    <title>동화 만들기</title>
-    <link rel="stylesheet" href="{% static 'nlg/style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/generator.css' %}">
 </head>
+{% endblock %}
+
+{% block content %}
 <body>
     <div class="story-container">
-        <div class="book">
-            <div class="page">
-                <h2>✨생성된 이야기✨</h2>
+        <div class="book" id="create-book">
+            <div class="story-page">
+                <h2 class="generator-h2">✨생성된 이야기✨</h2>
+                <div id="story-image">
+                    <img src="" id="story-image-part" alt="story image">
+                </div>
                 <div id="story-text">
-                    {% for story in generated_stories %}
-                        <div class="story-part" id="story-part-{{ forloop.counter }}" style="display:none;">
-                            <p>{{ story|linebreaks }}</p>
-                        </div>
-                    {% endfor %}
+                    <p id="story-content"></p>
                 </div>
                 <div class="navigation">
-                    <button id="prev-btn" onclick="navigateStory(-1)">←</button>
-                    <button id="next-btn" onclick="navigateStory(1)">→</button>
+                    <button id="prev-btn" onclick="navigateStory(-1)">← 이전 페이지로</button>
+                    <button id="next-btn" onclick="navigateStory(1)">다음 페이지로 →</button>
                 </div>
             </div>
-            <div class="page">
-                <h2>다음 내용을 <br> 만들어 볼까요?</h2>
-                <form method="post">
+            <div class="story-page">
+                <h2 class="generator-h2">다음 내용을 만들어 볼까요?</h2>
+                <form method="post" onsubmit="return setLastPage()">
                     {% csrf_token %}
                     <input type="hidden" name="initial_story" value="{{ initial_story }}">
                     <input type="hidden" name="story" value="{{ story }}">
                     <input type="hidden" name="stage" value="{{ stage }}">
                     <input type="hidden" name="generated_stories" value="{{ generated_stories|join:',' }}">
+                    <input type="hidden" name="generated_images" value="{{ generated_images|join:',' }}">
                     <div class="question-prompt">
-                        <label for="user_input">{{ question_prompt }}</label>
+                        <label for="user_input" class="question">{{ question_prompt }}</label>
                     </div>
-                    <input type="text" id="user_input" name="user_input" placeholder="다음 부분을 입력하세요" required>
-                    <div class="voice-recognition">
-                        <button type="button" onclick="startRecognition()">🗣️</button>
+                    <div class="story-input">
+                        <input type="text" id="user_input" name="user_input" placeholder="다음 부분을 입력하세요" required>
+                        <div class="buttons">
+                            <button id="story-button" type="submit">동화 만들기</button>
+                            <div class="voice-recognition">
+                                <button type="button" onclick="startRecognition()">🗣️</button>
+                            </div>
+                        </div>
                     </div>
-                    <button type="submit">확인</button>
                 </form>
             </div>
         </div>
     </div>
     <script>
+        const generatedStories = {{ generated_stories|safe }};
+        const generatedImages = {{ generated_images|safe }};
+        const defaultImage = "{% static 'images/default_image.jpg' %}";
+        let currentPage = generatedStories.length - 1;
+
+        function updateStoryPage() {
+
+            const isValidUrl = (url) => {
+                try {
+                  new URL(url);
+                  return true;
+                } catch (e) {
+                  return false;
+                }
+              };
+              
+              
+            const imageUrl = (generatedImages[currentPage] && isValidUrl(generatedImages[currentPage])) ? generatedImages[currentPage] : defaultImage;
+            document.getElementById('story-content').innerText = generatedStories[currentPage] || "No story content available";
+            document.getElementById('story-image-part').src = imageUrl;
+            document.getElementById('prev-btn').disabled = currentPage === 0;
+            document.getElementById('next-btn').disabled = currentPage === generatedStories.length - 1;
+        }
+
+        function navigateStory(direction) {
+            const newPage = currentPage + direction;
+            if (newPage >= 0 && newPage < generatedStories.length) {
+                currentPage = newPage;
+                updateStoryPage();
+            }
+        }
+
+        function setLastPage() {
+            currentPage = generatedStories.length;
+            return true; // form submission continues
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            currentPage = generatedStories.length - 1;
+            updateStoryPage();
+        });
+
         function startRecognition() {
             if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
                 var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -67,21 +118,8 @@
                 alert('이 브라우저에서는 음성 인식이 지원되지 않습니다.');
             }
         }
-
-        let currentPart = 1;
-        const totalParts = {{ generated_stories|length }};
-        
-        function navigateStory(direction) {
-            document.getElementById(`story-part-${currentPart}`).style.display = 'none';
-            currentPart += direction;
-            if (currentPart < 1) currentPart = totalParts;
-            if (currentPart > totalParts) currentPart = 1;
-            document.getElementById(`story-part-${currentPart}`).style.display = 'block';
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            navigateStory(0); // Initialize to show the first story part
-        });
     </script>
 </body>
+
+{% endblock %}
 </html>

@@ -1,26 +1,33 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
 <html lang="ko">
+    
 <head>
-    {% load static %}
+    <title>{% block title %}🎨동화 만들기✏️</title>
     <meta charset="UTF-8">
-    <title>동화 만들기</title>
-    <link rel="stylesheet" href="{% static 'nlg/style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/generator.css' %}">
 </head>
+{% endblock %}
+
+{% block content %}
 <body>
     <div class="story-container">
-        <div class="book">
-            <div class="page">
-                <form action="create_story" method="post" enctype="application/x-www-form-urlencoded">
+        <div class="book" id="index-book">
+            <div class="story-page">
+                <form id="index-form" action="create_story" method="post" enctype="application/x-www-form-urlencoded">
                     {% csrf_token %}
                     <div id="file-module-1">
-                        <label for="initial_story">이야기의 시작을 입력하세요📒</label>
+                        <label class="generator-h1" for="initial_story">📒 이야기의 시작을 입력하세요</label>
+                    </div>
+                    <div class="story-input">
                         <textarea id="initial_story" name="initial_story" placeholder="여기에 이야기를 시작해보세요..." required></textarea>
-                    </div>
-                    <div>
-                        <button id="story-button" type="submit">동화 만들기</button>
-                    </div>
-                    <div>
-                        <button type="button" onclick="startRecognition()">🗣️</button>
+                        <div class="buttons">
+                            <button id="story-button" type="submit">동화 만들기</button>
+                            <div class="voice-recognition">
+                                <button type="button" onclick="startRecognition()">🗣️</button>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -52,4 +59,6 @@
         }
     </script>
 </body>
+
+{% endblock %}
 </html>
