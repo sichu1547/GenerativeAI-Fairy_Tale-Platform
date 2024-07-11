@@ -17,7 +17,7 @@ from django.views import View
 from myaccount.models import Profile
 from myaccount.models import ReadingHistory
 from django.utils.decorators import method_decorator
-
+from quiz.models import ReaderStory
 def index(request):
     return render(request, 'reader/index.html')
 def search(request):
@@ -90,7 +90,7 @@ def story_detail(request, id):
     if profile_id:
         try:
             profile = get_object_or_404(Profile, id=profile_id, user=request.user)
-            ReadingHistory.objects.get_or_create(user=request.user, profile=profile, story=story)
+            ReadingHistory.objects.get_or_create(user=request.user, profile=profile, story_title=story.title, story_id=story.id)
             print("Reading history saved successfully")
         except Exception as e:
             print(f"Error saving reading history: {e}")
