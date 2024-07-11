@@ -1,99 +1,55 @@
-{% extends "base.html" %}
-{% load static %}
+<!DOCTYPE html>
 <html lang="ko">
-
 <head>
-    <title>{% block title %}🎨동화책 쓰기✏️</title>
+    {% load static %}
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/generator.css' %}">
+    <title>동화 만들기</title>
+    <link rel="stylesheet" href="{% static 'nlg/style.css' %}">
 </head>
-{% endblock %}
-
-{% block content %}
 <body>
-    <div class="generator-container">
-        <div class="generator-row">
-            <div class="generator-title">
-                <h1>AI와 함께 동화 만들기 🎨</h1>
-                <h4 style="color:#6e6e6e;">상상력을 마음껏 펼쳐보세요!</h4>
-            </div>
-            <div class="generator-content">
-                <div class="generator-model">
-                    <div class="manual">
-                        <div>AI와 질문-답변을 주고 받으면서 이야기를 만들어보세요 ✏️</div>
+    <div class="story-container">
+        <div class="book">
+            <div class="page">
+                <form action="create_story" method="post" enctype="application/x-www-form-urlencoded">
+                    {% csrf_token %}
+                    <div id="file-module-1">
+                        <label for="initial_story">이야기의 시작을 입력하세요📒</label>
+                        <textarea id="initial_story" name="initial_story" placeholder="여기에 이야기를 시작해보세요..." required></textarea>
                     </div>
-                    <div class="generator-story-image">
-                        <div class="generator-story" style="display: none;">이야기 들어갈 부분</div>
-                        <div class="generator-image" style="display: none;">생성한 그림 들어갈 부분</div>
+                    <div>
+                        <button id="story-button" type="submit">동화 만들기</button>
                     </div>
-                    <div class="generator-chatbox" style="display: none;">AI한테 챗 보낼 부분 / 음성 녹음</div>
-                </div>
-                <button class="generator-start-button">시작하기</button>
+                    <div>
+                        <button type="button" onclick="startRecognition()">🗣️</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 시작 버튼 요소 가져오기
-            var startButton = document.querySelector('.generator-start-button');
-        
-            // 시작 버튼 클릭 시 처리할 함수 정의
-            startButton.addEventListener('click', function() {
-                // generator-title 요소 가져오기
-                var h1 = document.querySelector('.generator-title h1');
-                var h4 = document.querySelector('.generator-title h4');
-                var manual = document.querySelector('.manual');
+        function startRecognition() {
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                var recognition = new SpeechRecognition();
+                recognition.lang = 'ko-KR';
+                recognition.start();
 
-                // generator-title 텍스트 서서히 사라지기
-                h1.style.transition = 'opacity 1s'; // 투명도를 1초 동안 변화
-                h4.style.transition = 'opacity 1s'; // 투명도를 1초 동안 변화
-                startButton.style.transition = 'opacity 1s';
-                h1.style.opacity = '0'; // 투명하게 만듦
-                h4.style.opacity = '0'; // 투명하게 만듦
-                startButton.style.opacity = '0';
+                recognition.onresult = function(event) {
+                    var transcript = event.results[0][0].transcript;
+                    document.getElementById('initial_story').value += transcript;
+                };
 
-                
-                // 1초 대기 후 manual 서서히 사라지기
-                setTimeout(function() {
-                    manual.style.transition = 'opacity 1s';
-                    manual.style.opacity = '0';
-                }, 1000); // 1000ms = 1초
+                recognition.onerror = function(event) {
+                    console.error('Recognition error:', event.error);
+                };
 
-
-                // generator-model 요소 높이 증가
-                var model = document.querySelector('.generator-model');
-                setTimeout(function() {
-                    model.style.height = '80vh'; // 원하는 높이로 설정
-                    model.style.transition = 'height 1s'; // 높이를 1초 동안 부드럽게 변화
-                    
-                    // generator-title 텍스트 사라지기
-                    var titleContainer = document.querySelector('.generator-title');
-                    titleContainer.style.height = '0'; // 높이를 0으로 만들어 여백을 없앰
-                    titleContainer.style.transition = 'height 1s'; // 높이를 1초 동안 부드럽게 변화
-                    startButton.style.height = '0';
-                    startButton.style.transition = 'height 1s'; // 높이를 1초 동안 부드럽게 변화
-                }, 2000);
-
-                setTimeout(function() {
-                    // manual 텍스트 사라지기
-                    manual.style.display = 'none'; // display를 none으로 설정
-                }, 2000);
-
-                var generator_story = document.querySelector('.generator-story');
-                var generator_image = document.querySelector('.generator-image');
-                var generator_chatbox = document.querySelector('.generator-chatbox');
-
-                setTimeout(function() {
-                    generator_story.style.display = 'block'; // display를 block으로 설정
-                    generator_image.style.display = 'block'; 
-                    generator_chatbox.style.display = 'block'; 
-                }, 2000); // 이야기, 이미지 생성 부분 나타나기
-            });
-        });
+                recognition.onend = function() {
+                    console.log('Recognition ended');
+                };
+            } else {
+                alert('이 브라우저에서는 음성 인식이 지원되지 않습니다.');
+            }
+        }
     </script>
 </body>
-
-{% endblock %}
 </html>
