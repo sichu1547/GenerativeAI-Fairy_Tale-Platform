@@ -109,6 +109,7 @@ def password_reset_complete(request):
 @login_required
 def select_account(request):
     profiles = request.user.profiles.all()
+    print(profiles)
     return render(request, 'registration/select_account.html', {'profiles': profiles}) 
 
 @login_required
@@ -134,6 +135,34 @@ def profile(request):
     return render(request, 'registration/profile.html', {'form': form, 'profiles': profiles})
 
 @login_required
+def multiprofile(request):
+    selected_profile_id = request.session.get('selected_profile_id')
+    if selected_profile_id:
+        profiles = Profile.objects.filter(user=request.user, id=selected_profile_id)
+    else:
+        profiles = Profile.objects.filter(user=request.user)
+
+    if request.method == 'POST':
+        profile_id = request.POST.get('profile_id')
+        if profile_id:
+            profile = get_object_or_404(Profile, id=profile_id, user=request.user)
+            form = ProfileForm(request.POST, request.FILES, instance=profile)
+        else:
+            form = ProfileForm(request.POST, request.FILES)
+            if request.user.profiles.count() >= 4:
+                return HttpResponse("최대 4개까지만 생성할 수 있습니다.")
+
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.user = request.user
+            profile.save()
+            return redirect('profile')
+    else:
+        form = ProfileForm()
+
+    return render(request, 'registration/multi_profile.html', {'form': form, 'profiles': profiles})
+
+@login_required
 def profile_delete(request, pk):
     profile = get_object_or_404(Profile, pk=pk, user=request.user)
     if request.method == 'POST':
@@ -145,6 +174,8 @@ def profile_delete(request, pk):
 def choose_profile(request, profile_id):
     profile = get_object_or_404(Profile, id=profile_id, user=request.user)
     request.session['selected_profile_id'] = profile.id
+    request.session['selected_profile_avatar'] = profile.avatar.url
+    request.session['selected_profile_name'] = profile.name
     return redirect('index')
 
 from .models import ReadingHistory
@@ -153,9 +184,9 @@ def reading_history(request, profile_id):
     profile = get_object_or_404(Profile, id=profile_id, user=request.user)
     selected_profile_id = profile.id
     if selected_profile_id:
-        reading_histories = ReadingHistory.objects.filter(user=request.user, profile_id=selected_profile_id).exclude(story_id=None)
+        reading_histories = ReadingHistory.objects.filter(user=request.user, profile_id=selected_profile_id)
     else:
-        reading_histories = ReadingHistory.objects.filter(user=request.user).exclude(story_id=None)
+        reading_histories = ReadingHistory.objects.filter(user=request.user)
 
     #for history in reading_histories:
     #print(f"User ID: {reading_histories[8].user.id}, Profile ID: {reading_histories[8].profile.id}, Story Title: {reading_histories[8].story}")
