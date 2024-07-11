@@ -162,35 +162,31 @@ input[type="radio"][name="voice"]:checked {
     background-repeat: no-repeat;
     flex: 1;
     width: 40%;
-    overflow-y: auto; /* 세로 스크롤바 추가 */
-    scrollbar-width: thin;  /* 스크롤바 얇게 설정 */
-    scrollbar-color: #bfb4ff transparent;  /* 스크롤바 색상 및 트랙 색상 */
     display: flex;
 }
 
-.left-page {
-    padding: 15px 20px;
+.right-page {
+    overflow-y: auto; /* 세로 스크롤바 추가 */
+    scrollbar-width: thin;  /* 스크롤바 얇게 설정 */
+    scrollbar-color: #bfb4ff transparent;  /* 스크롤바 색상 및 트랙 색상 */
 }
 
-.right-page {
-    padding: 30px 40px;
-}
 
 /* 웹킷 기반 브라우저에서 스크롤바 숨기기 */
-.left-page::-webkit-scrollbar, .right-page::-webkit-scrollbar {
+.right-page::-webkit-scrollbar {
     width: 8px;  /* 스크롤바 너비 */
 }
 
-.left-page::-webkit-scrollbar-track, .right-page::-webkit-scrollbar-track {
+.right-page::-webkit-scrollbar-track {
     background: transparent;  /* 스크롤바 트랙 배경색 */
 }
 
-.left-page::-webkit-scrollbar-thumb, .right-page::-webkit-scrollbar-thumb {
+.right-page::-webkit-scrollbar-thumb {
     background: #bfb4ff;  /* 스크롤바 핸들 색상 (갈색) */
     border-radius: 4px;  /* 핸들 모서리 둥글게 */
 }
 
-.left-page::-webkit-scrollbar-thumbhover, .right-page::-webkit-scrollbar-thumb:hover {
+.right-page::-webkit-scrollbar-thumb:hover {
     background: #bfb4ff;  /* 스크롤바 핸들 호버 색상 */
 }
 
@@ -224,17 +220,20 @@ input[type="radio"][name="voice"]:checked {
     width: 100%; 
     display: block;
     height: 100%;
+    padding: 30px 40px;
 }
 
 .image-container {
-    width: 100%; 
-    height: 100%;
-    background-size: contain; /* Ensures the entire image is visible */
+    width: calc(100% - 40px); /* 부모 요소의 패딩을 고려한 최대 너비 설정 */
+    height: calc(100% - 30px); /* 부모 요소의 패딩을 고려한 최대 높이 설정 */
+    background-size: contain;
     background-position: center; 
     background-repeat: no-repeat;
     display: flex;
     justify-content: center; /* Center the image horizontally */
     align-items: center;     /* Center the image vertically */
+    margin: 15px 20px;
+    flex: 1;
 }
 
 .reader-button {
@@ -308,12 +307,10 @@ input[type="radio"][name="voice"]:checked {
 @media (max-width: 1200px) {
     .text-container {
         font-size: 23px;
-    }
-    .left-page {
-        padding: 15px 10px;
-    }
-    .right-page {
         padding: 25px 30px;
+    }
+    .image-container {
+        padding: 15px 10px;
     }
     .story-title {
         font-size: 50px;
@@ -330,12 +327,10 @@ input[type="radio"][name="voice"]:checked {
 @media (max-width: 1000px) {
     .text-container {
         font-size: 17px;
-    }
-    .left-page {
-        padding: 10px 7px;
-    }
-    .right-page {
         padding: 20px 23px;
+    }
+    .image-container {
+        padding: 8px 4px;
     }
     .story-title {
         font-size: 40px;
@@ -390,3 +385,20 @@ input[type="radio"][name="voice"]:checked {
     }
 }
 
+.book.turn-right .right-page .text-container,
+.book.turn-left .left-page .image-container {
+    animation: hideContent 2s forwards;
+    backface-visibility: hidden;
+}
+
+@keyframes hideContent {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
