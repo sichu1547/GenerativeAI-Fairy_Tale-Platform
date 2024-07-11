@@ -96,7 +96,7 @@ top: 0;
                 {% for story in stories %}
                 <li class='book container1'>
                     <div class="overlay"></div>
-                    <a href="{% url 'reader:story_detail' story.id %}?keyword={{ keyword }}">
+                    <a class='link-click-animation' href="{% url 'reader:story_detail' story.id %}?keyword={{ keyword }}">
                         {% if story.image %}
                             <img class="card" src="{{ story.image.url }}" alt="{{ story.title }}">
                         {% else %}
