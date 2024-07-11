@@ -62,8 +62,8 @@ def search(request):
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
 
 def generate_image(sentence):
-    api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
-    client = OpenAI(api_key = api_key)
+    #api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
+    #client = OpenAI(api_key = api_key)
     
     try:
     #     response = client.images.generate(
@@ -80,7 +80,8 @@ def generate_image(sentence):
         return 'https://www.google.com/imgres?q=%EC%9D%B4%EB%AF%B8%EC%A7%80&imgurl=https%3A%2F%2Fimage.utoimage.com%2Fpreview%2Fcp872722%2F2022%2F12%2F202212008462_500.jpg&imgrefurl=https%3A%2F%2Fwww.utoimage.com%2F%3Fm%3Dgoods.free%26mode%3Dview%26idx%3D22250682&docid=ndiXgrntLEKe9M&tbnid=W6ySxPkcFXMkBM&vet=12ahUKEwixn4Gy-JuHAxUeafUHHaRiBooQM3oECGQQAA..i&w=500&h=750&hcb=2&ved=2ahUKEwixn4Gy-JuHAxUeafUHHaRiBooQM3oECGQQAA'#image_url
 
     except Exception as e:
-        return HttpResponse(f"Error: {e}", status=500)
+        return ""
+
 
 def story_detail(request, id):
     story = get_object_or_404(Story, id=id)
