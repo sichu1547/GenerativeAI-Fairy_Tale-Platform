@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>최종 동화</title>
+    <link rel="stylesheet" href="{% static 'nlg/style.css' %}">
+</head>
+<body>
+    <div class="story-container">
+        <div class="book">
+            <div class="page" id="left-page">
+                <!-- 왼쪽 페이지 내용 -->
+            </div>
+            <div class="page" id="right-page">
+                <!-- 오른쪽 페이지 내용 -->
+            </div>
+        </div>
+        <div class="navigation">
+            <button id="prev-btn" onclick="navigateStory(-1)">←</button>
+            <button id="next-btn" onclick="navigateStory(1)">→</button>
+        </div>
+    </div>
+    <script>
+        let currentPage = 0;
+        const finalStoryParts = `{{ final_story|linebreaks|safe }}`.split('\n\n');  // 문단 구분
+        const totalParts = finalStoryParts.length;
+        const leftPage = document.getElementById('left-page');
+        const rightPage = document.getElementById('right-page');
+
+        function displayPages() {
+            const leftIndex = currentPage * 2;
+            const rightIndex = leftIndex + 1;
+
+            leftPage.innerHTML = leftIndex < totalParts ? `<p>${finalStoryParts[leftIndex]}</p>` : '';
+            rightPage.innerHTML = rightIndex < totalParts ? `<p>${finalStoryParts[rightIndex]}</p>` : '';
+        }
+
+        function navigateStory(direction) {
+            currentPage += direction;
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= Math.ceil(totalParts / 2)) currentPage = Math.ceil(totalParts / 2) - 1;
+            displayPages();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            displayPages();
+        });
+    </script>
+</body>
+</html>

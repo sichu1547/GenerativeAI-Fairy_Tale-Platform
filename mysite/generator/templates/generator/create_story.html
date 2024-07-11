@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>동화 만들기</title>
+    <link rel="stylesheet" href="{% static 'nlg/style.css' %}">
+</head>
+<body>
+    <div class="story-container">
+        <div class="book">
+            <div class="page">
+                <h2>✨생성된 이야기✨</h2>
+                <div id="story-text">
+                    {% for story in generated_stories %}
+                        <div class="story-part" id="story-part-{{ forloop.counter }}" style="display:none;">
+                            <p>{{ story|linebreaks }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="navigation">
+                    <button id="prev-btn" onclick="navigateStory(-1)">←</button>
+                    <button id="next-btn" onclick="navigateStory(1)">→</button>
+                </div>
+            </div>
+            <div class="page">
+                <h2>다음 내용을 <br> 만들어 볼까요?</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="initial_story" value="{{ initial_story }}">
+                    <input type="hidden" name="story" value="{{ story }}">
+                    <input type="hidden" name="stage" value="{{ stage }}">
+                    <input type="hidden" name="generated_stories" value="{{ generated_stories|join:',' }}">
+                    <div class="question-prompt">
+                        <label for="user_input">{{ question_prompt }}</label>
+                    </div>
+                    <input type="text" id="user_input" name="user_input" placeholder="다음 부분을 입력하세요" required>
+                    <div class="voice-recognition">
+                        <button type="button" onclick="startRecognition()">🗣️</button>
+                    </div>
+                    <button type="submit">확인</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function startRecognition() {
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                var recognition = new SpeechRecognition();
+                recognition.lang = 'ko-KR';
+                recognition.start();
+
+                recognition.onresult = function(event) {
+                    var transcript = event.results[0][0].transcript;
+                    document.getElementById('user_input').value += transcript;
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Recognition error:', event.error);
+                };
+
+                recognition.onend = function() {
+                    console.log('Recognition ended');
+                };
+            } else {
+                alert('이 브라우저에서는 음성 인식이 지원되지 않습니다.');
+            }
+        }
+
+        let currentPart = 1;
+        const totalParts = {{ generated_stories|length }};
+        
+        function navigateStory(direction) {
+            document.getElementById(`story-part-${currentPart}`).style.display = 'none';
+            currentPart += direction;
+            if (currentPart < 1) currentPart = totalParts;
+            if (currentPart > totalParts) currentPart = 1;
+            document.getElementById(`story-part-${currentPart}`).style.display = 'block';
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            navigateStory(0); // Initialize to show the first story part
+        });
+    </script>
+</body>
+</html>
