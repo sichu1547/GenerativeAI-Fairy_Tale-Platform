@@ -7,6 +7,6 @@ app_name = 'review'
 urlpatterns = [
     path('write/<int:story_id>/', ReviewView.as_view(), name='write_review'),
     path('success/', TemplateView.as_view(template_name='review/success.html'), name='review_success'),
-    path('list/', ReviewListView.as_view(), name='review_list'),
+    path('list/<int:profile_id>/', ReviewListView.as_view(), name='review_list'),
     path('delete/<int:pk>/', ReviewDeleteView.as_view(), name='review_delete'),
 ]

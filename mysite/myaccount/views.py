@@ -1,15 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import UserSessionData, Profile
 from django.http import HttpResponse
-from django.contrib.auth.views import LoginView
 from .forms import CustomUserCreationForm, ProfileForm
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.conf import settings
+
 # def base(request):
 #     return render(request, 'base.html')
 
@@ -147,6 +146,20 @@ def choose_profile(request, profile_id):
     profile = get_object_or_404(Profile, id=profile_id, user=request.user)
     request.session['selected_profile_id'] = profile.id
     return redirect('index')
+
+from .models import ReadingHistory
+@login_required
+def reading_history(request, profile_id):
+    profile = get_object_or_404(Profile, id=profile_id, user=request.user)
+    selected_profile_id = profile.id
+    if selected_profile_id:
+        reading_histories = ReadingHistory.objects.filter(user=request.user, profile_id=selected_profile_id).exclude(story_id=None)
+    else:
+        reading_histories = ReadingHistory.objects.filter(user=request.user).exclude(story_id=None)
+
+    #for history in reading_histories:
+    #print(f"User ID: {reading_histories[8].user.id}, Profile ID: {reading_histories[8].profile.id}, Story Title: {reading_histories[8].story}")
+    return render(request, 'registration/reading_history.html', {'reading_histories': reading_histories})
 
 # @login_required
 # def current_profile(request):

@@ -17,5 +17,6 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('profile/<int:pk>/delete/', views.profile_delete, name='profile_delete'),
     path('choose_profile/<int:profile_id>/', views.choose_profile, name='choose_profile'),
+    path('reading-history/<int:profile_id>/', views.reading_history, name='reading_history'),
     #path('current_profile/', views.current_profile, name='current_profile'),
 ]

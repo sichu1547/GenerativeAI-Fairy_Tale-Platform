@@ -22,17 +22,15 @@ class ReviewView(LoginRequiredMixin, View):
     @method_decorator(login_required)
     def post(self, request, story_id):
         story = get_object_or_404(ReaderStory, id=story_id)
+        selected_profile_id = request.session.get('selected_profile_id')
+        profile = get_object_or_404(Profile, id=selected_profile_id, user=request.user)        
         form = ReviewForm(request.POST)
         if form.is_valid():
             review = form.save(commit=False)
             review.user = request.user
             review.story = story
             review.story_title = story.title
-            
-            selected_profile_id = request.session.get('selected_profile_id')
-            if selected_profile_id:
-                profile = get_object_or_404(Profile, id=selected_profile_id)
-                review.profile = profile
+            review.profile = profile
                 
             review.save()
             return redirect('review:review_success')
@@ -46,10 +44,10 @@ class StoryListView(ListView):
     context_object_name = 'stories'    
     
 class ReviewListView(View):
-    def get(self, request):
-        selected_profile_id = request.session.get('selected_profile_id')
-        if selected_profile_id:
-            reviews = Review.objects.filter(user=request.user, profile_id=selected_profile_id)
+    def get(self, request, profile_id):
+        profile = get_object_or_404(Profile, id=profile_id, user=request.user)
+        if profile:
+            reviews = Review.objects.filter(user=request.user, profile_id=profile)
         else:
             reviews = Review.objects.filter(user=request.user)
         return render(request, 'review/review_list.html', {'reviews': reviews})

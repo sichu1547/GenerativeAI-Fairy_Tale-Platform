@@ -12,6 +12,12 @@ import requests
 from django.conf import settings
 from django.core.files.base import ContentFile
 
+from django.contrib.auth.decorators import login_required
+from django.views import View
+from myaccount.models import Profile
+from myaccount.models import ReadingHistory
+from django.utils.decorators import method_decorator
+
 def index(request):
     return render(request, 'reader/index.html')
 def search(request):
@@ -56,34 +62,43 @@ def search(request):
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
 
 def generate_image(sentence):
-    api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
-    client = OpenAI(api_key = api_key)
-    print('이미지 생성 중')
+    #api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
+    #client = OpenAI(api_key = api_key)
     
     try:
-        response = client.images.generate(
-            model="dall-e-3",
-            prompt=f"다음은 동화 내용이야: {sentence}. 이 내용을 기반으로 그림을 그려줘. 귀여운 그림체로 부드러운 색조와 간단한 형태를 사용해 그려줘.",
-            size="1024x1024",
-            n=1,
-            quality="standard",
-            style="natural"
-        )
-        image_url = response.data[0].url
-        return image_url
+    #     response = client.images.generate(
+    #         model="dall-e-3",
+    #         prompt=f"다음은 동화 내용이야: {sentence}. 이 내용을 기반으로 그림을 그려줘. 귀여운 그림체로 부드러운 색조와 간단한 형태를 사용해 그려줘.",
+    #         #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
+    #         size="1024x1024",
+    #         n=1,
+    #         quality="standard",
+    #         style="natural"
+    #     )
+    #     image_url = response.data[0].url
+
+        return 'https://www.google.com/imgres?q=%EC%9D%B4%EB%AF%B8%EC%A7%80&imgurl=https%3A%2F%2Fimage.utoimage.com%2Fpreview%2Fcp872722%2F2022%2F12%2F202212008462_500.jpg&imgrefurl=https%3A%2F%2Fwww.utoimage.com%2F%3Fm%3Dgoods.free%26mode%3Dview%26idx%3D22250682&docid=ndiXgrntLEKe9M&tbnid=W6ySxPkcFXMkBM&vet=12ahUKEwixn4Gy-JuHAxUeafUHHaRiBooQM3oECGQQAA..i&w=500&h=750&hcb=2&ved=2ahUKEwixn4Gy-JuHAxUeafUHHaRiBooQM3oECGQQAA'#image_url
 
     except Exception as e:
         return ""
 
 
 def story_detail(request, id):
-    
     story = get_object_or_404(Story, id=id)
+    profile_id = request.session.get('selected_profile_id')
+
+    if profile_id:
+        try:
+            profile = get_object_or_404(Profile, id=profile_id, user=request.user)
+            ReadingHistory.objects.get_or_create(user=request.user, profile=profile, story=story)
+            print("Reading history saved successfully")
+        except Exception as e:
+            print(f"Error saving reading history: {e}")
+    else:
+        print("Profile ID not found in session")
+
     keyword = request.GET.get('keyword')
-    paragraphs = story.body.split('\n\n') 
-    sentences = []
-    for paragraph in paragraphs:
-        sentences.extend(re.split(r'(?<=\.) ', paragraph))
+    sentences = story.body.split('\r\n\r\n\r\n') 
     
     # 이미지
     image_urls = [generate_image(sentences[0])] if sentences else []
@@ -145,4 +160,3 @@ def generate_image_view(request):
         image_url = generate_image(sentence)
         return JsonResponse({'image_url': image_url})
     return JsonResponse({'error': 'No sentence provided'}, status=400)
-
