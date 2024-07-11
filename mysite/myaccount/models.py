@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from reader.models import Story
 
 class UserSessionData(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -34,3 +35,12 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.name}"
+    
+class ReadingHistory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reading_histories')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='reading_histories')
+    story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='reading_histories')
+    #read_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.profile.name} - {self.story.title}"      

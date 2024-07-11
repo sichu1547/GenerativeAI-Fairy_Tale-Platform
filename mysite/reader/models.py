@@ -7,6 +7,8 @@ class Story(models.Model):
     body = models.TextField()
     tag = models.ManyToManyField('Tag', blank=True)
     category = models.CharField(max_length=100, default='Uncategorized')
+    keywords = models.CharField(max_length=1000, blank=True, default=None, null=True)
+    theme = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return self.title

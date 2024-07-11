@@ -63,7 +63,8 @@
         <div class="buttons">
             <button class="arrow-button" id="previous_button">← 이전 페이지로</button>
             <button class="reader-button" id="picture_generate_button">그림 생성</button>
-            <button class="reader-button" id="quiz_button" onclick="window.location.href='{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}'">퀴즈 시작</button>
+            <button class="reader-button" id="quiz_button" onclick="window.location.href='{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}'" style="display:none;">퀴즈 시작</button>
+            <button class="reader-button" id="review_button" onclick="window.location.href='{% url 'review:write_review' id %}'" style="display:none;">독후감 쓰기</button>
             <button class="arrow-button" id="next_button">다음 페이지로 →</button>
         </div>
     </div>
@@ -92,6 +93,15 @@
             }
 
             generateImage(currentPage + 1); // 다음 페이지의 이미지 생성
+
+            // 마지막 페이지에서만 "퀴즈 시작" 및 "독후감 쓰기" 버튼 보이기
+            if (page >= totalPages - 1) {
+                document.getElementById('quiz_button').style.display = "inline-block";
+                document.getElementById('review_button').style.display = "inline-block";
+            } else {
+                document.getElementById('quiz_button').style.display = "none";
+                document.getElementById('review_button').style.display = "none";
+            }
         }
 
         function turnPage(direction) {
