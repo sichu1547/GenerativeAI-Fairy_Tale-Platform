@@ -23,8 +23,7 @@ from langchain.vectorstores import Chroma
 from langchain.chains import ConversationalRetrievalChain
 import os
 from myaccount.models import ReadingHistory, Profile
- 
-
+from django.contrib.auth.models import User
 
 def index(request):
     return render(request, 'reader/index.html')
@@ -71,26 +70,26 @@ def search(request):
 
 def generate_image(sentence):
     print('생성중')
-    api_key = settings.OPENAI_API_KEY
-    client = OpenAI(api_key = api_key)
-    
-    try:
-        response = client.images.generate(
-            model="dall-e-3",
-            prompt=f"This: {sentence}. Based on this, draw a cute and lovely 2D picture using an illustration that never contains text, phrases, or speech bubbles. Never add text.",
-            #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
-            size="1024x1024",
-            n=1,
-            quality="standard",
-            style="natural"
-        )
-        image_url = response.data[0].url
-        print('성공')
-        return image_url
+    # api_key = settings.OPENAI_API_KEY
+    # client = OpenAI(api_key = api_key)
 
-    except Exception as e:
-        print('실패')
-        return ""
+    # try:
+    #     response = client.images.generate(
+    #         model="dall-e-3",
+    #         prompt=f"다음은 동화 내용이야: {sentence}. 이 내용을 기반으로 그림을 그려줘. 귀여운 그림체로 부드러운 색조와 간단한 형태를 사용해 그려줘.",
+    #         #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
+    #         size="1024x1024",
+    #         n=1,
+    #         quality="standard",
+    #         style="natural"
+    #     )
+    #     image_url = response.data[0].url
+    #     print('성공')
+    #     return image_url
+
+    # except Exception as e:
+    #     print('실패')
+    return ""
 
 
 def story_detail(request, id):
@@ -186,6 +185,7 @@ qa = ConversationalRetrievalChain.from_llm(
     llm=chat, retriever=retriever, memory=memory, 
     return_source_documents=True, output_key="answer")
 
+
 @csrf_exempt
 def answer_question(request):
     if request.method == 'POST':
@@ -194,8 +194,7 @@ def answer_question(request):
         if question and story_id:
             story = get_object_or_404(Story, pk=story_id)
 
-            # full_query = f"{story}에 대한 질문입니다.\n{question}"
-            full_query = f"당신은 어린아이의 질문에 친절하게 답변해주는 선생님입니다. 동화 '{story}'에 대한 질문은 다음과 같고, 어린아이가 잘 이해할 수 있도록 대답해주세요.\n{question}"
+            full_query = f"당신은 어린아이의 질문에 친절하게 답변해주는 선생님입니다. 동화 '{story.title}'에 대한 질문은 다음과 같고, 어린아이가 잘 이해할 수 있도록 대답해주세요.\n{question}"
         
             memory_content = memory.load_memory_variables({})
 
@@ -210,7 +209,7 @@ def answer_question(request):
             memory.save_context({"question": full_query}, {"answer": answer})
 
             # Save to the database
-            save_to_database(question, answer)
+            save_to_database(story.title, question, answer)
             
             # print(memory.load_memory_variables({})["chat_history"])
 
@@ -218,9 +217,9 @@ def answer_question(request):
 
     return JsonResponse({'error': 'Invalid request'})
 
-def save_to_database(question, answer):
+def save_to_database(story_title, question, answer):
     try:
-        log_entry = LogEntry(question=question, answer=answer)
+        log_entry = LogEntry(story_title=story_title, question=question, answer=answer)
         log_entry.save()
     except Exception as e:
         print(f"Error saving to database: {e}")
