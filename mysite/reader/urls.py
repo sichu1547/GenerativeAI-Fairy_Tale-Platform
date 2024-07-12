@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('<int:id>', views.detail, name='detail'),
     path('search/', views.search, name='search'),
-    path('story/<int:id>/', views.story_detail, name='story_detail'),    
+    path('story/<int:id>/', views.story_detail, name='story_detail'),
     path('story/<int:id>/quiz/', views.redirect_to_quiz, name='redirect_to_quiz'),
+    path('generate_image/', views.generate_image_view, name='generate_image'),  # Add this line
 ]

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>독후감 리스트</title>
+</head>
+<body>
+    <div class="review-container">
+        <h2>📚 내 독후감 리스트 📚</h2>
+        <ul class="review-list">
+            {% for review in reviews %}
+            <li class="review-item">
+                <p>{{ review.story_title }}</p>
+                <p>{{ review.title }}</p>
+                <p>{{ review.content }}</p>
+                <form method="post" action="{% url 'review:review_delete' review.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit">삭제하기</button>
+                </form>
+            </li>
+            {% empty %}
+            <li>리뷰가 없습니다.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

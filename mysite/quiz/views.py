@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from .models import ReaderStory
+from django.conf import settings
 
 import re
 import pdb
@@ -99,7 +100,8 @@ class QuizView(View):
         conn.close()
 
     def generate_questions_with_gpt(self, paragraph, story_id):
-        api_key = 'sk-proj-jdcf3PkV3ZXNKueexexoT3BlbkFJ9oh8WIS3zpOCvM0afUGr'
+        api_key = settings.OPENAI_API_KEY
+        # api_key = os.getenv('OPENAI_API_KEY')
         chat = ChatOpenAI(model="gpt-4o", openai_api_key=api_key)
 
         # memory = ConversationBufferMemory(memory_key="chat_history", input_key="question", output_key="answer", return_messages=True)

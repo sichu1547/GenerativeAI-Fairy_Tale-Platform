@@ -5,4 +5,5 @@ from django.contrib.auth import views as auth_views
 app_name = 'generator'
 urlpatterns = [
     path('', views.index, name='index'),
+        path('create_story', views.create_story, name='create_story'),
 ]

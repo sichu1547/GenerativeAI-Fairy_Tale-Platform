@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.naver',
     'allauth.socialaccount.providers.kakao',
     "mine",
-
+    'review',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -181,6 +181,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 OPENAI_API_KEY = denv('OPENAI_API_KEY')
+OPENAI_API_KEY_FOR_IMAGE_GEN = denv('OPENAI_API_KEY_FOR_IMAGE_GEN')
 
 WSGI_APPLICATION = "mysite.wsgi.application"
 
@@ -252,26 +253,12 @@ STATICFILES_DIRS = [BASE_DIR / 'static',
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# 이메일 설정, manage.py와 같은 경로에 secret.json 파일을 만든 후 EMAIL_HOST_USER, EMAIL_HOST_PASSWORD 정의.
-import json
-
-#SECRET_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# SECRET_FILE_PATH = os.path.join(BASE_DIR, 'secret.json')
-
-# with open(SECRET_FILE_PATH) as f:
-#     secrets = json.load(f)
-
-# def get_secret(secret_name):
-#     try:
-#         return secrets[secret_name]
-#     except KeyError:
-#         raise Exception(f"Set the {secret_name} environment variable")
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend' 
 EMAIL_HOST = 'smtp.gmail.com' 
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = denv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = denv('EMAIL_HOST_PASSWORD')
-print(EMAIL_HOST_USER)
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+OPENAI_API_KEY = denv('OPENAI_API_KEY')

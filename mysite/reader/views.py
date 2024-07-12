@@ -7,7 +7,17 @@ from django.http import HttpResponse
 from google.cloud import texttospeech
 import io
 import sqlite3
+from openai import OpenAI
+import requests
+from django.conf import settings
+from django.core.files.base import ContentFile
 
+from django.contrib.auth.decorators import login_required
+from django.views import View
+from myaccount.models import Profile
+from myaccount.models import ReadingHistory
+from django.utils.decorators import method_decorator
+from quiz.models import ReaderStory
 def index(request):
     return render(request, 'reader/index.html')
 def search(request):
@@ -51,14 +61,50 @@ def search(request):
 
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
 
+def generate_image(sentence):
+    print('생성중')
+    api_key = settings.OPENAI_API_KEY
+    client = OpenAI(api_key = api_key)
+    
+    try:
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=f"다음은 동화 내용이야: {sentence}. 이 내용을 기반으로 그림을 그려줘. 귀여운 그림체로 부드러운 색조와 간단한 형태를 사용해 그려줘.",
+            #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
+            size="1024x1024",
+            n=1,
+            quality="standard",
+            style="natural"
+        )
+        image_url = response.data[0].url
+        print('성공')
+        return image_url
+
+    except Exception as e:
+        print('실패')
+        return ""
+
+
 def story_detail(request, id):
     story = get_object_or_404(Story, id=id)
+    profile_id = request.session.get('selected_profile_id')
+
+    if profile_id:
+        try:
+            profile = get_object_or_404(Profile, id=profile_id, user=request.user)
+            ReadingHistory.objects.get_or_create(user=request.user, profile=profile, story_title=story.title, story_id=story.id)
+            print("Reading history saved successfully")
+        except Exception as e:
+            print(f"Error saving reading history: {e}")
+    else:
+        print("Profile ID not found in session")
+
     keyword = request.GET.get('keyword')
-    paragraphs = story.body.split('\n\n') 
-    sentences = []
-    for paragraph in paragraphs:
-        sentences.extend(re.split(r'(?<=\.) ', paragraph))
+    sentences = story.body.split('\r\n\r\n\r\n') 
     
+    # 이미지
+    image_urls = [generate_image(sentences[0])] if sentences else []
+
     if 'tts' in request.GET:
         try:
             # Google TTS 클라이언트 설정
@@ -66,7 +112,12 @@ def story_detail(request, id):
 
             # 선택된 목소리 가져오기
             selected_voice = request.GET.get('voice', 'ko-KR-Standard-A')
-            ssml_text = f"""<speak>{story.title+'<break time="1s"/>'+story.body}</speak>"""
+            text = request.GET.get('text', '')
+            if text == 'full':
+                text = story.title+'<break time="1s"/>'+story.body
+
+            ssml_text = f"""<speak>{text}</speak>"""
+            # ssml_text = f"""<speak>{story.title+'<break time="1s"/>'+story.body}</speak>"""
 
             # TTS 요청 설정
             synthesis_input = texttospeech.SynthesisInput(ssml=ssml_text)
@@ -96,9 +147,18 @@ def story_detail(request, id):
         conn.close()    
         request.session['previous_story_id'] = id
 
-    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': story.title, 'id': id})
+    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': story.title, 'id': id, 'image_urls': image_urls})
 
 def redirect_to_quiz(request, id):
     keyword = request.GET.get('keyword')
 
     return redirect(f"{reverse('quiz:quiz_view', args=[id])}?keyword={keyword}")
+
+from django.http import JsonResponse
+
+def generate_image_view(request):
+    sentence = request.GET.get('sentence')
+    if sentence:
+        image_url = generate_image(sentence)
+        return JsonResponse({'image_url': image_url})
+    return JsonResponse({'error': 'No sentence provided'}, status=400)

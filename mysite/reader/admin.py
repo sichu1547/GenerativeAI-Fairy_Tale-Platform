@@ -4,7 +4,8 @@ from django.shortcuts import redirect, render
 import csv
 from django.http import HttpResponse
 from .models import Story
-
+import pandas as pd
+import sqlite3
 class StoryAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'category']
     list_display_links = ['id', 'title']
@@ -29,17 +30,27 @@ class StoryAdmin(admin.ModelAdmin):
                 self.message_user(request, "This is not a csv file")
                 return redirect(request.get_full_path())
             
-            reader = csv.reader(csv_file.read().decode('utf-8').splitlines())
-            next(reader)  # Skip the header
-            for row in reader:
-                if len(row[1]) < 50:
+            df = pd.read_csv(csv_file)
+            path = './database/story_db.db'
+            conn = sqlite3.connect(path)
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM reader_story')
+            conn.commit()
+            conn.close()                
+            col = df.columns
+
+            for _, row in df.iterrows():
+                if len(row[col[1]]) < 50:
                     continue
-                #print(row[0], len(row[1]))
+ 
                 Story.objects.create(
-                    title=row[0],
-                    body=row[1],
-                    category=row[2]
+                    title=row[col[0]],
+                    body=row[col[1]],
+                    category=row[col[2]],
+                    keywords=row[col[3]].strip('[]').replace("'", "").split(','),
+                    theme=row[col[4]]              
                 )
+
             self.message_user(request, "CSV file uploaded successfully")
             return redirect(request.get_full_path())
 

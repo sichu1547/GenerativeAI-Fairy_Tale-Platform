@@ -5,22 +5,29 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ownglyph_ryuttung-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_ryuttung-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
 html, body {
     height: 100%;
     margin: 0;
     font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif; /* Fallback 폰트로 Arial, sans-serif를 지정 */
+    padding: 0;
 }
 
-.generator-title h1 {
-    margin-bottom: 10px; 
-}
-
-.generator-title h4 {
-    margin-top: 10px;
-    margin-bottom: 0; 
-}
-
-.generator-container {
+.story-container {
     background-image: url("../images/generator-bg.jpg");
     background-size: cover; /* 이미지가 화면 전체를 채우도록 조정 */
     background-position: center; 
@@ -30,105 +37,314 @@ html, body {
     align-items: center;
     height: 100%;
     width: 100%;
-    min-height: 95vh;
+    min-height: 90vh;
     padding: 10px 0 10px 0;
-}
-
-.generator-row {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column; /* Vertical alignment for child elements */
-    width: 100%;
-    margin: 0 auto;
-}
-
-.generator-title {
-    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
-    text-align: center;
-    font-size: 50px;
-    opacity: 0; /* 초기에 투명 상태로 시작 */
-    animation: fadeInUp 1s forwards; /* fadeInUp 애니메이션 적용 */
-}
-
-@keyframes fadeInUp {
-    0% {
-        opacity: 0; /* 시작 시 투명 */
-        transform: translateY(20px); /* 시작 시 위로 이동 */
-    }
-    100% {
-        opacity: 1; /* 끝나면 불투명 */
-        transform: translateY(0); /* 원래 위치로 이동 */
-    }
-}
-
-.generator-content {
-    display: flex;
-    flex-direction: column; /* 요소들을 세로로 정렬 */
-    justify-content: center; /* 세로 방향으로 가운데 정렬 */
-    align-items: center; /* 가로 방향으로 가운데 정렬 */
-    min-height: 450px;
-    padding: 10px 20px; /* 내부 여백 설정 */
-    width: 100%;
-    box-sizing: border-box; /* padding이 요소의 크기에 포함되도록 설정 */
-    margin: 0 auto; /* 가운데 정렬을 위한 margin 설정 */
-}
-
-.generator-model {
-    border-radius: 10px; /* 둥근 테두리 반경 설정 */
-    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
-    font-size: 30px;
-    padding: 20px;
-    height: 430px;
-    background-color: #ffffff;
-    opacity: 0.9;
-    margin-bottom: 20px;
-    width: 80%; /* generator-content의 너비를 따르도록 설정 */
-    display: flex;
+    margin: 0;
     flex-direction: column;
 }
 
-.generator-start-button {
+.book {
+    display: flex;
+    width: 75%;
+    max-width: 1200px;
+    min-height: 75vh;
+    height: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    background-color: #fff8dc;
+    padding: 20px;
+    margin: 15px;
+    justify-content: center;
+    min-width: 300px;
+}
+
+#final-book {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: stretch;
+}
+
+p {
+    margin-bottom: 0 !important;
+    margin-top: 10px !important;
+}
+
+.story-page {
+    font-family: 'Ownglyph_ryuttung-Rg', Arial, sans-serif;
+    font-size: 18px;
+    width: 100%;
+    padding: 25px;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(120, 107, 176, 0.1);
+    border-radius: 5px;
+    margin: 5px;
+    min-height: 300px;
+    line-height: 130%;
+    display:flex;
+    flex-direction: column;
+}
+
+#story-content {
+    max-height: 150px;
+    margin-top: 0 !important;
+    margin-bottom: 10px !important;
+}
+
+.story-image {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#story-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 10px;
+}
+
+#story-image-part {
+    width: 100%;
+    height: auto;
+    max-width: 75%;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.generator-h1, .generator-h2, .generator-label {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-size: 34px;
+    color: #d2691e;
+    text-align: center;
+    line-height: 120%;
+    font-weight: normal;
+    word-break: keep-all;
+}
+
+.generator-h1 {
+    font-size : 52px !important;
+}
+
+.generator-h2 {
+    margin-bottom: 15px;
+}
+
+.story-part {
+    font-family: 'Ownglyph_ryuttung-Rg', Arial, sans-serif;
+    font-size: 18px;
+}
+
+.question {
     font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
     font-size: 20px;
-    background-color: #745cf9;  /* 보라색 배경 */
-    color: rgb(255, 255, 255);  /* 텍스트 색상 */
-    padding: 10px 20px;
-    border: none;
+    color: #d2691e;
+    line-height: 120%;
+    font-weight: normal !important;
+    word-break: keep-all;
+}
+
+#file-module-1 {
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    align-self: flex-start;
+}
+
+.story-input {
+    align-self: flex-end;
+    width: 100%;
+}
+
+#initial_story, #user_input {
+    font-family: 'Ownglyph_ryuttung-Rg';
+    width: 100%;
+    height: 50%;
+    margin-bottom: 10px;
+    border: 2px solid #ffa07a;
     border-radius: 5px;
+    font-size: 18px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: white;
+}
+
+input[type="text"] {
+    height: 40px;
+}
+
+.buttons {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+#story-button {
+    flex-grow: 1;
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-size: 18px !important;
+    font-weight: normal;
+    background-color: #ffa07a;
+    border: none;
+    color: white;
+    padding: 2.5px 10px;
+    border-radius: 5px !important;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    min-height: 50px;
+    max-width: 100%;
 }
 
-.generator-start-button:hover {
-    transform: scale(1.1); /* 호버 시 버튼이 105% 크기로 확대됨 */
+#left-page, #right-page {
+    font-size: 22px;
+    padding-bottom: 0;
 }
 
-.generator-story-image {
-    height: 80%;
+#left-text, #right-text {
+    margin: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.voice-recognition {
+    text-align: center;
+    margin-left: 10px;
+}
+
+.voice-recognition button {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-size: 20px !important;
+    font-weight: normal;
+    background-color: #ffa07a;
+    border: none;
+    color: white;
+    padding: 2.5px 10px;
+    border-radius: 5px !important;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-height: 50px;
+}
+
+#index-form {
+    height: 100%;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px; /* optional, adds space between story and image */
-}
-.generator-story, .generator-image {
-    border: 3px dashed #bbbbbb;
-    font-size: 20px;
-    padding: 10px;
-    width: 50%; /* adjust as needed */
-    height: 95%;
-    border-radius: 10px; /* 둥근 테두리 반경 설정 */
+    flex-wrap: wrap;
+    flex-direction: column;
 }
 
-.generator-chatbox {
-    font-size: 20px;
-    border: 3px dashed #bbbbbb;
-    padding: 10px;
-    min-height: 50px;
-    height: 20%;
-    border-radius: 10px; /* 둥근 테두리 반경 설정 */
+
+#story-button:hover,
+.voice-recognition button:hover {
+    background-color: #ff4500;
 }
 
-.manual {
-    line-height:1.5;
+.navigation {
+    display: flex;
+    width: 100%;
+    max-width: 1150px;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    margin-top: auto;
+    margin-bottom: 0;
+}
+
+.final-story-image {
+    width: 100%;
+    height: auto;
+    max-width: 70%;
+    object-fit: contain;
+}
+
+#final-nav {
+    width: 75%;
+    margin-bottom: 30px;
+}
+
+
+
+.navigation button {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    background-color: #ffa07a;
+    border: none;
+    color: white;
+    padding: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+}
+
+.navigation button:hover {
+    background-color: #ff4500;
+}
+
+
+@media (max-width: 1000px) {
+    #create-book {
+        flex-direction: column;
+        height: auto;
+        align-content: center;
+        flex-wrap:wrap;
+    }
+    .story-page {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 767px) {
+    p {
+        font-size: 16px !important;
+        line-height: 120%;
+    }
+
+    .generator-h1 {
+        font-size: 44px !important;
+    }
+
+    .generator-h2, .generator-label {
+        font-size: 28px;
+    }
+
+    .question {
+        font-size: 18px;
+    }
+
+    #final-book {
+        min-height: auto;
+    }
+
+    .story-container{
+        min-height: auto;
+    }
+}
+
+@media (max-width: 450px) {
+    #prev-btn::before {
+        content: "←"; 
+    }
+    #next-btn::before {
+        content: "→";
+    }
+    #prev-btn, #next-btn {
+        font-size: 0; /* 텍스트 숨기기 */
+        position: relative;
+        width: 40px; /* 버튼 너비 조정 */
+        height: 40px; /* 버튼 높이 조정 */
+    }
+    #prev-btn::before, #next-btn::before {
+        font-size: 16px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 }
