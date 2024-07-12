@@ -46,8 +46,8 @@
     background-image: url("../images/그림형제.png");
     background-size: cover; /* 이미지 크기를 버튼 크기에 맞춤 */
     background-position: center; /* 이미지 위치를 중앙으로 설정 */
-    width: 100px; /* 버튼의 너비 설정 */
-    height: 100px; /* 버튼의 높이 설정 */
+    width: 150px; /* 버튼의 너비 설정 */
+    height: 150px; /* 버튼의 높이 설정 */
     border-radius: 50%;
     border: none; /* 버튼 테두리 제거 */
     color: black; /* 버튼 텍스트 색상 설정 */
@@ -59,8 +59,8 @@
     background-image: url("../images/이솝우화.png");
     background-size: cover; /* 이미지 크기를 버튼 크기에 맞춤 */
     background-position: center; /* 이미지 위치를 중앙으로 설정 */
-    width: 100px; /* 버튼의 너비 설정 */
-    height: 100px; /* 버튼의 높이 설정 */
+    width: 150px; /* 버튼의 너비 설정 */
+    height: 150px; /* 버튼의 높이 설정 */
     border-radius: 50%;
     border: none; /* 버튼 테두리 제거 */
     color: black; /* 버튼 텍스트 색상 설정 */
@@ -73,8 +73,8 @@
     background-image: url("../images/전래동화.png");
     background-size: cover; /* 이미지 크기를 버튼 크기에 맞춤 */
     background-position: center; /* 이미지 위치를 중앙으로 설정 */
-    width: 100px; /* 버튼의 너비 설정 */
-    height: 100px; /* 버튼의 높이 설정 */
+    width: 150px; /* 버튼의 너비 설정 */
+    height: 150px; /* 버튼의 높이 설정 */
     border-radius: 50%;
     border: none; /* 버튼 테두리 제거 */
     color: black; /* 버튼 텍스트 색상 설정 */
@@ -86,8 +86,8 @@
     background-image: url("../images/샤를로페.png");
     background-size: cover; /* 이미지 크기를 버튼 크기에 맞춤 */
     background-position: center; /* 이미지 위치를 중앙으로 설정 */
-    width: 100px; /* 버튼의 너비 설정 */
-    height: 100px; /* 버튼의 높이 설정 */
+    width: 150px; /* 버튼의 너비 설정 */
+    height: 150px; /* 버튼의 높이 설정 */
     border-radius: 50%;
     border: none; /* 버튼 테두리 제거 */
     color: black; /* 버튼 텍스트 색상 설정 */

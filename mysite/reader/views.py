@@ -69,7 +69,7 @@ def generate_image(sentence):
     try:
         response = client.images.generate(
             model="dall-e-3",
-            prompt=f"다음은 동화 내용이야: {sentence}. 이 내용을 기반으로 그림을 그려줘. 귀여운 그림체로 부드러운 색조와 간단한 형태를 사용해 그려줘.",
+            prompt=f"This: {sentence}. Based on this, draw a cute and lovely 2D picture using an illustration that never contains text, phrases, or speech bubbles. Never add text.",
             #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
             size="1024x1024",
             n=1,
