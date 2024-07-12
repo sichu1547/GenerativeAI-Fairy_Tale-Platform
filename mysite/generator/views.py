@@ -40,7 +40,7 @@ def generate_question_prompt(last_sentence, stage):
 # GPT-3.5 API를 사용하여 응답 생성 함수
 def generate_response(prompt, role, max_tokens=110):
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-4o",
         messages=[
             {"role": "system", "content": role},
             {"role": "user", "content": prompt}
