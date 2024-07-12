@@ -207,23 +207,7 @@ ul.slides img {
     </a>
   </div>-->
 
-  <button id="openModalBtn" class="vs1-container"><img src="{% static 'images/젖소.png' %}" alt="문의"/></button>
-
-  <div id="chatModal" class="modal">
-      <div class="modal-content">
-          <span class="close">&times;</span>
-          <div class="chat-header">
-              <h2>Chat</h2>
-          </div>
-          <div class="chat-body" id="chatBody">
-              <!-- Chat messages will go here -->
-          </div>
-          <div class="chat-footer">
-              <input type="text" id="chatInput" placeholder="Type a message...">
-              <button id="sendBtn">Send</button>
-          </div>
-      </div>
-  </div>
+  
         <div class="row">
         </div>
         <div class="row">
@@ -287,6 +271,7 @@ ul.slides img {
         event.preventDefault();
         document.getElementById('logout-form').submit();
     });
+    
     document.addEventListener('DOMContentLoaded', (event) => {
         const modal = document.getElementById("chatModal");
         const openModalBtn = document.getElementById("openModalBtn");
@@ -312,9 +297,28 @@ ul.slides img {
         sendBtn.onclick = function() {
             const message = chatInput.value.trim();
             if (message !== "") {
-                const messageElement = document.createElement("div");
-                messageElement.textContent = message;
-                chatBody.appendChild(messageElement);
+                // 사용자 메시지를 추가
+                const userMessageElement = document.createElement("div");
+                userMessageElement.textContent = "User: " + message;
+                chatBody.appendChild(userMessageElement);
+
+                // 챗봇 서버에 메시지를 전송하고 응답을 받음
+                fetch('/chatbot/api/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ question: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const botMessageElement = document.createElement("div");
+                    botMessageElement.textContent = "Bot: " + data.response;
+                    chatBody.appendChild(botMessageElement);
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                });
+
                 chatInput.value = "";
                 chatBody.scrollTop = chatBody.scrollHeight;
             }
@@ -326,7 +330,6 @@ ul.slides img {
             }
         });
     });
-    
 </script>
 </body>
 </html>
