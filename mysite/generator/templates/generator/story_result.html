@@ -30,7 +30,7 @@
     </div>
     <script>
         let currentPage = 0;
-        const finalStoryParts = `{{ final_story_parts|safe }}`.split(',');  // 각 생성된 이야기 구분
+        const finalStoryParts = `{{ final_story|linebreaks|safe }}`.split('\n\n');  // 문단 구분
         const generatedImages = `{{ generated_images|safe }}`.split(',').map(img => img.replace(/[\[\]']/g, '').trim());
         const totalParts = finalStoryParts.length;
         const defaultImage = "{% static 'images/default_image.jpg' %}";
@@ -56,8 +56,8 @@
                 }
             };
 
-            leftImage.innerHTML = ''
-            rightImage.innerHTML = ''
+            leftImage.innerHTML =''
+            rightImage.innerHTML =''
 
             leftImage.innerHTML = isValidUrl(generatedImages[leftIndex]) ? `<img class="final-story-image" src="${generatedImages[leftIndex]}" alt="Generated Story Image">` : `<img class="final-story-image" src="${defaultImage}" alt="Generated Story Image">`;
             if (rightIndex < totalParts) {

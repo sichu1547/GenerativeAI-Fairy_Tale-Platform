@@ -22,6 +22,8 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chains import ConversationalRetrievalChain
 import os
+from myaccount.models import ReadingHistory, Profile
+ 
 
 
 def index(request):
@@ -86,9 +88,9 @@ def generate_image(sentence):
         print('성공')
         return image_url
 
-    # except Exception as e:
-    #     print('실패')
-    return ""
+    except Exception as e:
+        print('실패')
+        return ""
 
 
 def story_detail(request, id):
