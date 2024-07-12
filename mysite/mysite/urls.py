@@ -47,6 +47,7 @@ urlpatterns = [
     path('quiz/', include('quiz.urls')),
     path('mine/', include('mine.urls')),
     path('review/', include('review.urls')),
+    path('chatbot/', include('chatbot.urls')),
     #path('__debug__/', include('debug_toolbar.urls')),
 ]
 

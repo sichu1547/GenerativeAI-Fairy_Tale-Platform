@@ -3,7 +3,7 @@ from django.urls import path
 from django.shortcuts import redirect, render
 import csv
 from django.http import HttpResponse
-from .models import Story
+from .models import *
 import pandas as pd
 import sqlite3
 class StoryAdmin(admin.ModelAdmin):
@@ -58,6 +58,14 @@ class StoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Story, StoryAdmin)
 
+class LogAdmin(admin.ModelAdmin):
+    list_display = ['story_title', 'question', 'answer']
+admin.site.register(LogEntry)
+
+
+class LogAdmin(admin.ModelAdmin):
+    list_display = ['story_title', 'question', 'answer']
+admin.site.register(LogEntry)
 
 # @admin.register(Tag)
 # class TagAdmin(admin.ModelAdmin):
