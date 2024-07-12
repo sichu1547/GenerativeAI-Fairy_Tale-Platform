@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from .models import *
 import pandas as pd
 import sqlite3
+
 class StoryAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'category']
     list_display_links = ['id', 'title']
@@ -57,10 +58,6 @@ class StoryAdmin(admin.ModelAdmin):
         return render(request, self.upload_csv_template)
 
 admin.site.register(Story, StoryAdmin)
-
-class LogAdmin(admin.ModelAdmin):
-    list_display = ['story_title', 'question', 'answer']
-admin.site.register(LogEntry)
 
 
 class LogAdmin(admin.ModelAdmin):
