@@ -145,7 +145,9 @@
             <button class="reader-button" id="picture_generate_button">그림 생성</button>
             <button class="reader-button" id="quiz_button" onclick="window.location.href='{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}'" style="display:none;">퀴즈 시작</button>
             <button class="reader-button" id="review_button" onclick="window.location.href='{% url 'review:write_review' id %}'" style="display:none;">독후감 쓰기</button>
-            <button class="reader-button" id="recommend_button" onclick="recommend_tale(5042)">추천 동화</button>
+            {% comment %}  {% endcomment %}
+            <button class="reader-button" id="recommend_button" onclick="recommend_tale({{ rec_id }})" style="display:none;">추천 동화</button>
+            {% comment %}  {% endcomment %}
             <button class="arrow-button" id="next_button">다음 페이지로 →</button>
         </div>
     </div>
@@ -425,9 +427,13 @@
             });
         }
 
+        // 동화 추천하기
         function recommend_tale(id) {
             window.location.href = `/reader/story/${id}/`;
         }
+        
+        
+        
     
         updateDownloadLink(); // 페이지 로드 시 다운로드 링크 초기화
 

@@ -22,8 +22,13 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chains import ConversationalRetrievalChain
 import os
+
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.neighbors import NearestNeighbors
+from .models import Story
 from myaccount.models import ReadingHistory, Profile
-from django.contrib.auth.models import User
+ 
 
 def index(request):
     return render(request, 'reader/index.html')
@@ -153,8 +158,48 @@ def story_detail(request, id):
         conn.commit()
         conn.close()    
         request.session['previous_story_id'] = id
+        
+    ########################################################################################################    
+    # 장고 모델에서 모든 스토리 데이터 로드
+    
+    story = get_object_or_404(Story, id=id)
+    
+    stories = Story.objects.all()
+    data = {
+        '제목': [i.title for i in stories],
+        '내용': [i.body for i in stories]
+    }
+    # 제목과 내용을 새로운 데이터프레임으로 저장
+    df = pd.DataFrame(data)
 
-    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': story.title, 'id': id, 'image_urls': image_urls})
+    # 모델에서 id가 해당 동화인 데이터 가져오기
+    # 제목만 따로 저장하기
+    tale_title = story.title
+
+    if not tale_title:
+        return HttpResponse("Please provide a tale title.")  # 제목이 없으면 메시지 반환
+
+    tfidf = TfidfVectorizer()
+    dtm = tfidf.fit_transform(df['내용'])
+    dtm = pd.DataFrame(dtm.todense(), columns=tfidf.get_feature_names_out())
+
+    nn = NearestNeighbors(n_neighbors=6, algorithm='kd_tree')
+    nn.fit(dtm)
+
+    try:
+        idx = df[df['제목'] == tale_title].index[0]
+    except IndexError:
+        return HttpResponse("Tale title not found.")  # 제목이 데이터베이스에 없으면 메시지 반환
+
+    result = nn.kneighbors([dtm.iloc[idx]])
+    recommended_title = df['제목'].iloc[result[1][0][1]]
+    
+    story = get_object_or_404(Story, title=recommended_title)
+    recommended_id = story.id
+    
+
+    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': story.title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id})
+    ########################################################################################################    
 
 def redirect_to_quiz(request, id):
     keyword = request.GET.get('keyword')
@@ -185,7 +230,6 @@ qa = ConversationalRetrievalChain.from_llm(
     llm=chat, retriever=retriever, memory=memory, 
     return_source_documents=True, output_key="answer")
 
-
 @csrf_exempt
 def answer_question(request):
     if request.method == 'POST':
@@ -194,7 +238,8 @@ def answer_question(request):
         if question and story_id:
             story = get_object_or_404(Story, pk=story_id)
 
-            full_query = f"당신은 어린아이의 질문에 친절하게 답변해주는 선생님입니다. 동화 '{story.title}'에 대한 질문은 다음과 같고, 어린아이가 잘 이해할 수 있도록 대답해주세요.\n{question}"
+            # full_query = f"{story}에 대한 질문입니다.\n{question}"
+            full_query = f"당신은 어린아이의 질문에 친절하게 답변해주는 선생님입니다. 동화 '{story}'에 대한 질문은 다음과 같고, 어린아이가 잘 이해할 수 있도록 대답해주세요.\n{question}"
         
             memory_content = memory.load_memory_variables({})
 
@@ -209,7 +254,7 @@ def answer_question(request):
             memory.save_context({"question": full_query}, {"answer": answer})
 
             # Save to the database
-            save_to_database(story.title, question, answer)
+            save_to_database(question, answer)
             
             # print(memory.load_memory_variables({})["chat_history"])
 
@@ -217,9 +262,10 @@ def answer_question(request):
 
     return JsonResponse({'error': 'Invalid request'})
 
-def save_to_database(story_title, question, answer):
+def save_to_database(question, answer):
     try:
-        log_entry = LogEntry(story_title=story_title, question=question, answer=answer)
+        log_entry = LogEntry(question=question, answer=answer)
         log_entry.save()
     except Exception as e:
         print(f"Error saving to database: {e}")
+        
