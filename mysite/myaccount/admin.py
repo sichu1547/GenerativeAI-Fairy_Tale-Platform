@@ -15,6 +15,7 @@ class UserSessionDataAdmin(admin.ModelAdmin):
         return f"User ID: {user_id}, Session Index: {session_index}"
 
     get_decoded.short_description = 'Decoded Data'
+    
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'name', 'avatar')

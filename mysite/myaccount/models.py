@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from reader.models import Story
+from django.utils import timezone
 
 class UserSessionData(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -22,7 +23,9 @@ class Profile(models.Model):
     name = models.CharField(max_length=255)
     avatar = models.ImageField(upload_to='avatars/', default='avatars/ru8.jpg')
     full_profile_id = models.CharField(max_length=255, editable=False, unique=True, default=1)
-
+    date = models.DateField(default=timezone.now)
+    attendance_dates = models.JSONField(default=list)
+    
     class Meta:
         unique_together = ('user', 'profile_id')
 
