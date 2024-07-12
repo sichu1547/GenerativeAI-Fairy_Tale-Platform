@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.kakao',
     "mine",
     'review',
+    'chatbot',
 ]
 
 AUTHENTICATION_BACKENDS = [

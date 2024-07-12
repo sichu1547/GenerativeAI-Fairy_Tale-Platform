@@ -20,4 +20,6 @@ urlpatterns = [
     path('choose_profile/<int:profile_id>/', views.choose_profile, name='choose_profile'),
     path('reading-history/<int:profile_id>/', views.reading_history, name='reading_history'),
     #path('current_profile/', views.current_profile, name='current_profile'),
+    path('attendance_check/', views.attendance_check, name='attendance_check'),
+    path('reset_show_attendance_modal/', views.reset_show_attendance_modal, name='reset_show_attendance_modal'),
 ]

@@ -8,8 +8,10 @@ from .forms import CustomUserCreationForm, ProfileForm
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.conf import settings
-from django.http import HttpResponseRedirect
+from django.utils import timezone
+from django.http import JsonResponse
 from django.urls import reverse
+
 # def base(request):
 #     return render(request, 'base.html')
 
@@ -189,7 +191,7 @@ def choose_profile(request, profile_id):
     request.session['selected_profile_id'] = profile.id
     request.session['selected_profile_avatar'] = profile.avatar.url
     request.session['selected_profile_name'] = profile.name
-    print(123213)
+    request.session['show_attendance_modal'] = True
     return redirect('index')
 
 from .models import ReadingHistory
@@ -202,8 +204,6 @@ def reading_history(request, profile_id):
     else:
         reading_histories = ReadingHistory.objects.filter(user=request.user)
 
-    #for history in reading_histories:
-    #print(f"User ID: {reading_histories[8].user.id}, Profile ID: {reading_histories[8].profile.id}, Story Title: {reading_histories[8].story}")
     return render(request, 'registration/reading_history.html', {'reading_histories': reading_histories})
 
 # @login_required
@@ -214,3 +214,30 @@ def reading_history(request, profile_id):
 #         return HttpResponse(f"Current Profile: {profile.name}")
 #     else:
 #         return HttpResponse("No profile selected")
+
+@login_required
+def attendance_check(request):
+    if request.method == 'POST':
+        selected_profile_id = request.session.get('selected_profile_id')
+        if not selected_profile_id:
+            return JsonResponse({'status': 'fail', 'message': 'No profile selected'}, status=400)
+        
+        profile = get_object_or_404(Profile, id=selected_profile_id, user=request.user)
+        date = timezone.now().date().isoformat()
+
+        if date in profile.attendance_dates:
+            return JsonResponse({'status': 'already_checked', 'message': '이미 출석이 완료되었습니다.'})
+        else:
+            profile.attendance_dates.append(date)
+            profile.save()
+            return JsonResponse({'status': 'ok', 'message': '오늘 출석이 완료되었습니다!'})
+    else:
+        return JsonResponse({'status': 'fail', 'message': 'Invalid request method'}, status=400)
+    
+from django.views.decorators.csrf import csrf_exempt
+
+@csrf_exempt
+@login_required
+def reset_show_attendance_modal(request):
+    request.session['show_attendance_modal'] = False
+    return JsonResponse({'status': 'ok'})

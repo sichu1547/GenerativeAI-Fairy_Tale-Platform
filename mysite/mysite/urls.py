@@ -36,7 +36,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', index),
     path('base/', base),
-    #path('myaccount/', include('django.contrib.auth.urls')),  
+    # path('myaccount/', include('django.contrib.auth.urls')),  
     path('myaccount/', include('myaccount.urls')),
     path('myaccount/', include('allauth.urls')),  
     path('signup/', account_views.signup, name='signup'),  # 회원가입 URL
@@ -47,6 +47,7 @@ urlpatterns = [
     path('quiz/', include('quiz.urls')),
     path('mine/', include('mine.urls')),
     path('review/', include('review.urls')),
+    path('chatbot/', include('chatbot.urls')),
     #path('__debug__/', include('debug_toolbar.urls')),
 ]
 

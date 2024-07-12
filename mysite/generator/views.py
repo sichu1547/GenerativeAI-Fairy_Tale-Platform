@@ -25,16 +25,20 @@ def index(request):
         return redirect(f"{reverse('login')}?next={request.path}")
     return render(request, 'generator/index.html')
 
+# 이야기를 페이지당 하나씩 분할하는 함수
+def paginate_story(generated_stories):
+    return generated_stories
+
 # GPT 시스템 역할 정의
 system_roles = [
-    "Make the entered story the beginning of a fairy tale, create a Korean sentence according to the entered content, connect the stories, and make the sentence end naturally with 100 tokens.",
-    "Using the information you entered, make the middle part of the connected fairy tale end in Korean with 100 tokens.",
-    "Using the information you entered, create the ending of the fairy tale with three connected lines of Korean context."
+    "Follow the input value, make the beginning of the story connected, create a Korean sentence according to the input content, connect the story, and make sure the complete sentence ends naturally with 100 tokens.",
+    "Please set 100 tokens to connect the previous content and the entered word, and end the middle part of the connected fairy tale in Korean with a complete sentence.",
+    "Uings the information you entered, create the ending of the fairy tale with three connected lines of Korean context."
 ]
 
 # 마지막 문장을 기반으로 질문 프롬프트 생성 함수
 def generate_question_prompt(last_sentence, stage):
-    prompt = f"앞서 생성된 마지막 문장에 있는 단어를 가지고 대답은 따로 하지말고 질문만 해\n{last_sentence}"
+    prompt = f"앞서 생성된 내용에서 마지막으로 있는 명사 단어를 가지고 대답은 따로 하지말고 질문만 해\n{last_sentence}"
     question_response = generate_response(prompt, "role for generating question")
     question = f"{stage}/3\n{question_response}"
     return question
@@ -72,32 +76,38 @@ def paginate_story(story, max_length=500):
 
 def create_story(request):
     if request.method == "POST":
+        # 초기 이야기와 기존 이야기 데이터를 가져옴
         initial_story = request.POST.get('initial_story')
-        story = request.POST.get('story', initial_story)
         generated_stories = request.POST.getlist('generated_stories', [])
         generated_images = request.POST.getlist('generated_images', [])
         stage = int(request.POST.get('stage', 0))
         user_input = request.POST.get('user_input', '')
 
+        # 스테이지가 0보다 크면 사용자 입력을 이야기 뒤에 추가
         if stage > 0:
-            story += " " + user_input
+            story = generated_stories[-1] + " " + user_input
+        else:
+            story = user_input
 
+        # 스테이지가 3보다 작은 경우, 이야기를 생성하는 단계를 진행
         if stage < 3:
             role = system_roles[stage]
             response = generate_response(story, role)
-            story += " " + response
             generated_stories.append(response)
             
+            # 생성된 이야기를 바탕으로 이미지를 생성하고 리스트에 추가
             image_url = generate_image(response)
             if not image_url:
                 image_url = ""
             generated_images.append(image_url)
 
+            # 마지막 문장에서 질문 프롬프트를 생성
             last_sentence = response.split('.')[-1].strip()
             question_prompt = generate_question_prompt(last_sentence, stage + 1)
 
+            # 생성된 이야기, 이미지, 질문 프롬프트, 스테이지 정보를 컨텍스트로 전달하여 렌더링
             context = {
-                'story': story,
+                'story': response,
                 'generated_stories': generated_stories,
                 'stage': stage + 1,
                 'question_prompt': question_prompt,
@@ -105,20 +115,23 @@ def create_story(request):
             }
             return render(request, 'generator/create_story.html', context)
         else:
+            # 스테이지가 3인 경우, 최종 이야기 결말을 생성
             role = system_roles[2]
             final_prompt = f"{story}\n이 이야기를 어떻게 마무리할까요?"
             final_response = generate_response(final_prompt, role, max_tokens=300)
-            story += " " + final_response
-            final_story_parts = paginate_story(story)
+            generated_stories.append(final_response)
+            final_story_parts = paginate_story(generated_stories)
 
+            # 최종 이야기와 이를 분할한 파트, 생성된 이야기 및 이미지 리스트를 컨텍스트로 전달하여 렌더링
             context = {
-                'final_story': story,
+                'final_story': " ".join(generated_stories),
                 'final_story_parts': final_story_parts,
                 'generated_stories': generated_stories,
                 'generated_images': generated_images
             }
             return render(request, 'generator/story_result.html', context)
     else:
+        # GET 요청인 경우 이야기 생성 페이지를 렌더링
         return render(request, 'generator/create_story.html')
     
 def generate_image(sentence):
