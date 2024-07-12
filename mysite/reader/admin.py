@@ -3,7 +3,7 @@ from django.urls import path
 from django.shortcuts import redirect, render
 import csv
 from django.http import HttpResponse
-from .models import Story
+from .models import *
 
 class StoryAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'category']
@@ -46,3 +46,8 @@ class StoryAdmin(admin.ModelAdmin):
         return render(request, self.upload_csv_template)
 
 admin.site.register(Story, StoryAdmin)
+
+class LogAdmin(admin.ModelAdmin):
+    list_display = ['story_title', 'question', 'answer']
+admin.site.register(LogEntry)
+

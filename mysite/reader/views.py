@@ -161,7 +161,7 @@ def generate_image_view(request):
 
 # Initialize OpenAI embeddings, Chroma database, and ChatOpenAI model
 embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
-persist_directory = os.path.join(settings.BASE_DIR, 'data')
+persist_directory = os.path.join(settings.BASE_DIR, 'database')
 database = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
 
 chat = ChatOpenAI(model="gpt-4o")
@@ -175,12 +175,9 @@ qa = ConversationalRetrievalChain.from_llm(
 
 @csrf_exempt
 def answer_question(request):
-    print('질문 받았어요!')
     if request.method == 'POST':
         question = request.POST.get('question', None)
         story_id = request.POST.get('story_id', None)
-        print(request.POST)
-        print(f':{question}, id: {story_id}')
         if question and story_id:
             story = get_object_or_404(Story, pk=story_id)
 
@@ -202,7 +199,7 @@ def answer_question(request):
             # Save to the database
             save_to_database(question, answer)
             
-            print(memory.load_memory_variables({})["chat_history"])
+            # print(memory.load_memory_variables({})["chat_history"])
 
             return JsonResponse({'answer': answer})
 

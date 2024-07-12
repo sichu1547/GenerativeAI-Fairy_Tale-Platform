@@ -103,8 +103,9 @@
             </div>
         </div>
     </div> {% endcomment %}
+    {% comment %} <button id="openModalBtn" class="vs1-container"><img src="{% static 'images/젖소.png' %}" alt="문의"/></button> {% endcomment %}
 
-    <button id="chat-button">Chat</button>
+    <button id="chat-button"><img src="{% static 'images/젖소.png' %}" alt="문의"/></button>
     <div id="chat-popup">
         <button class="close-popup">닫기</button>
         <h2>챗봇 질문</h2>
@@ -125,10 +126,10 @@
     <style>
         /* 필요한 CSS 스타일링은 여기에 추가 */
         #chat-button {
-            width: 60px;
-            height: 60px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            background-color: #4CAF50; /* 배경색 설정 */
+            background-color: transparent; /* 배경색 설정 */
             color: white;
             border: none;
             cursor: pointer;
