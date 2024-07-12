@@ -21,3 +21,11 @@ class Tag(models.Model):
     
     def __str__(self):
         return self.name
+    
+class LogEntry(models.Model):
+    datetime = models.DateTimeField(auto_now_add=True)
+    question = models.TextField()
+    answer = models.TextField()
+ 
+    def __str__(self):
+        return f"Question: {self.question[:]} \n Answer: {self.answer[:]}"
