@@ -166,9 +166,9 @@ ul.slides img {
                                                 </a>
                                             </li>
                                             {% endif %}
+                                            <li><a href="{% url 'reader:list' %}">읽기</a></li>
+                                            <li><a href="{% url 'generator:index' %}">만들기</a></li>
                                         {% endif %}
-                                        <li><a href="{% url 'reader:list' %}">읽기</a></li>
-                                        <li><a href="{% url 'generator:index' %}">만들기</a></li>
                                         <li>
                                             <a href="/" id="logout-link">로그아웃</a>
                                             <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
@@ -177,7 +177,9 @@ ul.slides img {
                                         </li>
                                         <li><a href="{% url 'multi_profile' %}">내 정보</a></li>
                                     {% else %}
-                                        <li><a href="{% url 'login' %}">로그인</a></li>
+                                        {% if request.path != '/myaccount/login/'%}
+                                            <li><a href="{% url 'login' %}">로그인</a></li>
+                                        {% endif %}
                                         <li><a href="{% url 'signup' %}">회원가입</a></li>
                                     {% endif %}
                                     {% if user.is_staff %}

@@ -6,6 +6,10 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 <div id="main" class role="main">
     <div id="shapely_home_parallax-2" class="widget shapely_home_parallax">
         <section class="cover fullscreen image-bg">
@@ -43,6 +47,14 @@
             <ul class="slide_pagination"></ul>
           </div>
         <div class="clearfix"></div>
+    </div>
+<!-- 출석 체크 달력 모달 -->
+    <div id="attendance-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>{{ profile_name }}님의 출석 달력</h2>
+            <div id="calendar"></div>
+        </div>
     </div>
 <!--수치-->
 <div class="num-container" id="num-container">
@@ -515,7 +527,84 @@ slide.addEventListener("mouseout", () => {
 });
 </script>
 <script>
-    
+$(document).ready(function() {
+    // 모달 열기
+    function openModal() {
+        $('#attendance-modal').show();
+        markAttendance();
+    }
+
+    // 모달 닫기
+    function closeModal() {
+        $('#attendance-modal').hide();
+    }
+    // 출석 체크 함수
+    function markAttendance() {
+        console.log('출석 체크 함수 호출됨'); // 디버그 메시지
+        $.ajax({
+            url: '{% url "attendance_check" %}',
+            type: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            success: function(data) {
+                if (data.status === 'ok') {
+                    console.log('출석 체크 성공'); // 디버그 메시지
+                    $('#calendar').fullCalendar('renderEvent', {
+                        start: moment().format('YYYY-MM-DD'), // 오늘 날짜를 가져옴
+                        allDay: true,
+                    });
+                } else if (data.status === 'already_checked') {
+                    console.log('이미 출석 체크됨'); // 디버그 메시지
+                } else {
+                    console.log('출석 체크 실패:', data.message); // 디버그 메시지
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('출석 체크 AJAX 요청 실패:', error); // 디버그 메시지
+            }
+        });
+    }
+    // 세션에서 모달 열기 플래그 확인
+    var showModal = "{{ request.session.show_attendance_modal|default:'false' }}" === 'True';
+    if (showModal) {
+        openModal();
+        // 플래그를 초기화하여 다시 새로고침할 때 모달이 자동으로 열리지 않도록 함
+        $.ajax({
+            url: '{% url "reset_show_attendance_modal" %}',
+            type: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+        });
+    }
+
+    // 모달 닫기 버튼 클릭 이벤트
+    $('.close').click(function() {
+        closeModal();
+    });
+
+    $('#calendar').fullCalendar({
+        header: {
+            left: 'prev',
+            center: 'title',
+            right: 'next'
+        },
+        editable: false,
+        droppable: false,
+        events: function(start, end, timezone, callback) {
+            var attendanceDates = {{ attendance_dates|safe }};
+            var events = [];
+            for (var i = 0; i < attendanceDates.length; i++) {
+                events.push({
+                    start: attendanceDates[i],
+                    allDay: true,
+                    color: 'transparent'
+                });
+            }
+            callback(events);
+        },
+        eventRender: function(event, element) {
+            element.addClass('fc-day-checked');
+        }
+    });
+});
 //숫자 카운트 애니메이션
 $(document).ready(function () {
     function isElementInViewport(el) {
@@ -557,4 +646,182 @@ $(document).ready(function () {
     $(window).on('load', checkAnimation); // Initial check on page load
 });
 </script>
+<style>
+    @keyframes stamp {
+        0% {
+            transform: scale(4) rotate(15deg);
+            opacity: 0;
+        }
+        50% {
+            transform: scale(1.2) rotate(-5deg);
+            opacity: 1;
+        }
+        70% {
+            transform: scale(1.1) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+        }
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: #fffcf2;
+        margin: 2% auto;
+        padding: 20px;
+        border: 1px solid #f1c40f;
+        max-width: 700px;
+        height: 650px; /* 모달 높이를 650px로 설정 */
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        border-radius: 15px;
+        text-align: center;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    #calendar {
+        background-color: #ecf0f1;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        flex-grow: 1; /* 캘린더가 남은 공간을 채우도록 설정 */
+        width: 100%; /* 캘린더가 모달의 전체 너비를 차지하도록 설정 */
+        height: 100%; /* 캘린더 높이를 100%로 설정 */
+        overflow: hidden; /* 스크롤 바가 나타나지 않도록 설정 */
+    }
+    .fc-day-number {
+        position: relative;
+        z-index: 2; /* 숫자가 도장 위에 보이도록 z-index 조절 */
+        color:black;
+    }
+
+    .fc-event {
+        animation: stamp 0.5s ease-in-out forwards;
+        background: none;
+        background-image: url('/static/images/good_stamp.png');
+        background-size: 50%;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        background-repeat: no-repeat;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        background-position: center;
+        z-index: 1;
+        line-height:4.5;
+    }
+    .fc-row {
+        height: 20% !important; /* Adjusted height to make cells larger */
+    }
+
+    .fc-bg .fc-day, .fc-content-skeleton table {
+        height: 100% !important;
+    }
+
+    .fc-content-skeleton {
+        height: 100%;
+    }
+    /* 캘린더 구성 요소의 크기 및 스타일 조정 */
+    .fc-view-container {
+        height: 100%;
+    }
+    .fc-day-grid-container {
+        height: 100%;
+        overflow: hidden !important; /* 스크롤 바 제거 */
+    }
+
+    .fc-day-grid {
+        height: 100%;
+    }
+
+    .fc-row {
+        height: 16.6%; /* 각 행의 높이를 균등하게 설정 (총 6줄을 고려) */
+    }
+
+    /* 이벤트 스타일 */
+    .fc-event {
+        border: none;
+        border-radius: 5px;
+        color: white;
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .fc-day-header {
+        background-color: #e74c3c;
+        color: white;
+        font-family: 'Noto Sans KR', sans-serif;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+    .fc-title {
+        white-space: normal;
+    }
+
+    h2 {
+        font-family: 'Noto Sans KR', sans-serif;
+        color: #3498db;
+        display: inline-block; /* 버튼과 제목을 같은 줄에 표시 */
+    }
+
+    .fun-button {
+        display: inline-block; /* 버튼을 같은 줄에 표시 */
+        background-color: #f39c12;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin-left: 10px; /* 제목과 버튼 사이에 간격 추가 */
+        border-radius: 10px;
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .fun-button:hover {
+        background-color: #e67e22;
+    }
+
+    .close {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        color: #e74c3c;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #c0392b;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* 이전/다음 버튼 위치 조정 */
+    .fc-prev-button {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .fc-next-button {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+</style>
 {% endblock %}
