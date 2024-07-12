@@ -86,9 +86,9 @@ def generate_image(sentence):
         print('성공')
         return image_url
 
-    # except Exception as e:
-    #     print('실패')
-    return ""
+    except Exception as e:
+        print('실패')
+        return ""
 
 
 def story_detail(request, id):
