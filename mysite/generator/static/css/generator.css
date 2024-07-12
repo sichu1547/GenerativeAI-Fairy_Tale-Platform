@@ -83,12 +83,18 @@ p {
     line-height: 130%;
     display:flex;
     flex-direction: column;
+    justify-content: space-between;
 }
+
+
 
 #story-content {
     max-height: 150px;
+    overflow-y: auto;
     margin-top: 0 !important;
     margin-bottom: 10px !important;
+    scrollbar-width: thin;  /* 스크롤바 얇게 설정 */
+    scrollbar-color: #ffa07a transparent;  /* 스크롤바 색상 및 트랙 색상 */
 }
 
 .story-image {
@@ -300,9 +306,9 @@ input[type="text"] {
     }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 767px) {    
     p {
-        font-size: 16px !important;
+        font-size: 22px !important;
         line-height: 120%;
     }
 
@@ -319,15 +325,25 @@ input[type="text"] {
     }
 
     #final-book {
-        min-height: auto;
+        flex-direction: column;
+        justify-content: space-around;
+        align-content: stretch;
     }
 
     .story-container{
         min-height: auto;
     }
+
+    #story-content {
+        font-size: 20px !important;
+    }
 }
 
 @media (max-width: 450px) {
+    p {
+        font-size: 20px !important;
+        line-height: 120%;
+    }
     #prev-btn::before {
         content: "←"; 
     }
