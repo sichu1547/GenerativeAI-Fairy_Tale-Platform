@@ -80,6 +80,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "myaccount.custom_middleware.UserSessionMiddleware",  # 사용자 정의 미들웨어 추가
     "allauth.account.middleware.AccountMiddleware",
+    'myaccount.profile_middleware.ProfileMiddleware',
     #"debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 #INTERNAL_IPS = ['127.0.0.1',] #temp

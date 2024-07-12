@@ -8,7 +8,8 @@ from .forms import CustomUserCreationForm, ProfileForm
 from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.conf import settings
-
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 # def base(request):
 #     return render(request, 'base.html')
 
@@ -109,8 +110,20 @@ def password_reset_complete(request):
 @login_required
 def select_account(request):
     profiles = request.user.profiles.all()
-    print(profiles)
-    return render(request, 'registration/select_account.html', {'profiles': profiles}) 
+    next_url = request.GET.get('next', request.POST.get('next', 'index'))
+    print(next_url)
+    if request.method == "POST":
+        selected_profile_id = request.POST.get('profile_id')
+        if selected_profile_id:
+            profile = get_object_or_404(Profile, id=selected_profile_id, user=request.user)
+            request.session['selected_profile_id'] = profile.id
+            request.session['selected_profile_avatar'] = profile.avatar.url
+            request.session['selected_profile_name'] = profile.name
+            return redirect(next_url)
+        else:
+            #messages.error(request, "프로필을 선택하세요.")
+            return redirect('select_account')
+    return render(request, 'registration/select_account.html', {'profiles': profiles, 'next': next_url})
 
 @login_required
 def profile(request):
@@ -176,6 +189,7 @@ def choose_profile(request, profile_id):
     request.session['selected_profile_id'] = profile.id
     request.session['selected_profile_avatar'] = profile.avatar.url
     request.session['selected_profile_name'] = profile.name
+    print(123213)
     return redirect('index')
 
 from .models import ReadingHistory

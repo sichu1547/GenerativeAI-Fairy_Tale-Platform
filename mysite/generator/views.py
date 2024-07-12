@@ -21,6 +21,8 @@ client = OpenAI(
 )
 
 def index(request):
+    if not request.user.is_authenticated:
+        return redirect(f"{reverse('login')}?next={request.path}")
     return render(request, 'generator/index.html')
 
 # GPT 시스템 역할 정의

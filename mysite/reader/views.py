@@ -17,7 +17,7 @@ from django.views import View
 from myaccount.models import Profile
 from myaccount.models import ReadingHistory
 from django.utils.decorators import method_decorator
-from quiz.models import ReaderStory
+    
 def index(request):
     return render(request, 'reader/index.html')
 def search(request):
@@ -86,6 +86,8 @@ def generate_image(sentence):
 
 
 def story_detail(request, id):
+    if not request.user.is_authenticated:
+        return redirect(f"{reverse('login')}?next={request.path}")
     story = get_object_or_404(Story, id=id)
     profile_id = request.session.get('selected_profile_id')
 
@@ -100,8 +102,9 @@ def story_detail(request, id):
         print("Profile ID not found in session")
 
     keyword = request.GET.get('keyword')
-    sentences = story.body.split('\r\n\r\n\r\n') 
-    
+    patterns = r'\r\n\r\n\r\n|\r\n\r\n \r\n|\r\n \r\n \r\n|\r\n \r\n\r\n'
+    sentences = re.split(patterns, story.body)
+
     # 이미지
     image_urls = [generate_image(sentences[0])] if sentences else []
 

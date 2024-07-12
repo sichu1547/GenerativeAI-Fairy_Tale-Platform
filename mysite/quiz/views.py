@@ -30,10 +30,8 @@ class QuizView(View):
             if not story:
                 return render(request, 'quiz/no_story.html')
 
-            paragraphs = story.body.split('\n\n')
-            sentences = []
-            for paragraph in paragraphs:
-                sentences.extend(re.split(r'(?<=\.) ', paragraph))
+            patterns = r'\r\n\r\n\r\n|\r\n\r\n \r\n|\r\n \r\n \r\n|\r\n \r\n\r\n'
+            sentences = re.split(patterns, story.body)
 
             question, answer, example = self.generate_questions_with_gpt(sentences, id)
             self.save_question(id, question, answer)
