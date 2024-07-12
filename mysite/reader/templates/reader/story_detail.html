@@ -85,8 +85,97 @@
             <button class="arrow-button" id="next_button">다음 페이지로 →</button>
         </div>
     </div>
-    {% load static %}
 
+    {% comment %} <button id="openModalBtn" class="vs1-container"><img src="{% static 'images/젖소.png' %}" alt="문의"/></button> {% endcomment %}
+
+    {% comment %} <div id="chatModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="chat-header">
+                <h2>Chat</h2>
+            </div>
+            <div class="chat-body" id="chatBody">
+                <!-- Chat messages will go here -->
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="chatInput" placeholder="Type a message...">
+                <button id="sendBtn">Send</button>
+            </div>
+        </div>
+    </div> {% endcomment %}
+
+    <button id="chat-button">Chat</button>
+    <div id="chat-popup">
+        <button class="close-popup">닫기</button>
+        <h2>챗봇 질문</h2>
+        <form id="chat-form">
+            <input type="text" id="user-question" name="user-question" placeholder="질문을 입력하세요...">
+            <button id="q-button" type="submit">질문하기</button>
+        </form>
+        
+        <!-- 음성 인식 버튼 -->
+        <button id="speech-button">음성으로 질문하기</button>
+
+        <div id="answer-container">
+            <h2>챗봇 답변</h2>
+            <p id="answer"></p>
+        </div>
+    </div>
+    {% load static %}
+    <style>
+        /* 필요한 CSS 스타일링은 여기에 추가 */
+        #chat-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #4CAF50; /* 배경색 설정 */
+            color: white;
+            border: none;
+            cursor: pointer;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        #chat-popup {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 300px;
+            background: white;
+            border: 1px solid #ccc;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        #chat-popup h2 {
+            margin-top: 0;
+        }
+        
+        #chat-popup button.close-popup {
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        #speech-button, #q-button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         let currentPage = 0;
         const sentences = {{ story|safe }};
@@ -238,6 +327,126 @@
         }
     
         updateDownloadLink(); // 페이지 로드 시 다운로드 링크 초기화
+
+
+
+    ///////////////////////// new 챗봇script ///////////////////////////////////////
+    $(document).ready(function() {
+        $('#chat-form').submit(function(event) {
+            event.preventDefault();
+            var question = $('#user-question').val();
+            $.ajax({
+                type: 'POST',
+                url: '{% url "reader:answer_question" %}',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'question': question,
+                    'story_id': '{{ id }}'
+                },
+                dataType: 'json',
+                success: function(data) {
+                    $('#answer').text(data.answer);
+                    $('#user-question').val('');
+                }
+            });
+        });
+        
+        $('#chat-button').click(function() {
+            $('#chat-popup').toggle();
+        });
+        
+        $('.close-popup').click(function() {
+            $('#chat-popup').hide();
+        });
+        
+        // 음성 인식 시작
+        $('#speech-button').click(function() {
+            startRecognition();
+        });
+
+        function startRecognition() {
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                var recognition = new SpeechRecognition();
+                recognition.lang = 'ko-KR';
+                recognition.start();
+
+                recognition.onresult = function(event) {
+                    var transcript = event.results[0][0].transcript;
+                    document.getElementById('user-question').value = transcript;
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Recognition error:', event.error);
+                };
+
+                recognition.onend = function() {
+                    console.log('Recognition ended');
+                };
+            } else {
+                alert('Speech recognition not supported in this browser');
+            }
+        }
+    });
+    ///////////////////////// 챗봇script ///////////////////////////////////////
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const modal = document.getElementById("chatModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalSpan = document.getElementsByClassName("close")[0];
+        const sendBtn = document.getElementById("sendBtn");
+        const chatInput = document.getElementById("chatInput");
+        const chatBody = document.getElementById("chatBody");
+    
+        openModalBtn.onclick = function() {
+            modal.style.display = "block";
+        }
+    
+        closeModalSpan.onclick = function() {
+            modal.style.display = "none";
+        }
+    
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    
+        sendBtn.onclick = function() {
+            const message = chatInput.value.trim();
+            if (message !== "") {
+                // 사용자 메시지를 추가
+                const userMessageElement = document.createElement("div");
+                userMessageElement.textContent = "User: " + message;
+                chatBody.appendChild(userMessageElement);
+
+                // 챗봇 서버에 메시지를 전송하고 응답을 받음
+                fetch('/chatbot/api/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ question: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const botMessageElement = document.createElement("div");
+                    botMessageElement.textContent = "Bot: " + data.response;
+                    chatBody.appendChild(botMessageElement);
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                });
+
+                chatInput.value = "";
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+        }
+    
+        chatInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendBtn.click();
+            }
+        });
+    });
     </script>
     
 </body>
