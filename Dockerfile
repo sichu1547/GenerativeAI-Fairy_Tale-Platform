@@ -20,14 +20,14 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 # COPY start.sh /usr/local/bin/start.sh
 # RUN chmod +x /usr/local/bin/start.sh
 
-ENV DJANGO_SUPERUSER_USERNAME=admin
-ENV DJANGO_SUPERUSER_EMAIL=admin@example.com
-ENV DJANGO_SUPERUSER_PASSWORD=adminpass
+# ENV DJANGO_SUPERUSER_USERNAME=admin
+# ENV DJANGO_SUPERUSER_EMAIL=admin@example.com
+# ENV DJANGO_SUPERUSER_PASSWORD=adminpass
 # Copy project
 COPY ./mysite /app
 
 # Collect static files
-RUN python manage.py collectstatic --noinput
+# RUN python manage.py collectstatic --noinput
 
 
 # CMD ["/usr/local/bin/start.sh"]
