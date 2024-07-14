@@ -1,6 +1,6 @@
 FROM python:3.11.9
 
-WORKDIR /usr/src/app
+WORKDIR /app
 # 이 문장은 작업 디렉토리를 '/usr/src/app'으로 설정합니다. 이 디렉토리는 이미지 내에서 모든 작업이 수행될 위치입니다.
 # 쉽게는 manage.py를 가지고 있는 폴더의 위치라고 생각하면 됩니다.
 
@@ -8,24 +8,30 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYECODE 1
 ENV PYTHONUNBUFFERED 1
 
-COPY requirements.txt ./
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
+COPY ./mysite/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 # 이 문장은 Django를 이미지내에서 실행시키기 위해 pip으로 설치해야할 내용들을 설치하는 명령을 실행합니다. 
 # requirements.txt에 적혀있는 pip들을 설치하게 됩니다.
 
-COPY . .
+# COPY . .
 # 이 문장은 현재 디렉토리의 모든 파일과 폴더를 현재 작업 디렉토리(`/usr/src/app`)로 복사합니다. 
 # 즉, 현재 디렉토리의 모든 파일과 폴더가 이미지 내의 `/usr/src/app` 디렉토리로 복사됩니다.
 
-COPY start.sh /usr/local/bin/start.sh
-RUN chmod +x /usr/local/bin/start.sh
+# COPY start.sh /usr/local/bin/start.sh
+# RUN chmod +x /usr/local/bin/start.sh
 
 ENV DJANGO_SUPERUSER_USERNAME=admin
 ENV DJANGO_SUPERUSER_EMAIL=admin@example.com
 ENV DJANGO_SUPERUSER_PASSWORD=adminpass
+# Copy project
+COPY ./mysite /app
 
-CMD ["/usr/local/bin/start.sh"]
+# Collect static files
+RUN python manage.py collectstatic --noinput
+
+
+# CMD ["/usr/local/bin/start.sh"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "mysite.wsgi:application"]
 # 이 문장은 컨테이너가 실행될 때 기본으로 실행할 명령을 지정합니다. WORKDIR에서 지정한 디렉터리에서 실행되는 문장입니다. 
 # 만약 gunicorn을 사용한다면 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"] 이 CMD를 사용합니다.
 

@@ -1,4 +1,4 @@
-name: Deploy to Docker and EC2
+name: Deploy to Docker and EC2 with nginx
 
 on:
   push:
@@ -25,19 +25,9 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
-        context: ./mysite
-        file: ./mysite/Dockerfile
+        context: .
         push: true
-        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/dev-web:latest
-
-    # - name: Copy docker-compose.yml to server
-    #   uses: appleboy/scp-action@v0.1.6
-    #   with:
-    #     host: ${{ secrets.SERVER_IP }}
-    #     username: ${{ secrets.SERVER_USER }}
-    #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-    #     source: 'docker-compose.yml'
-    #     target: '~/app/docker-compose.yml'
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/mealkid:latest
 
     - name: Deploy to server
       uses: appleboy/ssh-action@v0.1.6
@@ -46,8 +36,7 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/dev-web:latest
-          sudo docker stop meal_kid_dev || true
-          sudo docker rm meal_kid_dev || true
-          sudo docker rmi $(sudo docker images -q)
-          sudo docker run -d -p 8000:8000 --name meal_kid_dev ${{ secrets.DOCKER_HUB_USERNAME }}/dev-web:latest
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/mealkid:latest
+          cd /home/ubuntu/mealkid
+          sudo docker-compose down
+          sudo docker-compose up
