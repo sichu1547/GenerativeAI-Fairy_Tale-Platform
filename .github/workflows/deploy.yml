@@ -13,6 +13,24 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Cache Python packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r ./mysite/requirements.txt
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
@@ -28,6 +46,8 @@ jobs:
         context: .
         push: true
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/mealkid:latest
+        cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/mealkid:cache
+        cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/mealkid:cache,mode=max
 
     - name: Deploy to server
       uses: appleboy/ssh-action@v0.1.6
@@ -36,7 +56,8 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/mealkid:latest
           cd /home/ubuntu/mealkid
-          sudo docker-compose down
-          sudo docker-compose up
+          sudo docker-compose stop mealkid
+          sudo docker-compose rm -f mealkid
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/mealkid:latest
+          sudo docker-compose up -d mealkid
