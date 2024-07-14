@@ -175,7 +175,11 @@ ul.slides img {
                                                 {% csrf_token %}
                                             </form>
                                         </li>
-                                        <li><a href="{% url 'multi_profile' %}">내 정보</a></li>
+                                        {% if request.session.selected_profile_id %}
+                                        <li><a href="{% url 'profile_detail' request.session.selected_profile_id %}">내 정보</a></li>
+                                        {% else %}
+                                            <li><a href="{% url 'profile' %}">내 정보</a></li>
+                                        {% endif %}
                                     {% else %}
                                         {% if request.path != '/myaccount/login/'%}
                                             <li><a href="{% url 'login' %}">로그인</a></li>

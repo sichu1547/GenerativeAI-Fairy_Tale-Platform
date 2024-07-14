@@ -20,27 +20,25 @@ from django.shortcuts import render
 from myaccount import views as account_views
 from reader.models import Story
 def base(request):
-    return render(request,'base.html')
+    return render(request, 'base.html')
 
 def index(request):
+    selected_profile_id = request.session.get('selected_profile_id') 
     keyword = request.GET.get('keyword', '')
-    #search_type = request.GET.get('search_type', 'title')
 
     if keyword:
         stories = Story.objects.filter(title__icontains=keyword)   
-        return render(request, 'index.html', {'stories': stories, 'keyword': keyword})
+        return render(request, 'index.html', {'stories': stories, 'keyword': keyword, 'selected_profile_id': selected_profile_id})
     else: 
-        return render(request, 'index.html')
+        return render(request, 'index.html', {'selected_profile_id': selected_profile_id})
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', index),
-    path('base/', base),
-    # path('myaccount/', include('django.contrib.auth.urls')),  
+    path('base/', base), 
     path('myaccount/', include('myaccount.urls')),
     path('myaccount/', include('allauth.urls')),  
     path('signup/', account_views.signup, name='signup'),  # 회원가입 URL
-    #path('myaccounts/profile/', account_views.profile, name='profile'),
     path('', account_views.index, name='index'),
     path('reader/', include('reader.urls')),
     path('generator/', include('generator.urls')),
@@ -48,7 +46,6 @@ urlpatterns = [
     path('mine/', include('mine.urls')),
     path('review/', include('review.urls')),
     path('chatbot/', include('chatbot.urls')),
-    #path('__debug__/', include('debug_toolbar.urls')),
 ]
 
 from django.conf import settings

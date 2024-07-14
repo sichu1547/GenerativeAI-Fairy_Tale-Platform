@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import UserSessionData, Profile
+from .models import UserSessionData, Profile, ReadingHistory
 from django.http import HttpResponse
 from .forms import CustomUserCreationForm, ProfileForm
 from django.utils.crypto import get_random_string
@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.http import JsonResponse
 from django.urls import reverse
 
+from review.models import Review
 # def base(request):
 #     return render(request, 'base.html')
 
@@ -113,7 +114,8 @@ def password_reset_complete(request):
 def select_account(request):
     profiles = request.user.profiles.all()
     next_url = request.GET.get('next', request.POST.get('next', 'index'))
-    print(next_url)
+    selected_profile_id = request.POST.get('profile_id')
+
     if request.method == "POST":
         selected_profile_id = request.POST.get('profile_id')
         if selected_profile_id:
@@ -121,10 +123,12 @@ def select_account(request):
             request.session['selected_profile_id'] = profile.id
             request.session['selected_profile_avatar'] = profile.avatar.url
             request.session['selected_profile_name'] = profile.name
+
             return redirect(next_url)
         else:
             #messages.error(request, "프로필을 선택하세요.")
             return redirect('select_account')
+
     return render(request, 'registration/select_account.html', {'profiles': profiles, 'next': next_url})
 
 @login_required
@@ -149,41 +153,18 @@ def profile(request):
     profiles = request.user.profiles.all()
     return render(request, 'registration/profile.html', {'form': form, 'profiles': profiles})
 
-@login_required
-def multiprofile(request):
-    selected_profile_id = request.session.get('selected_profile_id')
-    if selected_profile_id:
-        profiles = Profile.objects.filter(user=request.user, id=selected_profile_id)
-    else:
-        profiles = Profile.objects.filter(user=request.user)
-
-    if request.method == 'POST':
-        profile_id = request.POST.get('profile_id')
-        if profile_id:
-            profile = get_object_or_404(Profile, id=profile_id, user=request.user)
-            form = ProfileForm(request.POST, request.FILES, instance=profile)
-        else:
-            form = ProfileForm(request.POST, request.FILES)
-            if request.user.profiles.count() >= 4:
-                return HttpResponse("최대 4개까지만 생성할 수 있습니다.")
-
-        if form.is_valid():
-            profile = form.save(commit=False)
-            profile.user = request.user
-            profile.save()
-            return redirect('profile')
-    else:
-        form = ProfileForm()
-
-    return render(request, 'registration/multi_profile.html', {'form': form, 'profiles': profiles})
-
-@login_required
-def profile_delete(request, pk):
+def profile_detail(request, pk):
     profile = get_object_or_404(Profile, pk=pk, user=request.user)
+    reading_histories = ReadingHistory.objects.filter(profile=profile).order_by('-read_at')[:5]
+    reviews = Review.objects.filter(profile=profile).order_by('-created_at')[:5]    
     if request.method == 'POST':
-        profile.delete()
-        return redirect('profile')
-    return redirect('profile')
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile_detail', pk=profile.pk)
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'registration/profile_detail.html', {'form': form, 'profile': profile, 'reading_histories': reading_histories, 'reviews': reviews})
 
 @login_required
 def choose_profile(request, profile_id):
@@ -192,7 +173,7 @@ def choose_profile(request, profile_id):
     request.session['selected_profile_avatar'] = profile.avatar.url
     request.session['selected_profile_name'] = profile.name
     request.session['show_attendance_modal'] = True
-    return redirect('index')
+    return redirect('base')
 
 from .models import ReadingHistory
 @login_required
@@ -206,19 +187,11 @@ def reading_history(request, profile_id):
 
     return render(request, 'registration/reading_history.html', {'reading_histories': reading_histories})
 
-# @login_required
-# def current_profile(request):
-#     profile_id = request.session.get('selected_profile_id')
-#     if profile_id:
-#         profile = get_object_or_404(Profile, id=profile_id, user=request.user)
-#         return HttpResponse(f"Current Profile: {profile.name}")
-#     else:
-#         return HttpResponse("No profile selected")
-
 @login_required
 def attendance_check(request):
     if request.method == 'POST':
         selected_profile_id = request.session.get('selected_profile_id')
+        
         if not selected_profile_id:
             return JsonResponse({'status': 'fail', 'message': 'No profile selected'}, status=400)
         
@@ -241,3 +214,26 @@ from django.views.decorators.csrf import csrf_exempt
 def reset_show_attendance_modal(request):
     request.session['show_attendance_modal'] = False
     return JsonResponse({'status': 'ok'})
+
+def edit_profile(request, pk):
+    profile = get_object_or_404(Profile, pk=pk, user=request.user)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile', pk=profile.pk) 
+    else:
+        form = ProfileForm(instance=profile)
+    return redirect('profile')
+
+@login_required
+def profile_delete(request, pk):
+    profile = get_object_or_404(Profile, pk=pk, user=request.user)
+    if request.method == 'POST':
+        profile.delete()
+        if request.session.get('selected_profile_id') == pk:
+            del request.session['selected_profile_id']
+            del request.session['selected_profile_avatar']
+            del request.session['selected_profile_name']
+        return redirect('profile')  # 모든 프로필 목록으로 리다이렉트
+    return redirect('profile')

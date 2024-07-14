@@ -164,3 +164,33 @@ html, body {
         opacity: 1;
     }
 }
+.warning-message {
+    display: none; /* 처음에는 보이지 않도록 설정 */
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 10px 0;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    transition: opacity 1s ease-in-out;
+}
+
+.warning-message.show {
+    display: block;
+    opacity: 1;
+}
+
+.warning-message.hide {
+    opacity: 0;
+}
+
+.warning-message .close-btn {
+    float: right;
+    font-size: 20px;
+    cursor: pointer;
+    color: #856404;
+}

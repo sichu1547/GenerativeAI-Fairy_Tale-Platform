@@ -4,10 +4,8 @@
 
 <head>
     <title>{% block title %}👤내 정보👤</title>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-   
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
 </head>
@@ -46,13 +44,13 @@
                     <li class="profile-item">
                         <img class="profile-img" src="{{ profile.avatar.url }}" alt="Profile Image" width="50" height="50">
                         <label class="profile-name">{{ profile.name }}</label>
-                        <button type="button" id="edit-button" onclick="editProfile('{{ profile.id }}', '{{ profile.name }}')">수정하기</button>
-                        <form method="post" action="{% url 'profile_delete' profile.id %}" style="display:inline;">
+                        <button type="button" id="edit-button" onclick="location.href='{% url 'profile_detail' profile.id %}'">수정하기</button>
+                        <form method="post" action="{% url 'profile_delete' profile.pk %}" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit" id="delete-button">삭제하기</button>
                         </form>
-                        <button type="button" id="edit-button" onclick="location.href='{% url 'review:review_list' profile.id %}'">독후감 보기</button>
-                        <button type="button" id="edit-button" onclick="location.href='{% url 'reading_history' profile.id %}'">열람 기록 보기</button>
+                        {% comment %} <button type="button" id="edit-button" onclick="location.href='{% url 'review:review_list' profile.id %}'">독후감 보기</button>
+                        <button type="button" id="edit-button" onclick="location.href='{% url 'reading_history' profile.id %}'">열람 기록 보기</button> {% endcomment %}
                     </li>
                     {% endfor %}
                 </ul>

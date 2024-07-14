@@ -1,16 +1,16 @@
-from django.shortcuts import redirect, get_object_or_404
-from django.urls import reverse
+from django.urls import reverse, resolve
+from django.shortcuts import get_object_or_404, redirect
+from django.utils.deprecation import MiddlewareMixin
 from myaccount.models import Profile
 
-class ProfileMiddleware:
+class ProfileMiddleware(MiddlewareMixin):
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
         allowed_paths = [
             reverse('select_account'),
-            reverse('profile'),
-            reverse('logout')
+            reverse('logout'),
         ]
 
         if request.user.is_authenticated:
@@ -23,8 +23,11 @@ class ProfileMiddleware:
                     allowed_paths.append(choose_profile_url)
                 except Profile.DoesNotExist:
                     pass
-            
-            if not selected_profile_id and request.path not in allowed_paths:
+
+            path_resolver = resolve(request.path)
+            if path_resolver.url_name in ['edit_profile', 'profile_delete', 'profile', 'profile_detail'] or request.path in allowed_paths:
+                pass
+            elif not selected_profile_id:
                 return redirect(reverse('select_account') + '?next=' + request.path)
 
         response = self.get_response(request)
