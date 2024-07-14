@@ -263,3 +263,19 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = denv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = denv('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Superuser 자동 생성
+if os.getenv('DJANGO_SUPERUSER_USERNAME'):
+    from django.contrib.auth.management.commands.createsuperuser import get_user_model
+    from django.core.management.base import CommandError
+
+    UserModel = get_user_model()
+
+    try:
+        UserModel.objects.get(username=os.getenv('DJANGO_SUPERUSER_USERNAME'))
+    except UserModel.DoesNotExist:
+        UserModel._default_manager.db_manager('default').create_superuser(
+            username=os.getenv('DJANGO_SUPERUSER_USERNAME'),
+            email=os.getenv('DJANGO_SUPERUSER_EMAIL'),
+            password=os.getenv('DJANGO_SUPERUSER_PASSWORD')
+        )
