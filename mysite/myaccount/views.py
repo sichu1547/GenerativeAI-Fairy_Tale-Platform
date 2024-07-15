@@ -11,7 +11,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.http import JsonResponse
 from django.urls import reverse
-
+from django.core.paginator import Paginator
 from review.models import Review
 # def base(request):
 #     return render(request, 'base.html')
@@ -156,8 +156,17 @@ def profile(request):
 
 def profile_detail(request, pk):
     profile = get_object_or_404(Profile, pk=pk, user=request.user)
-    reading_histories = ReadingHistory.objects.filter(profile=profile).order_by('-read_at')[:5]
-    reviews = Review.objects.filter(profile=profile).order_by('-created_at')[:5]    
+    reading_histories = ReadingHistory.objects.filter(profile=profile).order_by('-read_at')
+    reviews = Review.objects.filter(profile=profile).order_by('-created_at')
+
+    paginator_histories = Paginator(reading_histories, 5)  # 페이지당 5개의 항목을 표시
+    page_number_histories = request.GET.get('page_histories', 1)
+    page_histories = paginator_histories.get_page(page_number_histories)
+
+    paginator_reviews = Paginator(reviews, 5)  # 페이지당 5개의 항목을 표시
+    page_number_reviews = request.GET.get('page_reviews', 1)
+    page_reviews = paginator_reviews.get_page(page_number_reviews)
+        
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
@@ -165,7 +174,7 @@ def profile_detail(request, pk):
             return redirect('profile_detail', pk=profile.pk)
     else:
         form = ProfileForm(instance=profile)
-    return render(request, 'registration/profile_detail.html', {'form': form, 'profile': profile, 'reading_histories': reading_histories, 'reviews': reviews})
+    return render(request, 'registration/profile_detail.html', {'form': form, 'profile': profile, 'page_histories': page_histories, 'page_reviews': page_reviews,})
 
 @login_required
 def choose_profile(request, profile_id):
