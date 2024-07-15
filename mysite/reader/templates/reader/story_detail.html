@@ -212,25 +212,25 @@
         <img src="{% static 'images/젖소.png' %}" alt="챗봇"/>
         <p class="tooltip">밀키에게 질문하기💡</p>
     </button>
-    <div id="chat-popup">
-        <div id="chatbot-buttons">
-            <label id="chatbot-label">밀키에게 질문하기💡</label>
-            <button class="close-popup">✖️</button>
-        </div>
+    <div id="chat-popup" class="resizable">
         <form id="chat-form">
-            <div id="answer-container">
-                <p class="message bot">「{{title}}」 에 대해 물어봐😊</p> <!-- 초기 메시지 -->
-                <!-- 주고받은 질답 띄울 부분 -->
-            </div>
-
-            <input type="text" id="user-question" name="user-question" placeholder="질문을 입력하세요...">
-
             <div id="chatbot-buttons">
-                <button id="q-button" type="submit">질문하기</button>
-                <button id="speech-button">🎙️</button>
+                <label id="chatbot-label">밀키에게 질문하기💡</label>
+                <button class="close-popup">✖️</button>
             </div>
-        </form>
+                <div id="answer-container">
+                    <p class="message bot">「{{title}}」 에 대해 물어봐😊</p> <!-- 초기 메시지 -->
+                    <!-- 주고받은 질답 띄울 부분 -->
+                </div>
 
+                <input type="text" id="user-question" name="user-question" placeholder="질문을 입력하세요...">
+
+                <div id="chatbot-buttons">
+                    <button id="q-button" type="submit">질문하기</button>
+                    <button id="speech-button">🎙️</button>
+                </div>
+        </form>
+        <div class="resizer"></div> <!-- 리사이즈 핸들 추가 -->
 
     </div>
 
@@ -533,11 +533,11 @@ for (let i = 1; i <= 5; i++) {
     
        
         $('#chat-button').click(function() {
-            $('#chat-popup').toggle();
+            $('#chat-popup').fadeToggle(300); // 나타나는 속도 300ms
         });
-       
+
         $('.close-popup').click(function() {
-            $('#chat-popup').hide();
+            $('#chat-popup').fadeOut(300); // 사라지는 속도 300ms
         });
        
         // 음성 인식 시작
@@ -645,8 +645,87 @@ for (let i = 1; i <= 5; i++) {
             if (event.key === "Enter") {
                 sendBtn.click();
             }
-        });
+        });        
+
     });
+
+    // 챗봇 드래그 앤 드롭, 리사이즈
+    $(document).ready(function() {
+        var $chatPopup = $('#chat-popup');
+        var isDragging = false;
+        var startX, startY, initialMouseX, initialMouseY;
+
+    
+        // 드래그 앤 드롭 이벤트 핸들러
+        $chatPopup.on('mousedown', function(e) {
+            if ($(e.target).is('#user-question')) {
+                return; // #user-question에서 mousedown 이벤트가 발생하면 드래그를 시작하지 않음
+            }
+            isDragging = true;
+            startX = $chatPopup.offset().left;
+            startY = $chatPopup.offset().top;
+            initialMouseX = e.clientX;
+            initialMouseY = e.clientY;
+            $(document).on('mousemove.draggable', doDrag);
+            $(document).on('mouseup.draggable', stopDrag);
+            return false;
+        });
+    
+        function doDrag(e) {
+            if (isDragging) {
+                var dx = e.clientX - initialMouseX;
+                var dy = e.clientY - initialMouseY;
+                $chatPopup.css({
+                    top: startY + dy,
+                    left: startX + dx
+                });
+                e.preventDefault();
+            }
+        }
+    
+        function stopDrag() {
+            isDragging = false;
+            $(document).off('mousemove.draggable');
+            $(document).off('mouseup.draggable');
+        }
+    
+        // 리사이즈 이벤트 핸들러
+        var isResizing = false;
+        var initialWidth, initialHeight;
+    
+        $('.resizer').on('mousedown', function(e) {
+            isResizing = true;
+            initialWidth = $chatPopup.width();
+            initialHeight = $chatPopup.height();
+            initialMouseX = e.clientX;
+            initialMouseY = e.clientY;
+            $(document).on('mousemove.resizable', doResize);
+            $(document).on('mouseup.resizable', stopResize);
+            return false;
+        });
+    
+        function doResize(e) {
+            if (isResizing) {
+                var dx = e.clientX - initialMouseX;
+                var dy = e.clientY - initialMouseY;
+                $chatPopup.css({
+                    width: initialWidth + dx,
+                    height: initialHeight + dy
+                });
+    
+                e.preventDefault();
+            }
+        }
+    
+        function stopResize() {
+            isResizing = false;
+            $(document).off('mousemove.resizable');
+            $(document).off('mouseup.resizable');
+        }
+    });
+    
+    
+    
 
     
     // 동화 이동하기
