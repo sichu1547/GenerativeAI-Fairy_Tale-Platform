@@ -588,6 +588,15 @@ for (let i = 1; i <= 5; i++) {
                 $('#user-question').attr('placeholder', '질문을 입력하세요...'); 
             }
         }
+
+        // 질문 입력 필드에서 엔터 키를 누르면 질문하기 버튼을 클릭
+        $('#user-question').on('keypress', function(event) {
+            if (event.which === 13) { // Enter key code
+                event.preventDefault();
+                $('#q-button').click();
+            }
+        });
+
     });
 
     // new 챗봇 답변 읽기 TTS
