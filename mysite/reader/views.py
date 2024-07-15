@@ -256,7 +256,7 @@ def answer_question(request):
             memory.save_context({"question": full_query}, {"answer": answer})
 
             # Save to the database
-            save_to_database(question, answer)
+            save_to_database(story.title, question, answer)
             
             # print(memory.load_memory_variables({})["chat_history"])
 
@@ -264,9 +264,9 @@ def answer_question(request):
 
     return JsonResponse({'error': 'Invalid request'})
 
-def save_to_database(question, answer):
+def save_to_database(story_title, question, answer):
     try:
-        log_entry = LogEntry(question=question, answer=answer)
+        log_entry = LogEntry(story_title=story_title, question=question, answer=answer)
         log_entry.save()
     except Exception as e:
         print(f"Error saving to database: {e}")

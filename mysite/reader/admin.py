@@ -10,7 +10,7 @@ import sqlite3
 class StoryAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'category']
     list_display_links = ['id', 'title']
-    ordering = ['title']
+    ordering = ['id']
     list_filter = ['category']
     search_fields = ['body']
     #list_per_page = 3
@@ -60,8 +60,9 @@ class StoryAdmin(admin.ModelAdmin):
 admin.site.register(Story, StoryAdmin)
 
 class LogAdmin(admin.ModelAdmin):
-    list_display = ['datetime', 'story_title', 'question', 'answer']
-
+    list_display = ['id', 'datetime', 'story_title', 'question', 'answer']
+    list_display_links = ['story_title', 'question']
+    list_filter = ['story_title']
 admin.site.register(LogEntry, LogAdmin)
 
 # @admin.register(Tag)
