@@ -213,11 +213,14 @@ def answer_question(request):
 
             # Perform the query
             result = qa({"question": full_query, "chat_history": memory_content["chat_history"]})
+            # print(result)
 
             # Output the answer obtained from LangChain
             answer = result["answer"]
-
-            src_doc = result['source_documents'][0].page_content.split('\n')[0]
+            if result['source_documents'] != []:
+                src_doc = result['source_documents'][0].page_content.split('\n')[0]
+            else:
+                src_doc = 'Got No Source Document'
             print('Question:', question)
             print('Answer:', answer)
             print('Source Document:', src_doc)

@@ -483,7 +483,8 @@ for (let i = 1; i <= 5; i++) {
  
  
     ///////////////////////// new 챗봇script ///////////////////////////////////////
-    
+    let audio; // 전역 변수로 오디오 객체 선언
+
     $(document).ready(function() {
         $('#chat-form').submit(function(event) {
             event.preventDefault();
@@ -548,6 +549,10 @@ for (let i = 1; i <= 5; i++) {
 
         $('.close-popup').click(function() {
             $('#chat-popup').fadeOut(300); // 사라지는 속도 300ms
+            if (audio) {
+                audio.pause(); // 오디오 정지
+                audio.currentTime = 0; // 오디오 재생 위치 초기화
+            }
         });
        
         // 음성 인식 시작
@@ -601,11 +606,17 @@ for (let i = 1; i <= 5; i++) {
 
     // new 챗봇 답변 읽기 TTS
     function playAudio(audioContent) {
+        if (audio) {
+            audio.pause(); // 기존 오디오 정지
+            audio.currentTime = 0; // 기존 오디오 재생 위치 초기화
+        }
+
         const audioBlob = new Blob([new Uint8Array(audioContent.split('').map(char => char.charCodeAt(0)))], { type: 'audio/mpeg' });
         const audioUrl = URL.createObjectURL(audioBlob);
-        const audio = new Audio(audioUrl);
+        audio = new Audio(audioUrl);
         audio.play();
     }
+    
     ///////////////////////// 챗봇script ///////////////////////////////////////
     document.addEventListener('DOMContentLoaded', (event) => {
 
