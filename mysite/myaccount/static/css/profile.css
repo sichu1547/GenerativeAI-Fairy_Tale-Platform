@@ -89,6 +89,7 @@ html, body {
 
 .profile-h2, .profile-h3 {
     font-family: 'CookieRun-Regular', Arial, sans-serif;
+    font-size: 11px;
 }
 
 .profile-h2 {
@@ -190,12 +191,12 @@ html, body {
     margin-bottom: 0;
 }
 
-#id_name {
+/* #id_name {
     width: 18vw;
     margin-right: 20px;
     margin-left: 10px;
     min-width: 150px;
-}
+} */
 
 #id_avatar {
     font-family: 'Pretendard-Regular';
