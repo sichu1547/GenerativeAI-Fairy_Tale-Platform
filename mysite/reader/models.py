@@ -9,7 +9,9 @@ class Story(models.Model):
     category = models.CharField(max_length=100, default='Uncategorized')
     keywords = models.CharField(max_length=1000, blank=True, default=None, null=True)
     theme = models.CharField(max_length=100, blank=True, null=True)
-    starpoint = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], blank=True, null=True)
+    starpoint = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], blank=True, null=True, default=0)
+    starcount = models.IntegerField(default=0)
+    starsum = models.IntegerField(default=0)
     def __str__(self):
         return self.title
     

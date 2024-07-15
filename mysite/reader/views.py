@@ -281,17 +281,19 @@ def save_to_database(story_title, question, answer):
         print(f"Error saving to database: {e}")
         
 def rate_story(request, id):
-    story = get_object_or_404(Story, pk=id)
-   
+    story = get_object_or_404(Story, id=id)
+    
     if request.method == 'POST':
         starpoint = request.POST.get('starpoint')
         if starpoint:
             try:
                 starpoint = int(starpoint)
-                if 1 <= starpoint <= 5:  # 별점이 1에서 5 사이의 값인지 확인
-                    story.starpoint = starpoint
+                if 1 <= starpoint <= 5:
+                    story.starcount += 1
+                    story.starsum += starpoint
+                    story.starpoint = story.starsum / story.starcount
                     story.save()
-                    # 별점 저장 성공
+                #return HttpResponse(status=200)
             except ValueError:
                 pass
  
