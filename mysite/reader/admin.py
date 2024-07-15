@@ -11,7 +11,7 @@ class StoryAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'category']
     list_display_links = ['id', 'title']
     ordering = ['title']
-    list_filter = ['tag', 'category']
+    list_filter = ['category']
     search_fields = ['body']
     #list_per_page = 3
 
@@ -59,10 +59,10 @@ class StoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Story, StoryAdmin)
 
-
 class LogAdmin(admin.ModelAdmin):
-    list_display = ['story_title', 'question', 'answer']
-admin.site.register(LogEntry)
+    list_display = ['datetime', 'story_title', 'question', 'answer']
+
+admin.site.register(LogEntry, LogAdmin)
 
 # @admin.register(Tag)
 # class TagAdmin(admin.ModelAdmin):

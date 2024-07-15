@@ -173,7 +173,7 @@ def choose_profile(request, profile_id):
     request.session['selected_profile_avatar'] = profile.avatar.url
     request.session['selected_profile_name'] = profile.name
     request.session['show_attendance_modal'] = True
-    return redirect('base')
+    return redirect('index')
 
 from .models import ReadingHistory
 @login_required
@@ -189,6 +189,7 @@ def reading_history(request, profile_id):
 
 @login_required
 def attendance_check(request):
+    print(request.method)
     if request.method == 'POST':
         selected_profile_id = request.session.get('selected_profile_id')
         

@@ -92,7 +92,7 @@
                     <ul class="profile-list">                        
                         <li class="profile-item">
                             {% for review in reviews %}
-                                <a href="{% url 'review_detail' review.id %}">{{ review.title }}</a>
+                                <a href="{% url 'review:review_list' profile.id %}">{{ review.title }}</a>
                             {% endfor %}
                         </li>                        
                     </ul>
