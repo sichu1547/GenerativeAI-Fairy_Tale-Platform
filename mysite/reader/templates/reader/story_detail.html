@@ -198,11 +198,11 @@
            
            
             <button class="arrow-button1 arrow-button" id="previous_button">← 이전 페이지로</button>
+            <button class="reader-button" id="prev_tale_button" onclick="prevPage({{ id }})">이전 동화</button>
             <button class="reader-button" id="quiz_button" onclick="window.location.href='{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}'" style="display:none;">퀴즈 시작</button>
             <button class="reader-button" id="review_button" onclick="window.location.href='{% url 'review:write_review' id %}'" style="display:none;">독후감 쓰기</button>
-            {% comment %}  {% endcomment %}
             <button class="reader-button" id="recommend_button" onclick="recommend_tale({{ rec_id }})" style="display:none;">추천 동화</button>
-            {% comment %}  {% endcomment %}
+            <button class="reader-button" id="next_tale_button" onclick="nextPage({{ id }})">다음 동화</button>
             <button class="arrow-button2 arrow-button" id="next_button">다음 페이지로 →</button>
         </div>
     </div>
@@ -646,6 +646,29 @@ for (let i = 1; i <= 5; i++) {
             }
         });
     });
+
+    
+    // 동화 이동하기
+    function prevPage(id) {
+        if (id == 01){
+            window.location.href = `/reader/story/442/`;
+        } else{
+            id = id - 1;
+            window.location.href = `/reader/story/${id}/`;
+        }
+    }
+
+    // 동화 이동하기
+    function nextPage(id) {
+        if (id == 442){
+            window.location.href = `/reader/story/01/`;
+        } else{
+            id = id + 1;
+            window.location.href = `/reader/story/${id}/`;
+        }
+    }
+
+
     </script>
    
 </body>
