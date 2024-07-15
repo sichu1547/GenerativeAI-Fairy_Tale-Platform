@@ -81,6 +81,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "myaccount.custom_middleware.UserSessionMiddleware",  # 사용자 정의 미들웨어 추가
     "allauth.account.middleware.AccountMiddleware",
+    'myaccount.profile_middleware.ProfileMiddleware',
     #"debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 #INTERNAL_IPS = ['127.0.0.1',] #temp
@@ -248,6 +249,8 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / 'static',
                     BASE_DIR / 'generator/static',
                     BASE_DIR / 'reader/static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

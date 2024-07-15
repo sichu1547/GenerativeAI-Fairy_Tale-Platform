@@ -12,6 +12,12 @@ import requests
 from django.conf import settings
 from django.core.files.base import ContentFile
 
+from django.contrib.auth.decorators import login_required
+from django.views import View
+from myaccount.models import Profile
+from myaccount.models import ReadingHistory
+from django.utils.decorators import method_decorator
+    
 # fairytales/views.py
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -22,9 +28,14 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chains import ConversationalRetrievalChain
 import os
-from myaccount.models import ReadingHistory, Profile
- 
 
+import pandas as pd
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.neighbors import NearestNeighbors
+from .models import Story
+from myaccount.models import ReadingHistory, Profile
+import random
+ 
 
 def index(request):
     return render(request, 'reader/index.html')
@@ -70,30 +81,32 @@ def search(request):
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
 
 def generate_image(sentence):
-    print('생성중')
-    api_key = settings.OPENAI_API_KEY
-    client = OpenAI(api_key = api_key)
+    # print('생성중')
+    # api_key = settings.OPENAI_API_KEY
+    # client = OpenAI(api_key = api_key)
     
-    try:
-        response = client.images.generate(
-            model="dall-e-3",
-            prompt=f"This: {sentence}. Based on this, draw a cute and lovely 2D picture using an illustration that never contains text, phrases, or speech bubbles. Never add text.",
-            #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
-            size="1024x1024",
-            n=1,
-            quality="standard",
-            style="natural"
-        )
-        image_url = response.data[0].url
-        print('성공')
-        return image_url
+    # try:
+    #     response = client.images.generate(
+    #         model="dall-e-3",
+    #         prompt=f"This: {sentence}. Based on this, draw a cute and lovely 2D picture using an illustration that never contains text, phrases, or speech bubbles. Never add text.",
+    #         #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
+    #         size="1024x1024",
+    #         n=1,
+    #         quality="standard",
+    #         style="natural"
+    #     )
+    #     image_url = response.data[0].url
+    #     print('성공')
+    #     return image_url
 
-    except Exception as e:
-        print('실패')
-        return ""
+    # except Exception as e:
+    #     print('실패')
+    return ""
 
 
 def story_detail(request, id):
+    if not request.user.is_authenticated:
+        return redirect(f"{reverse('login')}?next={request.path}")
     story = get_object_or_404(Story, id=id)
     profile_id = request.session.get('selected_profile_id')
 
@@ -108,8 +121,9 @@ def story_detail(request, id):
         print("Profile ID not found in session")
 
     keyword = request.GET.get('keyword')
-    sentences = story.body.split('\r\n\r\n\r\n') 
-    
+    patterns = r'\r\n\r\n\r\n|\r\n\r\n \r\n|\r\n \r\n \r\n|\r\n \r\n\r\n'
+    sentences = re.split(patterns, story.body)
+
     # 이미지
     image_urls = [generate_image(sentences[0])] if sentences else []
 
@@ -154,8 +168,49 @@ def story_detail(request, id):
         conn.commit()
         conn.close()    
         request.session['previous_story_id'] = id
+        
+    ########################################################################################################    
+    # 장고 모델에서 모든 스토리 데이터 로드
+    
+    story = get_object_or_404(Story, id=id)
+    
+    stories = Story.objects.all()
+    data = {
+        '제목': [i.title for i in stories],
+        '내용': [i.body for i in stories]
+    }
+    # 제목과 내용을 새로운 데이터프레임으로 저장
+    df = pd.DataFrame(data)
 
-    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': story.title, 'id': id, 'image_urls': image_urls})
+    # 모델에서 id가 해당 동화인 데이터 가져오기
+    # 제목만 따로 저장하기
+    tale_title = story.title
+
+    if not tale_title:
+        return HttpResponse("Please provide a tale title.")  # 제목이 없으면 메시지 반환
+
+    tfidf = TfidfVectorizer()
+    dtm = tfidf.fit_transform(df['내용'])
+    dtm = pd.DataFrame(dtm.todense(), columns=tfidf.get_feature_names_out())
+
+    nn = NearestNeighbors(n_neighbors=6, algorithm='kd_tree')
+    nn.fit(dtm)
+
+    try:
+        idx = df[df['제목'] == tale_title].index[0]
+    except IndexError:
+        return HttpResponse("Tale title not found.")  # 제목이 데이터베이스에 없으면 메시지 반환
+
+    result = nn.kneighbors([dtm.iloc[idx]])
+    random_value = random.randint(1,5)
+    recommended_title = df['제목'].iloc[result[1][0][random_value]]
+    
+    story = get_object_or_404(Story, title=recommended_title)
+    recommended_id = story.id
+    
+
+    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id})
+    ########################################################################################################    
 
 def redirect_to_quiz(request, id):
     keyword = request.GET.get('keyword')
@@ -210,7 +265,7 @@ def answer_question(request):
             memory.save_context({"question": full_query}, {"answer": answer})
 
             # Save to the database
-            save_to_database(question, answer)
+            save_to_database(story.title, question, answer)
             
             # print(memory.load_memory_variables({})["chat_history"])
 
@@ -218,9 +273,27 @@ def answer_question(request):
 
     return JsonResponse({'error': 'Invalid request'})
 
-def save_to_database(question, answer):
+def save_to_database(story_title, question, answer):
     try:
-        log_entry = LogEntry(question=question, answer=answer)
+        log_entry = LogEntry(story_title=story_title, question=question, answer=answer)
         log_entry.save()
     except Exception as e:
         print(f"Error saving to database: {e}")
+        
+def rate_story(request, id):
+    story = get_object_or_404(Story, pk=id)
+   
+    if request.method == 'POST':
+        starpoint = request.POST.get('starpoint')
+        if starpoint:
+            try:
+                starpoint = int(starpoint)
+                if 1 <= starpoint <= 5:  # 별점이 1에서 5 사이의 값인지 확인
+                    story.starpoint = starpoint
+                    story.save()
+                    # 별점 저장 성공
+            except ValueError:
+                pass
+ 
+    return redirect('reader:story_detail', id=story.id)
+        

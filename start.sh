@@ -1,7 +1,9 @@
 #!/bin/sh
 set -e
-python manage.py makemigrations myaccount
+python manage.py makemigrations
+python manage.py makemigrations myaccount review
 python manage.py migrate
+python manage.py migrate --database=story
 
 ADMIN_USER=${DJANGO_SUPERUSER_USERNAME}
 ADMIN_EMAIL=${DJANGO_SUPERUSER_EMAIL}
