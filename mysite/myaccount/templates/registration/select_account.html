@@ -19,7 +19,7 @@
             <section class="content-area">
                 <div id="main" role="main">
                     {% if profiles %}
-                    <h1 class="select-account-h1">프로필을 골라주세요!</h1>
+                    <h1><img src="{% static 'images/선택로고.png' %}"></h1>
                     <div class="account-selection">
                         {% for profile in profiles %}
                         <div class="account">
@@ -30,11 +30,11 @@
                         </div>
                         {% endfor %}
                     </div>
-                    <a class="select-account-h3" href="{% url 'profile' %}">프로필 관리</a>
+                    <a class="select-account-h3" href="{% url 'profile' %}"><img src="{% static 'images/프로필관리.png' %}"></a>
                     {% else %}
-                    <h1 class="select-account-h1">등록된 프로필이 없습니다</h1>
+                    <h1><img src="{% static 'images/프로필없음.png' %}"></h1>
                     <div style="height: 50px;"></div> <!-- 원하는 여백 크기 -->
-                    <a class="select-account-h3" href="{% url 'profile' %}">➡️ 프로필 관리</a>
+                    <a class="select-account-h3" href="{% url 'profile' %}"><img src="{% static 'images/프로필관리.png' %}"></a>
                     {% endif %}
             </section>
         </div>
