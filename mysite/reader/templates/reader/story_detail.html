@@ -380,12 +380,15 @@ for (let i = 1; i <= 5; i++) {
                 document.getElementById('recommend_button').style.display = "inline-block";
                 document.getElementById('rating-form').style.display = "inline-block";
                 document.getElementById('next_button').style.display = "none";
+                document.getElementById('next_tale_button').style.display = "inline-block";
+                document.getElementById('prev_tale_button').style.display = "inline-block";
             } else {
                 document.getElementById('next_button').style.display = "inline-block";
                 document.getElementById('quiz_button').style.display = "none";
                 document.getElementById('review_button').style.display = "none";
                 document.getElementById('rating-form').style.display = "none";
-                document.getElementById('recommend_button').style.display = "none";
+                document.getElementById('next_tale_button').style.display = "none";
+                document.getElementById('prev_tale_button').style.display = "none";
             }
             if (page <= 0) {
                 document.getElementById('previous_button').style.display = "none";
