@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/story_detail.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         body, html {
         margin: 0;
@@ -224,62 +225,8 @@
         </div>
     </div>
     {% load static %}
-    <style>
-        /* 필요한 CSS 스타일링은 여기에 추가 */
-        #chat-button {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: transparent; /* 배경색 설정 */
-            color: white;
-            border: none;
-            cursor: pointer;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-            z-index: 8000;
-        }
-       
-        #chat-popup {
-            display: none;
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 300px;
-            background: white;
-            border: 1px solid #ccc;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            z-index: 8001;
-        }
-       
-        #chat-popup h2 {
-            margin-top: 0;
-        }
-       
-        #chat-popup button.close-popup {
-            background: red;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-       
-        #speech-button, #q-button {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    
     <script>
        
         document.addEventListener('DOMContentLoaded', function() {
@@ -520,15 +467,13 @@ for (let i = 1; i <= 5; i++) {
         function recommend_tale(id) {
             window.location.href = `/reader/story/${id}/`;
         }
-       
-       
-       
-   
+ 
         updateDownloadLink(); // 페이지 로드 시 다운로드 링크 초기화
  
  
  
     ///////////////////////// new 챗봇script ///////////////////////////////////////
+    
     $(document).ready(function() {
         $('#chat-form').submit(function(event) {
             event.preventDefault();
@@ -545,6 +490,14 @@ for (let i = 1; i <= 5; i++) {
                 success: function(data) {
                     $('#answer').text(data.answer);
                     $('#user-question').val('');
+                    if (data.audio_content) {
+                        playAudio(data.audio_content);  // TTS 기능 추가
+                    }
+
+                    // 답변 클릭 시 음성 재생
+                    $('#answer').off('click').on('click', function() {
+                        playAudio(data.audio_content);
+                    });
                 }
             });
         });
@@ -562,90 +515,41 @@ for (let i = 1; i <= 5; i++) {
             startRecognition();
         });
  
-        function startRecognition() {
-            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-                var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                var recognition = new SpeechRecognition();
-                recognition.lang = 'ko-KR';
-                recognition.start();
- 
-                recognition.onresult = function(event) {
-                    var transcript = event.results[0][0].transcript;
-                    document.getElementById('user-question').value = transcript;
-                };
- 
-                recognition.onerror = function(event) {
-                    console.error('Recognition error:', event.error);
-                };
- 
-                recognition.onend = function() {
-                    console.log('Recognition ended');
-                };
-            } else {
-                alert('Speech recognition not supported in this browser');
-            }
-        }
-    });
-    ///////////////////////// 챗봇script ///////////////////////////////////////
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const modal = document.getElementById("chatModal");
-        const openModalBtn = document.getElementById("openModalBtn");
-        const closeModalSpan = document.getElementsByClassName("close")[0];
-        const sendBtn = document.getElementById("sendBtn");
-        const chatInput = document.getElementById("chatInput");
-        const chatBody = document.getElementById("chatBody");
-   
-        openModalBtn.onclick = function() {
-            modal.style.display = "block";
-        }
-   
-        closeModalSpan.onclick = function() {
-            modal.style.display = "none";
-        }
-   
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-   
-        sendBtn.onclick = function() {
-            const message = chatInput.value.trim();
-            if (message !== "") {
-                // 사용자 메시지를 추가
-                const userMessageElement = document.createElement("div");
-                userMessageElement.textContent = "User: " + message;
-                chatBody.appendChild(userMessageElement);
- 
-                // 챗봇 서버에 메시지를 전송하고 응답을 받음
-                fetch('/chatbot/api/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({ question: message })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const botMessageElement = document.createElement("div");
-                    botMessageElement.textContent = "Bot: " + data.response;
-                    chatBody.appendChild(botMessageElement);
-                    chatBody.scrollTop = chatBody.scrollHeight;
-                });
- 
-                chatInput.value = "";
-                chatBody.scrollTop = chatBody.scrollHeight;
-            }
-        }
-   
-        chatInput.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                sendBtn.click();
-            }
-        });
+        
     });
 
+    // 음성 인식
+    function startRecognition() {
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            var recognition = new SpeechRecognition();
+            recognition.lang = 'ko-KR';
+            recognition.start();
+
+            recognition.onresult = function(event) {
+                var transcript = event.results[0][0].transcript;
+                document.getElementById('user-question').value = transcript;
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Recognition error:', event.error);
+            };
+
+            recognition.onend = function() {
+                console.log('Recognition ended');
+            };
+        } else {
+            alert('Speech recognition not supported in this browser');
+        }
+    }
+
+    // new 챗봇 답변 읽기 TTS
+    function playAudio(audioContent) {
+        const audioBlob = new Blob([new Uint8Array(audioContent.split('').map(char => char.charCodeAt(0)))], { type: 'audio/mpeg' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        audio.play();
+    }
     
     // 동화 이동하기
     function prevPage(id) {
