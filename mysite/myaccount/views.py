@@ -120,6 +120,7 @@ def select_account(request):
         selected_profile_id = request.POST.get('profile_id')
         if selected_profile_id:
             profile = get_object_or_404(Profile, id=selected_profile_id, user=request.user)
+            request.session['show_attendance_modal'] = True
             request.session['selected_profile_id'] = profile.id
             request.session['selected_profile_avatar'] = profile.avatar.url
             request.session['selected_profile_name'] = profile.name
@@ -168,6 +169,7 @@ def profile_detail(request, pk):
 
 @login_required
 def choose_profile(request, profile_id):
+    print(1)
     profile = get_object_or_404(Profile, id=profile_id, user=request.user)
     request.session['selected_profile_id'] = profile.id
     request.session['selected_profile_avatar'] = profile.avatar.url
@@ -189,7 +191,6 @@ def reading_history(request, profile_id):
 
 @login_required
 def attendance_check(request):
-    print(request.method)
     if request.method == 'POST':
         selected_profile_id = request.session.get('selected_profile_id')
         

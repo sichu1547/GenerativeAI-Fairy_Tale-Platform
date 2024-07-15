@@ -280,3 +280,20 @@ def save_to_database(story_title, question, answer):
     except Exception as e:
         print(f"Error saving to database: {e}")
         
+def rate_story(request, id):
+    story = get_object_or_404(Story, pk=id)
+   
+    if request.method == 'POST':
+        starpoint = request.POST.get('starpoint')
+        if starpoint:
+            try:
+                starpoint = int(starpoint)
+                if 1 <= starpoint <= 5:  # 별점이 1에서 5 사이의 값인지 확인
+                    story.starpoint = starpoint
+                    story.save()
+                    # 별점 저장 성공
+            except ValueError:
+                pass
+ 
+    return redirect('reader:story_detail', id=story.id)
+        

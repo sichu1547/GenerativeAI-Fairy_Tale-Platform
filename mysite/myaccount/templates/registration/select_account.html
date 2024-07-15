@@ -59,7 +59,10 @@
             });
         });
     </script>
+    <form id="profileForm" method="post" style="display: none;">
+        {% csrf_token %}
+        <input type="hidden" name="profile_id" id="profileIdInput">
+    </form>
 </body>
-
 {% endblock %}
 </html>
