@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/story_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body, html {
@@ -207,77 +208,32 @@
         </div>
     </div>
   
-    <button id="chat-button"><img src="{% static 'images/젖소.png' %}" alt="문의"/></button>
+    <!-- 챗봇 -->
+    <button id="chat-button">
+        <img src="{% static 'images/젖소.png' %}" alt="챗봇"/>
+        <p class="tooltip">밀키에게 질문하기💡</p>
+    </button>
     <div id="chat-popup">
-        <button class="close-popup">닫기</button>
-        <h2>챗봇 질문</h2>
-        <form id="chat-form">
-            <input type="text" id="user-question" name="user-question" placeholder="질문을 입력하세요...">
-            <button id="q-button" type="submit">질문하기</button>
-        </form>
-       
-        <!-- 음성 인식 버튼 -->
-        <button id="speech-button">음성으로 질문하기</button>
- 
-        <div id="answer-container">
-            <h2>챗봇 답변</h2>
-            <p id="answer"></p>
+        <div id="chatbot-buttons">
+            <label id="chatbot-label">밀키에게 질문하기💡</label>
+            <button class="close-popup">✖️</button>
         </div>
+        <form id="chat-form">
+            <div id="answer-container">
+                <p class="message bot">「{{title}}」 에 대해 물어봐😊</p> <!-- 초기 메시지 -->
+                <!-- 주고받은 질답 띄울 부분 -->
+            </div>
+
+            <input type="text" id="user-question" name="user-question" placeholder="질문을 입력하세요...">
+
+            <div id="chatbot-buttons">
+                <button id="q-button" type="submit">질문하기</button>
+                <button id="speech-button">🎙️</button>
+            </div>
+        </form>
+
+
     </div>
-    {% load static %}
-    <style>
-        /* 필요한 CSS 스타일링은 여기에 추가 */
-        #chat-button {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: transparent; /* 배경색 설정 */
-            color: white;
-            border: none;
-            cursor: pointer;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-        }
-       
-        #chat-popup {
-            display: none;
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 300px;
-            background: white;
-            border: 1px solid #ccc;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-       
-        #chat-popup h2 {
-            margin-top: 0;
-        }
-       
-        #chat-popup button.close-popup {
-            background: red;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-       
-        #speech-button, #q-button {
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-    </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
        
@@ -534,6 +490,28 @@ for (let i = 1; i <= 5; i++) {
         $('#chat-form').submit(function(event) {
             event.preventDefault();
             var question = $('#user-question').val();
+        
+            if (question.trim() === "") {
+                return;  // 빈 질문은 무시
+            }
+        
+            // 질문을 채팅 창에 추가
+            var questionElement = $('<p class="message me"></p>').text(question);
+            $('#answer-container').append(questionElement);
+            $('#user-question').val('');
+            $('#answer-container').scrollTop($('#answer-container')[0].scrollHeight); // 스크롤을 맨 아래로 이동
+        
+            var loadingMessage = $('<p class="message bot"></p>').text("생각 중이야.");
+            $('#answer-container').append(loadingMessage);
+            $('#answer-container').scrollTop($('#answer-container')[0].scrollHeight);
+
+            var dotCount = 1;
+            var loadingInterval = setInterval(function() {
+                dotCount = (dotCount % 3) + 1;
+                loadingMessage.text("생각 중이야" + ".".repeat(dotCount));
+            }, 500);
+
+            
             $.ajax({
                 type: 'POST',
                 url: '{% url "reader:answer_question" %}',
@@ -544,11 +522,17 @@ for (let i = 1; i <= 5; i++) {
                 },
                 dataType: 'json',
                 success: function(data) {
-                    $('#answer').text(data.answer);
-                    $('#user-question').val('');
+
+                    loadingMessage.remove();
+
+                    // 질문에 대한 응답을 채팅 창에 추가
+                    var answerElement = $('<p class="message bot"></p>').text(data.answer);
+                    $('#answer-container').append(answerElement);
+                    $('#answer-container').scrollTop($('#answer-container')[0].scrollHeight); // 스크롤을 맨 아래로 이동
                 }
             });
         });
+    
        
         $('#chat-button').click(function() {
             $('#chat-popup').toggle();
@@ -561,6 +545,8 @@ for (let i = 1; i <= 5; i++) {
         // 음성 인식 시작
         $('#speech-button').click(function() {
             startRecognition();
+            $('#speech-button').html('🔴');  // 🎙️ 이모지를 🔴 이모지로 변경
+            $('#user-question').attr('placeholder', '녹음 중...'); 
         });
  
         function startRecognition() {
@@ -573,22 +559,39 @@ for (let i = 1; i <= 5; i++) {
                 recognition.onresult = function(event) {
                     var transcript = event.results[0][0].transcript;
                     document.getElementById('user-question').value = transcript;
+                    $('#speech-button').html('🎙️');  // 🔴 이모지를 🎙️ 이모지로 변경
+                    $('#user-question').attr('placeholder', '질문을 입력하세요...');  // "녹음 중"을 "질문을 입력하세요..."로 변경
                 };
  
                 recognition.onerror = function(event) {
                     console.error('Recognition error:', event.error);
+                    $('#speech-button').html('🎙️'); 
+                    $('#user-question').attr('placeholder', '질문을 입력하세요...'); 
                 };
  
                 recognition.onend = function() {
                     console.log('Recognition ended');
+                    $('#speech-button').html('🎙️'); 
+                    $('#user-question').attr('placeholder', '질문을 입력하세요...'); 
                 };
             } else {
                 alert('Speech recognition not supported in this browser');
+                $('#speech-button').html('🎙️');
+                $('#user-question').attr('placeholder', '질문을 입력하세요...'); 
             }
         }
     });
     ///////////////////////// 챗봇script ///////////////////////////////////////
     document.addEventListener('DOMContentLoaded', (event) => {
+
+        var closeButton = document.querySelector('.close-popup');
+        closeButton.addEventListener('mouseover', function() {
+            closeButton.textContent = '❌'; // 마우스를 올렸을 때 텍스트 변경
+        });
+        closeButton.addEventListener('mouseout', function() {
+            closeButton.textContent = '✖️'; // 마우스를 내렸을 때 원래 텍스트로 복귀
+        });
+
         const modal = document.getElementById("chatModal");
         const openModalBtn = document.getElementById("openModalBtn");
         const closeModalSpan = document.getElementsByClassName("close")[0];
