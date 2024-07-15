@@ -11,6 +11,9 @@ db.sqlite3
 db.sqlite3-journal
 story_db.db
 media
+*.db
+*.sqlite3
+.bin
 
 # Ignore the secret.json file
 secret.json
