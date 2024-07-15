@@ -17,3 +17,4 @@ konlpy
 django-environ
 google-cloud-texttospeech
 langchain_openai
+gunicorn
