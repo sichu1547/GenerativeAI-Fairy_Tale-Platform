@@ -28,6 +28,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
 from .models import Story
 from myaccount.models import ReadingHistory, Profile
+import random
  
 
 def index(request):
@@ -192,13 +193,14 @@ def story_detail(request, id):
         return HttpResponse("Tale title not found.")  # 제목이 데이터베이스에 없으면 메시지 반환
 
     result = nn.kneighbors([dtm.iloc[idx]])
-    recommended_title = df['제목'].iloc[result[1][0][1]]
+    random_value = random.randint(1,5)
+    recommended_title = df['제목'].iloc[result[1][0][random_value]]
     
     story = get_object_or_404(Story, title=recommended_title)
     recommended_id = story.id
     
 
-    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': story.title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id})
+    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id})
     ########################################################################################################    
 
 def redirect_to_quiz(request, id):
