@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<h1>내 열람 기록</h1>
+<ul>
+    {% for history in reading_histories %}
+        {% if history.story_title %}
+            <li><a href="{% url 'reader:story_detail' history.story_id %}">{{ history.story_title }}</a></li>
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endblock %}

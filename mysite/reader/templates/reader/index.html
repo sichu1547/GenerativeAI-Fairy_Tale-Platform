@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+<html lang="ko">
+<head>
+    <title>{% block title %}📖동화책 읽기📖</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/reader.css' %}">
+
+   <style>
+    input[type='submit'], button[type='submit'] {
+        background-color: transparent !important;
+    }
+   </style>
+</head>{% endblock %}
+{% block content %}
+<body>
+    <div class="reader-container">
+        <div class="reader-row">
+            <div class="reader-title">
+                <h1><img src="{% static 'images/읽기로고.png' %}"></h1>
+                
+            </div>
+            <div class="reader-content">
+                <div class="reader-model font">
+                   
+                    <div class="button1-container">
+                            <form action="{% url 'reader:search' %}" method="GET" style="display: inline;">
+                            <input type="hidden" name="keyword" value="그림형제">
+                            <button type="submit" class="button1">그림형제</button>
+                            </form>
+                            <form action="{% url 'reader:search' %}" method="GET" style="display: inline;">
+                            <input type="hidden" name="keyword" value="이솝우화">
+                            <button type="submit" class="button1">이솝우화</button>
+                            </form>
+                            <form action="{% url 'reader:search' %}" method="GET" style="display: inline;">
+                            <input type="hidden" name="keyword" value="전래동화">
+                            <button type="submit" class="button1">전래동화</button>
+                            </form>
+                            <form action="{% url 'reader:search' %}" method="GET" style="display: inline;">
+                            <input type="hidden" name="keyword" value="샤를페로">
+                            <button type="submit" class="button1">샤를페로</button>
+                            </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{% static 'js/reader.js' %}"></script>
+</body>
+{% endblock %}
+</html>

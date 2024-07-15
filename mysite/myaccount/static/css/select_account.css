@@ -1,0 +1,196 @@
+@font-face {
+    font-family: 'CookieRun-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.main {
+    height: auto;
+    width: auto;
+}
+
+.select-account-h1, .account-selection, .select-account-h3 {
+    opacity: 0; /* 처음에 보이지 않도록 설정 */
+    animation: fadeIn 1s forwards; /* 1초 동안 페이드 인 애니메이션 */
+}
+
+
+.select-account-h1 {
+    font-family: 'CookieRun-Regular', Arial, sans-serif;
+    font-size: 4.5vw; /* 뷰포트 너비의 4.5% 크기 */
+    margin-bottom: 10px; 
+    animation-delay: 0.5s; /* 0.5초 후 애니메이션 시작 */
+    padding: 20px;
+}
+
+.select-account-h3 {
+    font-family: 'CookieRun-Regular', Arial, sans-serif;
+    font-size: 2vw; /* 뷰포트 너비의 2% 크기 */
+    margin-bottom: 30px; 
+    color: black;
+    animation-delay: 1.5s; /* 1.5초 후 애니메이션 시작 */
+}
+
+.select-account-h3:hover {
+    font-size: 2.2vw; /* 글자 크기를 키움 */
+    transition: font-size 0.3s ease-in-out; /* 0.3초 동안 부드럽게 변화 */
+}
+
+.select-account-h3:visited {
+    color: black; /* visited 상태에서도 색상이 변하지 않도록 black으로 설정 */
+}
+
+.selector-container {
+    background-image: url("../images/select-account-bg.jpg");
+    background-size: cover; /* 이미지가 화면 전체를 채우도록 조정 */
+    background-position: center; 
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    min-height: 95vh;
+    padding: 20px 0 40px 0;
+}
+
+.content-area {
+    text-align: center;
+}
+
+.account-selection {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px; /* Space between account items */
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 30px;
+    animation-delay: 1s; /* 1초 후 애니메이션 시작 */
+}
+
+.account {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.profile-management {
+    margin-top: 20px;
+}
+
+.profile-name {
+    font-family: 'CookieRun-Regular', Arial, sans-serif;
+    font-size: 1.8vw;
+    color: dimgray;
+    padding: 10px;
+    margin-bottom: 0;
+    margin-top: 10px;
+}
+/* Media Query for smaller screens */
+@media (max-width: 1000px) {
+    .profile-name {
+        font-size: 2vw;
+    }
+
+    .select-account-h1 {
+        font-size: 5vw;
+    }
+
+    .select-account-h3 {
+        font-size: 3vw;
+    }
+
+    .select-account-h3:hover {
+        font-size: 3.2vw; /* 글자 크기를 키움 */
+        transition: font-size 0.3s ease-in-out; /* 0.3초 동안 부드럽게 변화 */
+    }
+}
+
+/* Media Query for smaller screens */
+@media (max-width: 700px) {
+    .profile-name {
+        font-size: 4vw;
+    }
+
+    .select-account-h1 {
+        font-size: 7vw;
+    }
+
+    .select-account-h3 {
+        font-size: 4vw;
+    }
+
+    .select-account-h3:hover {
+        font-size: 4.2vw; /* 글자 크기를 키움 */
+        transition: font-size 0.3s ease-in-out; /* 0.3초 동안 부드럽게 변화 */
+    }
+}
+
+.profile-img {
+    width: 10vw; /* 뷰포트 너비의 10% 크기 */
+    height: 10vw; /* 뷰포트 너비의 10% 크기 */
+    min-width: 30px;
+    min-height: 30px;
+}
+
+.profile {
+    padding: 15px;
+}
+
+.profile:hover .profile-name,
+.profile:hover .profile-img {
+    transform: scale(1.1); /* 1.1배 커지게 설정 */
+    transition: transform 0.3s ease-in-out; /* 0.3초 동안 부드럽게 변화 */
+}
+
+/* 애니메이션 키프레임 정의 */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+.warning-message {
+    display: none; /* 처음에는 보이지 않도록 설정 */
+    background-color: #fff3cd;
+    border: 1px solid #ffeeba;
+    color: #856404;
+    padding: 15px;
+    border-radius: 5px;
+    margin: 10px 0;
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    transition: opacity 1s ease-in-out;
+}
+
+.warning-message.show {
+    display: block;
+    opacity: 1;
+}
+
+.warning-message.hide {
+    opacity: 0;
+}
+
+.warning-message .close-btn {
+    float: right;
+    font-size: 20px;
+    cursor: pointer;
+    color: #856404;
+}

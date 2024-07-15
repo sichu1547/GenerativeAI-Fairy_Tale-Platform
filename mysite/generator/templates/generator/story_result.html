@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+<html lang="ko">
+
+<head>
+    <title>{% block title %}🎨최종 동화✏️</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/generator.css' %}">
+</head>
+{% endblock %}
+
+{% block content %}
+<body>
+    <div class="story-container">
+        <div class="book" id="final-book">
+            <div class="story-page" id="left-page">
+                <div class="story-image" id="story-image-left"></div>
+                <div id="left-text"></div>
+            </div>
+            <div class="story-page" id="right-page">
+                <div class="story-image" id="story-image-right"></div>
+                <div id="right-text"></div>
+            </div>
+        </div>
+        <div class="navigation" id="final-nav">
+            <button class="arrow-button" id="prev-btn" onclick="navigateStory(-1)">← 이전 페이지로</button>
+            <button class="arrow-button" id="next-btn" onclick="navigateStory(1)">다음 페이지로 →</button>
+        </div>
+    </div>
+    <script>
+        let currentPage = 0;
+        const finalStoryParts = `{{ final_story|linebreaks|safe }}`.split('\n\n');  // 문단 구분
+        const generatedImages = `{{ generated_images|safe }}`.split(',').map(img => img.replace(/[\[\]']/g, '').trim());
+        const totalParts = finalStoryParts.length;
+        const defaultImage = "{% static 'images/default_image.jpg' %}";
+
+        function displayPages() {
+            const leftText = document.getElementById('left-text');
+            const rightText = document.getElementById('right-text');
+            const leftImage = document.getElementById('story-image-left');
+            const rightImage = document.getElementById('story-image-right');
+
+            const leftIndex = currentPage * 2;
+            const rightIndex = leftIndex + 1;
+
+            leftText.innerHTML = leftIndex < totalParts ? `<p>${finalStoryParts[leftIndex]}</p>` : '';
+            rightText.innerHTML = rightIndex < totalParts ? `<p>${finalStoryParts[rightIndex]}</p>` : '';
+            
+            const isValidUrl = (url) => {
+                try {
+                    new URL(url);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            };
+
+            leftImage.innerHTML =''
+            rightImage.innerHTML =''
+
+            leftImage.innerHTML = isValidUrl(generatedImages[leftIndex]) ? `<img class="final-story-image" src="${generatedImages[leftIndex]}" alt="Generated Story Image">` : `<img class="final-story-image" src="${defaultImage}" alt="Generated Story Image">`;
+            if (rightIndex < totalParts) {
+                rightImage.innerHTML = isValidUrl(generatedImages[rightIndex]) ? `<img class="final-story-image" src="${generatedImages[rightIndex]}" alt="Generated Story Image">` : `<img class="final-story-image" src="${defaultImage}" alt="Generated Story Image">`
+            }
+        }
+
+        function navigateStory(direction) {
+            currentPage += direction;
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= Math.ceil(totalParts / 2)) currentPage = Math.ceil(totalParts / 2) - 1;
+            displayPages();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            displayPages();
+        });
+    </script>
+</body>
+{% endblock %}
+</html>

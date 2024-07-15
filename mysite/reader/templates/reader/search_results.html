@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+<html lang="ko">
+<head>
+    <title>{% block title %}🔍 검색 결과</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search_results.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-image: url("{% static 'images/리드배경.jpg' %}");
+            z-index: 9999;
+            display: none;
+        }
+
+        .curtain {
+            position: fixed;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background-image: url("{% static 'images/커튼.jpg' %}");
+            background-size: cover;
+            z-index: 10000;
+        }
+
+        #curtain-left {
+            left: 0;
+            animation: curtainDown 1s forwards;
+        }
+
+        #curtain-right {
+            right: 0;
+            animation: curtainDown 1s forwards;
+        }
+
+        #loading-message {
+            position: absolute;
+            z-index: 10001;
+            font-size: 2em;
+            color: #000;
+        }
+
+        @keyframes curtainDown {
+            0% { top: -100%; }
+            100% { top: 0; }
+        }
+
+        .link-click-animation {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .link-click-animation::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.1);
+            top: 0;
+            left: -100%;
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .link-click-animation:hover::before {
+            left: 0;
+        }
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .star {
+            width: 20px;
+            height: 20px;
+            margin-right: 2px;
+            background-image: url("{% static 'images/realstar.png' %}");
+            background-size: cover;
+        }
+
+        .star.full {
+            background-image: url("{% static 'images/full-star.png' %}");
+        }
+    </style>
+</head>{% endblock %}
+{% block content %}
+<body>
+    <div id="preloader">
+        <div id="curtain-left" class="curtain"></div>
+        <div id="curtain-right" class="curtain"></div>
+    </div>
+    <div class="search-results-container">
+        <h1 class='h'>🔍 검색 결과</h1>
+        <div class="books">
+            <ul class="gallery">
+                {% for story in stories %}
+                <li class='book container1'>
+                    <div class="overlay"></div>
+                    <a class='link-click-animation' href="{% url 'reader:story_detail' story.id %}?keyword={{ keyword }}">
+                        {% if story.image %}
+                        <img class="card" src="{{ story.image.url }}" alt="{{ story.title }}">
+                        {% else %}
+                        <img class="card" src="{% static 'images/상자.png' %}" alt="{{ story.title }}">
+                        {% endif %}
+                        <span class="book-title">{{ story.title }}</span>
+                    </a>
+                    <div class="star-rating">
+                        {% for i in 5|to_range %}
+                        <div class="star {% if i <= story.starpoint %}full{% endif %}"></div>
+                        {% endfor %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <script>
+     $(document).ready(function() {
+            $('.link-click-animation').on('click', function(e) {
+                e.preventDefault();
+
+                // 프리로더 보이기
+                $('#preloader').show();
+
+                // 실제 페이지로 이동
+                var targetUrl = $(this).attr('href');
+                
+                setTimeout(function() {
+                    window.location.href = targetUrl;
+                }, 1000);
+            });
+        });
+        $(window).on('pageshow', function(event) {
+            console.log('뒤로가기 이벤트 발생');
+            preloader.style.display = 'none';
+        });
+        var containers = document.querySelectorAll('.container1');
+        containers.forEach(function(container) {
+            var overlay = container.querySelector('.overlay');
+            var timeout;
+
+            container.addEventListener('mousemove', function(e) {
+                var x = e.offsetX;
+                var y = e.offsetY;
+                var rotateY = -1 / 5 * x + 20;
+                var rotateX = 4 / 30 * y - 20;
+
+                overlay.style.backgroundPosition = `${x / 5 + y / 5}%`;
+                overlay.style.filter = `opacity(${x / 200}) brightness(1.2)`;
+
+                container.style.transition = 'transform 0.1s ease';
+                container.style.transform = `perspective(350px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+                clearTimeout(timeout);
+            });
+
+            container.addEventListener('mouseout', function() {
+                overlay.style.filter = 'opacity(0)';
+                timeout = setTimeout(function() {
+                    container.style.transition = 'transform 0.1s ease';
+                    container.style.transform = 'perspective(350px) rotateY(0deg) rotateX(0deg)';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}
