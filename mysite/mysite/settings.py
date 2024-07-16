@@ -248,7 +248,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / 'static',
                     BASE_DIR / 'generator/static',
-                    BASE_DIR / 'reader/static']
+                    BASE_DIR / 'reader/static',
+                    BASE_DIR / 'quiz/static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
