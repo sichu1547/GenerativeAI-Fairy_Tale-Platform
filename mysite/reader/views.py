@@ -252,7 +252,7 @@ def answer_question(request, story_id):
             memory_content = memory.load_memory_variables({})
 
             # Perform the query
-            result = qa({"question": full_query, "chat_history": memory_content["chat_history"]})
+            result = qa.invoke({"question": full_query, "chat_history": memory_content["chat_history"]})
             print(result)
 
             # Output the answer obtained from LangChain
