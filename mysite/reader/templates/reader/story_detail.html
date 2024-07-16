@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static 'css/story_detail.css' %}">
     <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         body, html {
         margin: 0;
@@ -233,8 +234,9 @@
         <div class="resizer"></div> <!-- 리사이즈 핸들 추가 -->
 
     </div>
+    {% load static %}
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    
     <script>
        
         document.addEventListener('DOMContentLoaded', function() {
@@ -481,15 +483,14 @@
         function recommend_tale(id) {
             window.location.href = `/reader/story/${id}/`;
         }
-       
-       
-       
-   
+ 
         updateDownloadLink(); // 페이지 로드 시 다운로드 링크 초기화
  
  
  
     ///////////////////////// new 챗봇script ///////////////////////////////////////
+    let audio; // 전역 변수로 오디오 객체 선언
+
     $(document).ready(function() {
         $('#chat-form').submit(function(event) {
             event.preventDefault();
@@ -533,6 +534,16 @@
                     var answerElement = $('<p class="message bot"></p>').text(data.answer);
                     $('#answer-container').append(answerElement);
                     $('#answer-container').scrollTop($('#answer-container')[0].scrollHeight); // 스크롤을 맨 아래로 이동
+
+                    // TTS 기능 추가
+                    if (data.audio_content) {
+                        playAudio(data.audio_content);
+                    }
+
+                    // 답변 클릭 시 음성 재생
+                    $('#answer').off('click').on('click', function() {
+                        playAudio(data.audio_content);
+                    });
                 }
             });
         });
@@ -544,6 +555,10 @@
 
         $('.close-popup').click(function() {
             $('#chat-popup').fadeOut(300); // 사라지는 속도 300ms
+            if (audio) {
+                audio.pause(); // 오디오 정지
+                audio.currentTime = 0; // 오디오 재생 위치 초기화
+            }
         });
        
         // 음성 인식 시작
@@ -594,6 +609,20 @@
         });
 
     });
+
+    // new 챗봇 답변 읽기 TTS
+    function playAudio(audioContent) {
+        if (audio) {
+            audio.pause(); // 기존 오디오 정지
+            audio.currentTime = 0; // 기존 오디오 재생 위치 초기화
+        }
+
+        const audioBlob = new Blob([new Uint8Array(audioContent.split('').map(char => char.charCodeAt(0)))], { type: 'audio/mpeg' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        audio = new Audio(audioUrl);
+        audio.play();
+    }
+    
     ///////////////////////// 챗봇script ///////////////////////////////////////
     document.addEventListener('DOMContentLoaded', (event) => {
 
