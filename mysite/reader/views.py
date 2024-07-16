@@ -46,8 +46,10 @@ def search(request):
         else:
             stories = Story.objects.filter(category__icontains=keyword)
     else:
-        stories = Story.objects.all()      
-         
+        stories = Story.objects.all() 
+   # 정수형 필드에 대해 정렬 적용
+    stories = stories.order_by('starpoint')
+        
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
 
 def list(request):
@@ -75,6 +77,7 @@ def search(request):
         stories = Story.objects.filter(Q(title__icontains=keyword) | Q(category__icontains=keyword))
     else:
         stories = Story.objects.all()      
+    stories = stories.order_by('-starpoint')
 
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
 
