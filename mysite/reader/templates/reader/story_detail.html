@@ -3,7 +3,7 @@
 {% load static %}
 <html lang="ko">
 <head>
-    <title>{% block title %}📖 {{ title }}</title>
+    <title>{% block title %}📖{{ title }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/story_detail.css' %}">
@@ -333,6 +333,7 @@
                 document.getElementById('rating-form').style.display = "none";
                 document.getElementById('next_tale_button').style.display = "none";
                 document.getElementById('prev_tale_button').style.display = "none";
+                document.getElementById('recommend_button').style.display = "none";
             }
             if (page <= 0) {
                 document.getElementById('previous_button').style.display = "none";

@@ -1,8 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse, FileResponse
 from django import forms
 from django.urls import reverse
-
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 
@@ -10,7 +9,8 @@ from google.cloud import texttospeech
 import io
 import pandas as pd
 import openai
-
+from .models import GenStory
+from myaccount.models import Profile
 import os
 from openai import OpenAI
 from django.conf import settings
@@ -92,6 +92,8 @@ def create_story(request):
         generated_images = request.POST.getlist('generated_images', [])
         stage = int(request.POST.get('stage', 0))
         user_input = request.POST.get('user_input', '')
+        profile_id = request.session.get('selected_profile_id')
+        profile = get_object_or_404(Profile, id=profile_id, user=request.user)        
 
         # 스테이지가 0보다 크면 사용자 입력을 이야기 뒤에 추가
         if stage > 0:
@@ -142,8 +144,11 @@ def create_story(request):
             final_story = clean_story(" ".join(generated_stories)) # 쉼표 문제 해결
             final_story_parts = paginate_story(final_story)
             
-            # 최종 동화를 VS 코드 파일로 저장
-            file_path = save_final_story_to_file(final_story)
+            # db
+            title_prompt = f"{final_story}\n이 이야기의 제목을 지어주세요"
+            title_response = generate_response(title_prompt, role, max_tokens=300)   
+            title = title_response.split('"')[1]
+            file_path = save_final_story_to_database(final_story, profile, request.user, title)
 
             # 최종 이야기와 이를 분할한 파트, 생성된 이야기 및 이미지 리스트를 컨텍스트로 전달하여 렌더링
             context = {
@@ -153,10 +158,6 @@ def create_story(request):
                 'generated_images': generated_images,
                 'file_path': file_path  # 파일 경로를 컨텍스트에 추가
             }
-            # print(context)
-            # print(final_story)
-
-            
 
             return render(request, 'generator/story_result.html', context)
     else:
@@ -164,31 +165,36 @@ def create_story(request):
         return render(request, 'generator/create_story.html')
 
 def generate_image(sentence):
-    print('이미지 생성 중')
-    api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
-    client = OpenAI(api_key = api_key)
+    # print('이미지 생성 중')
+    # api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
+    # client = OpenAI(api_key = api_key)
     
+    # try:
+    #     response = client.images.generate(
+    #         model="dall-e-3",
+    #         prompt=f"다음은 동화 내용이야: {sentence}. 이 내용을 기반으로 그림을 그려줘. 귀여운 그림체로 부드러운 색조와 간단한 형태를 사용해 그려줘.",
+    #         size="1024x1024",
+    #         n=1,
+    #         quality="standard",
+    #         style="natural"
+    #     )
+    #     image_url = response.data[0].url
+    return ""
+
+    # except Exception as e:
+    #     return ""
+
+def save_final_story_to_database(final_story, profile, user, title):
     try:
-        response = client.images.generate(
-            model="dall-e-3",
-            prompt=f"다음은 동화 내용이야: {sentence}. 이 내용을 기반으로 그림을 그려줘. 귀여운 그림체로 부드러운 색조와 간단한 형태를 사용해 그려줘.",
-            size="1024x1024",
-            n=1,
-            quality="standard",
-            style="natural"
+        Gen_Story = GenStory.objects.create(
+            title = title,
+            user = user,
+            body=final_story,
+            profile = profile
         )
-        image_url = response.data[0].url
-        return image_url
-
+        Gen_Story.save()
     except Exception as e:
-        return ""
-
-def save_final_story_to_file(final_story):
-    file_path = os.path.join(settings.BASE_DIR, 'final_story.txt')
-    with open(file_path, 'w', encoding='utf-8') as file:
-        file.write(final_story)
-    return file_path
-
+        print(f"Error saving to database: {e}")
     
 def generate_tts(request):
     # print(request.POST)

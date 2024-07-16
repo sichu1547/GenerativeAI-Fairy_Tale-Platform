@@ -1,26 +1,101 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <title>독후감 리스트</title>
-</head>
-<body>
-    <div class="review-container">
-        <h2>📚 내 독후감 리스트 📚</h2>
-        <ul class="review-list">
-            {% for review in reviews %}
-            <li class="review-item">
-                <p>{{ review.story_title }}</p>
-                <p>{{ review.title }}</p>
-                <p>{{ review.content }}</p>
-                <form method="post" action="{% url 'review:review_delete' review.id %}" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit">삭제하기</button>
-                </form>
-            </li>
-            {% empty %}
-            <li>리뷰가 없습니다.</li>
-            {% endfor %}
-        </ul>
-    </div>
-</body>
-</html>
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+📚 내 독후감 리스트 📚
+{% endblock %}
+{% block content %}
+<style>
+    .review-container {
+        background: url("{% static 'images/image2.png' %}") no-repeat center center;
+        background-size: cover;
+        padding: 20px;
+        border-radius: 10px;
+        width: 80%;
+        margin: 0 auto;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .review-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 2em;
+    }
+    .review-question {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+    .review-question label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        margin-left: 30px;
+    }
+    .review-question textarea {
+        width: 100%;
+        height: 100px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        resize: none;
+    }
+    .review-question::before {
+        content: "Q";
+        position: absolute;
+        left: 0;
+        background: skyblue;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2em;
+        color: black;
+    }
+
+    .submit-button-container {
+        text-align: right;
+    }
+    .submit-button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.2em;
+    }
+    .submit-button:hover {
+        background-color: #45a049;
+    }
+</style>
+<div class="review-container">
+    <h1>{{ review.story_title }}에 대한 독후감 수정하기</h1>
+    <form method="post" action="{% url 'review:review_list' review.id %}" class="review-form">
+        {% csrf_token %}
+        <div class="review-question">
+            <label for="title"> 제목</label>
+            {{ form.title }}
+        </div>
+        <div class="review-question">
+            <label for="main_character"> 누구의 이야기인가요?</label>
+            {{ form.main_character }}
+        </div>
+        <div class="review-question">
+            <label for="content"> 무슨 일이 일어났나요?</label>
+            {{ form.content }}
+        </div>
+        <div class="review-question">
+            <label for="ending"> 어떻게 되었나요?</label>
+            {{ form.ending }}
+        </div>
+        <div class="review-question">
+            <label for="author_thoughts"> 작가의 생각</label>
+            {{ form.author_thoughts }}
+        </div>
+        <div class="submit-button-container">
+            <button type="submit" class="submit-button">저장</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

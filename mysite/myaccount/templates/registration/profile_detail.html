@@ -3,7 +3,7 @@
 <html lang="ko">
 
 <head>
-    <title>{% block title %}👤내 정보👤</title>
+    <title>{% block title %}👤내 정보</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% load static %}
@@ -27,7 +27,8 @@
             max-width: 250px;
         }
         .content-container {
-            flex: 1 0 25%;
+            flex: 1 0 25%; /* 기존 값을 수정 */
+            max-width: 300px; /* 가로 폭을 줄이기 위해 max-width 추가 */
             padding: 20px;
             margin: 10px;
             border-radius: 10px;
@@ -35,6 +36,7 @@
             background: #fff;
             display: flex;
             flex-direction: column;
+            font-family: 'Ownglyph_ryuttung-Rg', Arial, sans-serif;
         }
         .profile-box {
             background: #fff;
@@ -68,14 +70,29 @@
             border: 1px solid #ddd;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative; /* 상대 위치로 설정 */
+        }
+        .blog-post a {
+            position: absolute; /* 절대 위치로 설정 */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* 가장 앞에 위치하게 설정 */
+            text-decoration: none; /* 링크 밑줄 제거 */
+            color: inherit; /* 글자 색상 상속 */
         }
         .blog-post-title {
             font-size: 1.5em;
             margin-bottom: 10px;
+            z-index: 2;
+            color: #745cf9;
         }
         .blog-post-content {
             font-size: 1em;
             line-height: 1.5;
+            z-index: 2;
+            color: #745cf9;
         }
         .pagination {
             display: flex;
@@ -137,9 +154,9 @@
                     <div class="profile-box">
                         {% for history in page_histories %}
                             <div class="blog-post">
-                                <div class="blog-post-title">{{ history.story_title }}</div>
-                                <div class="blog-post-content">
-                                    <a href="{% url 'reader:story_detail' history.story_id %}">자세히 보기</a>
+                                <a href="{% url 'reader:story_detail' history.story_id %}"></a>
+                                <div class="blog-post-title">
+                                    {{ history.story_title }}
                                 </div>
                             </div>
                         {% endfor %}
@@ -164,9 +181,9 @@
                     <div class="profile-box">
                         {% for review in page_reviews %}
                             <div class="blog-post">
-                                <div class="blog-post-title">{{ review.title }}</div>
-                                <div class="blog-post-content">
-                                    <a href="{% url 'review:review_list' profile.id %}">자세히 보기</a>
+                                <a href="{% url 'review:review_list' review.id %}"></a>
+                                <div class="blog-post-title">
+                                    {{ review.story_title }}
                                 </div>
                             </div>
                         {% endfor %}
@@ -183,6 +200,35 @@
                 </section>
             </div>
         </div>
+
+        <!-- 동화 목록 추가 -->
+        <div class="content-container">
+            <div id="stories-container" class="profile-box">
+                <section class="content-area profile-stories">
+                    <h2 class="profile-h2">📚 내가 만든 동화</h2>
+                    <div class="profile-box">
+                        {% for story in gen_stories %}
+                            <div class="blog-post">
+                                <div class="blog-post-title">{{ story.title }}</div>
+                                <div class="blog-post-content">
+                                    <a href="{% url 'reader:genstory_detail' story.id %}">자세히 보기</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="pagination">
+                            {% for num in page_stories.paginator.page_range %}
+                                {% if page_stories.number == num %}
+                                    <span class="active">{{ num }}</span>
+                                {% else %}
+                                    <a href="?page_stories={{ num }}">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
     </div>
 </body>
 {% endblock %}

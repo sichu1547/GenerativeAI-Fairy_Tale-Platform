@@ -198,15 +198,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     },
-    'story': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'database/story_db.db',
-    },
 }
-
-DATABASE_ROUTERS = ['common.db_router.AccountDBRouter',
-                    'common.db_router.StoryDBRouter',
-]
 
 
 
@@ -248,7 +240,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / 'static',
                     BASE_DIR / 'generator/static',
-                    BASE_DIR / 'reader/static']
+                    BASE_DIR / 'reader/static',
+                    BASE_DIR / 'quiz/static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 

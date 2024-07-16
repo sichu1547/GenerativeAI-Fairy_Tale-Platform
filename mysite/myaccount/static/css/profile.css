@@ -150,6 +150,7 @@ html, body {
 .profile-img {
     height: 70px;
     width: 70px;
+    margin: 10px 0;
 }
 
 .id-name-label, .id-avatar-label {
@@ -200,6 +201,7 @@ html, body {
 
 #id_avatar {
     font-family: 'Pretendard-Regular';
+    margin-top: 20px;
 }
 
 input[type=file]::file-selector-button {
