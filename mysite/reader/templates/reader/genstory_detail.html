@@ -43,18 +43,6 @@
         width: 200px; /* 원하는 너비로 설정 */
         height: 100%;
     }
-    .arrow-button1 {
-        display:none;
-        position: fixed;
-        left: 0;
-        top: 50%;
-    }
-    .arrow-button2 {
-        display:none;
-        position: fixed;
-        right: 0;
-        top: 50%;
-    }
  
     .star-rating {
         display: flex;
@@ -116,58 +104,56 @@
             </audio>
             <a href="?tts=true&voice=ko-KR-Standard-A&text=full" download="audio.mp3" id="downloadLink">⬇️</a>
         </div>
-       
-        <div class="book">
-           
-            <div class="left-page">
-                <div class="image-container" style="background-image: url('{{ image_urls.0 }}');"></div>
-            </div>
-            <div class="spine">
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-            </div>
-            <div class="right-page">
-                <div class="text-container">
-                    {% for sentence in story %}
-                        <p onclick="readSentence({{ forloop.counter0 }})" id="sentence-{{ forloop.counter0 }}">{{ sentence }}</p>
-                    {% endfor %}
+        <div class="center-container">
+            <button class="arrow-button" id="previous_button">←</button>
+            <div class="book">
+                <div class="left-page">
+                    <div class="image-container" style="background-image: url('{{ image_urls.0 }}');"></div>
+                </div>
+                <div class="spine">
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                </div>
+                <div class="right-page">
+                    <div class="text-container">
+                        {% for sentence in story %}
+                            <p onclick="readSentence({{ forloop.counter0 }})" id="sentence-{{ forloop.counter0 }}">{{ sentence }}</p>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
+            <button class="arrow-button" id="next_button">→</button>
         </div>
-        <div>
-            <form id="rating-form" method="post" action="{% if keyword == 'Generative' %}{% url 'reader:rate_story' id %}?keyword=Generative{% else %}{% url 'reader:rate_story' id %}{% endif %}">
-                {% csrf_token %}
-                <label for="starpoint"></label>
-                <div class="star-rating">
-                    <img src="{% static 'images/realstar.png' %}" class="star" data-value="1">
-                    <img src="{% static 'images/realstar.png' %}" class="star" data-value="2">
-                    <img src="{% static 'images/realstar.png' %}" class="star" data-value="3">
-                    <img src="{% static 'images/realstar.png' %}" class="star" data-value="4">
-                    <img src="{% static 'images/realstar.png' %}" class="star" data-value="5">
-                </div>
-                <select id="number-select" name="starpoint" style="display: none;">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-                <button type="submit">별점 저장</button>
-            </form>
-        </div>
+        <form id="rating-form" method="post" action="{% if keyword == 'Generative' %}{% url 'reader:rate_story' id %}?keyword=Generative{% else %}{% url 'reader:rate_story' id %}{% endif %}">
+            {% csrf_token %}
+            <label for="starpoint"></label>
+            <div class="star-rating">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="1">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="2">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="3">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="4">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="5">
+            </div>
+            <select id="number-select" name="starpoint" style="display: none;">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <button class="reader-button">별점 저장</button>
+        </form>
         <div class="buttons"> 
-            <button class="arrow-button1 arrow-button" id="previous_button">← 이전 페이지로</button>
             <button class="reader-button" id="prev_tale_button" onclick="prevPage({{ id }})">이전 동화</button>
             <button class="reader-button" id="next_tale_button" onclick="nextPage({{ id }})">다음 동화</button>
-            <button class="arrow-button2 arrow-button" id="next_button">다음 페이지로 →</button>
         </div>
     </div>
   
@@ -197,8 +183,6 @@
         <div class="resizer"></div> <!-- 리사이즈 핸들 추가 -->
 
     </div>
-    {% load static %}
-
     
     <script>
        
@@ -269,20 +253,28 @@
  
             // 마지막 페이지에서만 "퀴즈 시작" 및 "독후감 쓰기" 버튼 보이기
             if (page >= totalPages - 1) {
-                document.getElementById('rating-form').style.display = "inline-block";
-                document.getElementById('next_button').style.display = "none";
+                document.getElementById('rating-form').style.display = "flex";
                 document.getElementById('next_tale_button').style.display = "inline-block";
                 document.getElementById('prev_tale_button').style.display = "inline-block";
             } else {
-                document.getElementById('next_button').style.display = "inline-block";
                 document.getElementById('rating-form').style.display = "none";
                 document.getElementById('next_tale_button').style.display = "none";
                 document.getElementById('prev_tale_button').style.display = "none";
             }
-            if (page <= 0) {
-                document.getElementById('previous_button').style.display = "none";
+            
+            const prevButton = document.getElementById('previous_button');
+            const nextButton = document.getElementById('next_button');
+        
+            if (currentPage === 0) {
+                prevButton.classList.add('disabled');
             } else {
-                document.getElementById('previous_button').style.display = "inline-block";
+                prevButton.classList.remove('disabled');
+            }
+        
+            if (currentPage === totalPages - 1) {
+                nextButton.classList.add('disabled');
+            } else {
+                nextButton.classList.remove('disabled');
             }
         }
    
@@ -677,10 +669,6 @@
             $(document).off('mouseup.resizable');
         }
     });
-    
-    
-    
-
     
     // 동화 이동하기
     function prevPage(id) {

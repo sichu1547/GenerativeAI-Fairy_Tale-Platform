@@ -75,18 +75,6 @@
         width: 200px; /* 원하는 너비로 설정 */
         height: 100%;
     }
-    .arrow-button1 {
-        display:none;
-        position: fixed;
-        left: 0;
-        top: 50%;
-    }
-    .arrow-button2 {
-        display:none;
-        position: fixed;
-        right: 0;
-        top: 50%;
-    }
  
     .star-rating {
         display: flex;
@@ -112,40 +100,40 @@
             <h1 class="story-title">📖 {{ title }}</h1>
             <div class="audio-buttons">
  
-            <div class="inner-audio-buttons">
-                <label class="audio-button-label">
-                    <span>A1</span>
-                    <input type="radio" name="voice" value="ko-KR-Standard-A" onclick="selectVoice('ko-KR-Standard-A')">
-                </label>
-                <label class="audio-button-label">
-                    <span>B1</span>
-                    <input type="radio" name="voice" value="ko-KR-Standard-B" onclick="selectVoice('ko-KR-Standard-B')">
-                </label>
-                <label class="audio-button-label">
-                    <span>C1</span>
-                    <input type="radio" name="voice" value="ko-KR-Standard-C" onclick="selectVoice('ko-KR-Standard-C')">
-                </label>
-                <label class="audio-button-label">
-                    <span>D1</span>
-                    <input type="radio" name="voice" value="ko-KR-Standard-D" onclick="selectVoice('ko-KR-Standard-D')">
-                </label>
-                <label class="audio-button-label">
-                    <span>A2</span>
-                    <input type="radio" name="voice" value="ko-KR-Wavenet-A" onclick="selectVoice('ko-KR-Wavenet-A')">
-                </label>
-                <label class="audio-button-label">
-                    <span>B2</span>
-                    <input type="radio" name="voice" value="ko-KR-Wavenet-B" onclick="selectVoice('ko-KR-Wavenet-B')">
-                </label>
-                <label class="audio-button-label">
-                    <span>C2</span>
-                    <input type="radio" name="voice" value="ko-KR-Wavenet-C" onclick="selectVoice('ko-KR-Wavenet-C')">
-                </label>
-                <label class="audio-button-label">
-                    <span>D2</span>
-                    <input type="radio" name="voice" value="ko-KR-Wavenet-D" onclick="selectVoice('ko-KR-Wavenet-D')">
-                </label>
-            </div>
+                <div class="inner-audio-buttons">
+                    <label class="audio-button-label">
+                        <span>A1</span>
+                        <input type="radio" name="voice" value="ko-KR-Standard-A" onclick="selectVoice('ko-KR-Standard-A')">
+                    </label>
+                    <label class="audio-button-label">
+                        <span>B1</span>
+                        <input type="radio" name="voice" value="ko-KR-Standard-B" onclick="selectVoice('ko-KR-Standard-B')">
+                    </label>
+                    <label class="audio-button-label">
+                        <span>C1</span>
+                        <input type="radio" name="voice" value="ko-KR-Standard-C" onclick="selectVoice('ko-KR-Standard-C')">
+                    </label>
+                    <label class="audio-button-label">
+                        <span>D1</span>
+                        <input type="radio" name="voice" value="ko-KR-Standard-D" onclick="selectVoice('ko-KR-Standard-D')">
+                    </label>
+                    <label class="audio-button-label">
+                        <span>A2</span>
+                        <input type="radio" name="voice" value="ko-KR-Wavenet-A" onclick="selectVoice('ko-KR-Wavenet-A')">
+                    </label>
+                    <label class="audio-button-label">
+                        <span>B2</span>
+                        <input type="radio" name="voice" value="ko-KR-Wavenet-B" onclick="selectVoice('ko-KR-Wavenet-B')">
+                    </label>
+                    <label class="audio-button-label">
+                        <span>C2</span>
+                        <input type="radio" name="voice" value="ko-KR-Wavenet-C" onclick="selectVoice('ko-KR-Wavenet-C')">
+                    </label>
+                    <label class="audio-button-label">
+                        <span>D2</span>
+                        <input type="radio" name="voice" value="ko-KR-Wavenet-D" onclick="selectVoice('ko-KR-Wavenet-D')">
+                    </label>
+                </div>
                 <button class="audio-button" onclick="readFullStory()">전체 읽기</button>
             </div>
             <audio id="ttsAudio" controls>
@@ -155,56 +143,55 @@
             <a href="?tts=true&voice=ko-KR-Standard-A&text=full" download="audio.mp3" id="downloadLink">⬇️</a>
         </div>
        
-        <div class="book">
-           
-            <div class="left-page">
-                <div class="image-container" style="background-image: url('{{ image_urls.0 }}');"></div>
-            </div>
-            <div class="spine">
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-                <div class="spiral"></div>
-            </div>
-            <div class="right-page">
-                <div class="text-container"></div>
-            </div>
-        </div>
-        <div>
-            <form id="rating-form" method="post" action="{% url 'reader:rate_story' id %}?keyword={{ keyword }}">
-                {% csrf_token %}
-                <label for="starpoint"></label>
-                <div class="star-rating">
-                    <img src="{% static 'images/realstar.png' %}" class="star" data-value="1">
-                    <img src="{% static 'images/realstar.png' %}" class="star" data-value="2">
-                    <img src="{% static 'images/realstar.png' %}" class="star" data-value="3">
-                    <img src="{% static 'images/realstar.png' %}" class="star" data-value="4">
-                    <img src="{% static 'images/realstar.png' %}" class="star" data-value="5">
+        <div class="center-container">
+            <button class="arrow-button" id="previous_button">←</button>
+            <div class="book">
+                <div class="left-page">
+                    <div class="image-container" style="background-image: url('{{ image_urls.0 }}');"></div>
                 </div>
-                <select id="number-select" name="starpoint" style="display: none;">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                </select>
-                <button type="submit">별점 저장</button>
-            </form>
+                <div class="spine">
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                </div>
+                <div class="right-page">
+                    <div class="text-container"></div>
+                </div>
+            </div>
+            <button class="arrow-button" id="next_button">→</button>
         </div>
+        <form id="rating-form" method="post" action="{% url 'reader:rate_story' id %}?keyword={{ keyword }}">
+            {% csrf_token %}
+            <label for="starpoint"></label>
+            <div class="star-rating">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="1">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="2">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="3">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="4">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="5">
+            </div>
+            <select id="number-select" name="starpoint" style="display: none;">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <button class="reader-button">별점 저장</button>
+        </form>
         <div class="buttons"> 
-            <button class="arrow-button1 arrow-button" id="previous_button">← 이전 페이지로</button>
             <button class="reader-button" id="prev_tale_button" onclick="prevPage({{ id }})">이전 동화</button>
-            <button class="reader-button" id="quiz_button" onclick="window.location.href='{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}'" style="display:none;">퀴즈 시작</button>
-            <button class="reader-button" id="review_button" onclick="window.location.href='{% url 'review:write_review' id %}'" style="display:none;">독후감 쓰기</button>
-            <button class="reader-button" id="recommend_button" onclick="recommend_tale({{ rec_id }})" style="display:none;">추천 동화</button>
+            <button class="reader-button" id="quiz_button" onclick="window.location.href='{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}'">퀴즈 시작</button>
+            <button class="reader-button" id="review_button" onclick="window.location.href='{% url 'review:write_review' id %}'">독후감 쓰기</button>
+            <button class="reader-button" id="recommend_button" onclick="recommend_tale({{ rec_id }})">추천 동화</button>
             <button class="reader-button" id="next_tale_button" onclick="nextPage({{ id }})">다음 동화</button>
-            <button class="arrow-button2 arrow-button" id="next_button">다음 페이지로 →</button>
         </div>
     </div>
   
@@ -234,7 +221,6 @@
         <div class="resizer"></div> <!-- 리사이즈 핸들 추가 -->
 
     </div>
-    {% load static %}
 
     
     <script>
@@ -317,17 +303,15 @@
    
             generateImage(currentPage + 1); // 다음 페이지의 이미지 생성
  
-            // 마지막 페이지에서만 "퀴즈 시작" 및 "독후감 쓰기" 버튼 보이기
+            // 마지막 페이지에서만 rating-form, 하단 buttons 보이기
             if (page >= totalPages - 1) {
                 document.getElementById('quiz_button').style.display = "inline-block";
                 document.getElementById('review_button').style.display = "inline-block";
                 document.getElementById('recommend_button').style.display = "inline-block";
-                document.getElementById('rating-form').style.display = "inline-block";
-                document.getElementById('next_button').style.display = "none";
+                document.getElementById('rating-form').style.display = "flex";
                 document.getElementById('next_tale_button').style.display = "inline-block";
                 document.getElementById('prev_tale_button').style.display = "inline-block";
             } else {
-                document.getElementById('next_button').style.display = "inline-block";
                 document.getElementById('quiz_button').style.display = "none";
                 document.getElementById('review_button').style.display = "none";
                 document.getElementById('rating-form').style.display = "none";
@@ -335,10 +319,20 @@
                 document.getElementById('prev_tale_button').style.display = "none";
                 document.getElementById('recommend_button').style.display = "none";
             }
-            if (page <= 0) {
-                document.getElementById('previous_button').style.display = "none";
+
+            const prevButton = document.getElementById('previous_button');
+            const nextButton = document.getElementById('next_button');
+
+            if (currentPage === 0) {
+                prevButton.classList.add('disabled');
             } else {
-                document.getElementById('previous_button').style.display = "inline-block";
+                prevButton.classList.remove('disabled');
+            }
+        
+            if (currentPage === totalPages - 1) {
+                nextButton.classList.add('disabled');
+            } else {
+                nextButton.classList.remove('disabled');
             }
         }
    
