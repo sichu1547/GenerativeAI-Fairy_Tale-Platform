@@ -44,13 +44,18 @@ class StoryListView(ListView):
     context_object_name = 'stories'    
     
 class ReviewListView(View):
-    def get(self, request, profile_id):
-        profile = get_object_or_404(Profile, id=profile_id, user=request.user)
-        if profile:
-            reviews = Review.objects.filter(user=request.user, profile_id=profile)
-        else:
-            reviews = Review.objects.filter(user=request.user)
-        return render(request, 'review/review_list.html', {'reviews': reviews})
+    def get(self, request, review_id):
+        review = get_object_or_404(Review, id=review_id, user=request.user)
+        form = ReviewForm(instance=review)
+        return render(request, 'review/review_list.html', {'form': form, 'review': review})
+    
+    def post(self, request, review_id):
+        review = get_object_or_404(Review, id=review_id, user=request.user)
+        form = ReviewForm(request.POST, instance=review)
+        if form.is_valid():
+            form.save()
+            return redirect('profile_detail', pk=request.user.pk)
+        return render(request, 'review/review_list.html', {'form': form, 'review': review})
 
 class ReviewDeleteView(DeleteView):
     model = Review
