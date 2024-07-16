@@ -1,9 +1,7 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, JsonResponse, FileResponse
 from django import forms
 from django.urls import reverse
-
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 
@@ -11,7 +9,8 @@ from google.cloud import texttospeech
 import io
 import pandas as pd
 import openai
-
+from .models import GenStory
+from myaccount.models import Profile
 import os
 from openai import OpenAI
 from django.conf import settings
@@ -51,11 +50,15 @@ def generate_response(prompt, role, max_tokens=110):
         n=1,
         temperature=0.7
     )
-    # 110 토큰으로 생성된 문장이 끊기지 않도록 최대한 완전한 문장을 반환
     content = response.choices[0].message.content.strip()
-    sentences = content.split('. ')
-    complete_content = '. '.join(sentences[:-1]) + '.' if len(sentences) > 1 else content
-    return complete_content
+    
+    # role이 system_roles[2]가 아닌 경우에만 문장이 끊기지 않도록 처리
+    if role != system_roles[2]:
+        sentences = content.split('. ')
+        complete_content = '. '.join(sentences[:-1]) + '.' if len(sentences) > 1 else content
+        return complete_content
+    else:
+        return content
 
 # 이야기 분할 함수
 def paginate_story(story, max_length=500):
@@ -67,7 +70,7 @@ def paginate_story(story, max_length=500):
             parts.append(current_part)
             current_part = word
         else:
-            if current_part:
+            if (current_part):
                 current_part += " " + word
             else:
                 current_part = word
@@ -85,6 +88,8 @@ def create_story(request):
         generated_images = request.POST.getlist('generated_images', [])
         stage = int(request.POST.get('stage', 0))
         user_input = request.POST.get('user_input', '')
+        profile_id = request.session.get('selected_profile_id')
+        profile = get_object_or_404(Profile, id=profile_id, user=request.user)        
 
         # 스테이지가 0보다 크면 사용자 입력을 이야기 뒤에 추가
         if stage > 0:
@@ -134,35 +139,55 @@ def create_story(request):
             # 최종 이야기 전체를 하나의 문자열로 결합하여 분할
             final_story = clean_story(" ".join(generated_stories)) # 쉼표 문제 해결
             final_story_parts = paginate_story(final_story)
+            
+            # db
+            title_prompt = f"{final_story}\n이 이야기의 제목을 지어주세요"
+            title_response = generate_response(title_prompt, role, max_tokens=300)   
+            title = title_response.split('"')[1]
+            file_path = save_final_story_to_database(final_story, profile, request.user, title)
 
             # 최종 이야기와 이를 분할한 파트, 생성된 이야기 및 이미지 리스트를 컨텍스트로 전달하여 렌더링
             context = {
                 'final_story': final_story,
                 'final_story_parts': final_story_parts,
                 'generated_stories': generated_stories,
-                'generated_images': generated_images
+                'generated_images': generated_images,
+                'file_path': file_path  # 파일 경로를 컨텍스트에 추가
             }
+
             return render(request, 'generator/story_result.html', context)
     else:
         # GET 요청인 경우 이야기 생성 페이지를 렌더링
         return render(request, 'generator/create_story.html')
 
 def generate_image(sentence):
-    print('이미지 생성 중')
-    api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
-    client = OpenAI(api_key = api_key)
+    # print('이미지 생성 중')
+    # api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
+    # client = OpenAI(api_key = api_key)
     
-    try:
-        response = client.images.generate(
-            model="dall-e-3",
-            prompt=f"다음은 동화 내용이야: {sentence}. 이 내용을 기반으로 그림을 그려줘. 귀여운 그림체로 부드러운 색조와 간단한 형태를 사용해 그려줘.",
-            size="1024x1024",
-            n=1,
-            quality="standard",
-            style="natural"
-        )
-        image_url = response.data[0].url
-        return image_url
+    # try:
+    #     response = client.images.generate(
+    #         model="dall-e-3",
+    #         prompt=f"다음은 동화 내용이야: {sentence}. 이 내용을 기반으로 그림을 그려줘. 귀여운 그림체로 부드러운 색조와 간단한 형태를 사용해 그려줘.",
+    #         size="1024x1024",
+    #         n=1,
+    #         quality="standard",
+    #         style="natural"
+    #     )
+    #     image_url = response.data[0].url
+    return ""
 
+    # except Exception as e:
+    #     return ""
+
+def save_final_story_to_database(final_story, profile, user, title):
+    try:
+        Gen_Story = GenStory.objects.create(
+            title = title,
+            user = user,
+            body=final_story,
+            profile = profile
+        )
+        Gen_Story.save()
     except Exception as e:
-        return ""
+        print(f"Error saving to database: {e}")

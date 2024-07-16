@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views import View
-from .models import ReaderStory
+from reader.models import Story
 from django.conf import settings
 
 import re
@@ -13,11 +13,11 @@ from google.cloud import texttospeech
 import io
 from django.conf import settings
 from langchain.chat_models import ChatOpenAI
-from langchain.schema import HumanMessage#, AIMessage
-#from langchain.memory import ConversationBufferMemory
+from langchain.schema import HumanMessage
+
 class QuizView(View):
     m_context = {}
-    path = './database/quiz_history.db'
+    path = './db.sqlite3'
 
     def get(self, request, id):
         keyword = request.GET.get('keyword', '')
@@ -25,7 +25,7 @@ class QuizView(View):
         if 'quizzes' in QuizView.m_context:
             QuizView.m_context['keyword'] = keyword
         else:
-            story = get_object_or_404(ReaderStory, id=id)
+            story = get_object_or_404(Story, id=id)
 
             if not story:
                 return render(request, 'quiz/no_story.html')
@@ -77,15 +77,16 @@ class QuizView(View):
         cursor = conn.cursor()
 
         cursor.execute('''
-        CREATE TABLE IF NOT EXISTS history(
+        CREATE TABLE IF NOT EXISTS quiz_history(
             id INTEGER PRIMARY KEY,
+            story_id INTEGER NOT NULL,
             question TEXT NOT NULL,
             answer TEXT NOT NULL
         )
         ''')
         conn.commit()
 
-        cursor.execute('SELECT * FROM history WHERE question = ?', (question, ))
+        cursor.execute('SELECT * FROM quiz_history WHERE question = ?', (question, ))
         result = cursor.fetchone()
         conn.close()
         return result is not None
@@ -93,26 +94,13 @@ class QuizView(View):
     def save_question(self, story_id, question, answer):
         conn = sqlite3.connect(self.path)
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO history (story_id, question, answer) VALUES (?, ?, ?)', (story_id, question, answer))
+        cursor.execute('INSERT INTO quiz_history (story_id, question, answer) VALUES (?, ?, ?)', (story_id, question, answer))
         conn.commit()
         conn.close()
 
     def generate_questions_with_gpt(self, paragraph, story_id):
         api_key = settings.OPENAI_API_KEY
-        # api_key = os.getenv('OPENAI_API_KEY')
         chat = ChatOpenAI(model="gpt-4o", openai_api_key=api_key)
-
-        # memory = ConversationBufferMemory(memory_key="chat_history", input_key="question", output_key="answer", return_messages=True)
-
-        # conn = sqlite3.connect(self.path)
-        # cursor = conn.cursor()
-        # cursor.execute('SELECT question, answer FROM history WHERE story_id = ?', (story_id,))
-        # db_history = cursor.fetchall()
-        # conn.close()
-
-        # for message in db_history:
-        #     memory.chat_memory.add_message(HumanMessage(content=message[0]))
-        #     memory.chat_memory.add_message(AIMessage(content=message[1]))
         
         prompt = f"다음 문단을 읽고 최대한 간단하고 본문에 명시된 답변이 나오게 질문을 하나 만들고 그에 대한 정답 1개와 정답과 비슷한 보기를 정답을 포함해서 3개를 제시해라:\n\n{paragraph}"
         response = chat(messages=[HumanMessage(content=prompt)])

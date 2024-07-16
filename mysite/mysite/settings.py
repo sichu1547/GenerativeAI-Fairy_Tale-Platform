@@ -198,15 +198,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     },
-    'story': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'database/story_db.db',
-    },
 }
-
-DATABASE_ROUTERS = ['common.db_router.AccountDBRouter',
-                    'common.db_router.StoryDBRouter',
-]
 
 
 

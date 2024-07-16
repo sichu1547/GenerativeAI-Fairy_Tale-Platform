@@ -33,7 +33,7 @@ from sklearn.neighbors import NearestNeighbors
 from .models import Story
 from myaccount.models import ReadingHistory, Profile
 import random
- 
+from generator.models import GenStory
 
 def index(request):
     return render(request, 'reader/index.html')
@@ -144,10 +144,10 @@ def story_detail(request, id):
 
     if previous_story_id != id:
         QuizView.m_context = {}
-        path = './database/quiz_history.db'
+        path = './db.sqlite3'
         conn = sqlite3.connect(path)
         cursor = conn.cursor()
-        cursor.execute('DELETE FROM history')
+        cursor.execute('DELETE FROM quiz_history')
         conn.commit()
         conn.close()    
         request.session['previous_story_id'] = id
@@ -192,7 +192,7 @@ def story_detail(request, id):
     recommended_id = story.id
     
 
-    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id})
+    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id, 'profile' : profile})
     ########################################################################################################    
 
 def redirect_to_quiz(request, id):
@@ -226,10 +226,12 @@ qa = ConversationalRetrievalChain.from_llm(
     return_source_documents=True, output_key="answer")
 
 @csrf_exempt
-def answer_question(request):
+def answer_question(request, story_id):
     if request.method == 'POST':
+        profile_id = request.POST.get('profile_id')
         question = request.POST.get('question', None)
-        story_id = request.POST.get('story_id', None)
+        profile = get_object_or_404(Profile, id=profile_id, user=request.user)
+
         if question and story_id:
             story = get_object_or_404(Story, pk=story_id)
 
@@ -256,7 +258,7 @@ def answer_question(request):
             memory.save_context({"question": full_query}, {"answer": answer})
 
             # Save to the database
-            save_to_database(story.title, question, answer)
+            save_to_database(story.title, question, answer, profile_id)
 
             # Answer TTS
             ssml_text = f"""<speak>{answer}</speak>"""
@@ -275,9 +277,14 @@ def answer_question(request):
 
     return JsonResponse({'error': 'Invalid request'})
 
-def save_to_database(story_title, question, answer):
+def save_to_database(story_title, question, answer, profile_id):
     try:
-        log_entry = LogEntry(story_title=story_title, question=question, answer=answer)
+        log_entry = LogEntry.objects.create(
+            profile_id=profile_id,
+            story_title=story_title,
+            question=question,
+            answer=answer
+        )
         log_entry.save()
     except Exception as e:
         print(f"Error saving to database: {e}")
@@ -301,3 +308,6 @@ def rate_story(request, id):
  
     return redirect('reader:story_detail', id=story.id)
         
+def genstory_detail(request, story_id):
+    story = get_object_or_404(GenStory, id=story_id)
+    return render(request, 'reader/genstory_detail.html', {'story': story})

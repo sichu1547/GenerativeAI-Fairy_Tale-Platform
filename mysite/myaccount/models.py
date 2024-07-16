@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from reader.models import Story
 from django.utils import timezone
 
 class UserSessionData(models.Model):

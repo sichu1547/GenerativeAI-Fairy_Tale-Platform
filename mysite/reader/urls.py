@@ -11,6 +11,7 @@ urlpatterns = [
     path('story/<int:id>/', views.story_detail, name='story_detail'),
     path('story/<int:id>/quiz/', views.redirect_to_quiz, name='redirect_to_quiz'),
     path('generate_image/', views.generate_image_view, name='generate_image'),  # Add this line
-    path('answer_question/', views.answer_question, name='answer_question'),  # AJAX 요청 처리용 URL
+    path('answer_question/<int:story_id>/', views.answer_question, name='answer_question'),  # AJAX 요청 처리용 URL
     path('rate_story/<int:id>/', views.rate_story, name='rate_story'),
+    path('genstory/<int:story_id>/', views.genstory_detail, name='genstory_detail'),
 ]
