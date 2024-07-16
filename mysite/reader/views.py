@@ -26,7 +26,7 @@ from langchain.embeddings import OpenAIEmbeddings
 from langchain.vectorstores import Chroma
 from langchain.chains import ConversationalRetrievalChain
 import os
-
+from django.http import HttpResponseRedirect
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import NearestNeighbors
@@ -66,13 +66,11 @@ def detail(request, id):
 
 def search(request):
     keyword = request.GET.get('keyword')
-
     if keyword:
-        # if search_type == 'title':
-        #     stories = Story.objects.filter(title__icontains=keyword)
-        # else:
-        #     stories = Story.objects.filter(category__icontains=keyword)
-        stories = Story.objects.filter(Q(title__icontains=keyword) | Q(category__icontains=keyword))
+        if keyword == 'Generative':
+            stories = GenStory.objects.all()
+        else:
+            stories = Story.objects.filter(Q(title__icontains=keyword) | Q(category__icontains=keyword))
     else:
         stories = Story.objects.all()      
 
@@ -103,96 +101,104 @@ def generate_image(sentence):
 
 
 def story_detail(request, id):
-    if not request.user.is_authenticated:
-        return redirect(f"{reverse('login')}?next={request.path}")
-    story = get_object_or_404(Story, id=id)
-    profile_id = request.session.get('selected_profile_id')
-
-    if profile_id:
-        try:
-            profile = get_object_or_404(Profile, id=profile_id, user=request.user)
-            ReadingHistory.objects.get_or_create(user=request.user, profile=profile, story_title=story.title, story_id=story.id)
-            print("Reading history saved successfully")
-        except Exception as e:
-            print(f"Error saving reading history: {e}")
-    else:
-        print("Profile ID not found in session")
-
     keyword = request.GET.get('keyword')
-    patterns = r'\r\n\r\n\r\n|\r\n\r\n \r\n|\r\n \r\n \r\n|\r\n \r\n\r\n'
-    sentences = re.split(patterns, story.body)
-    
-    # 이미지
-    image_urls = request.session.get('image_urls', [])
-    if sentences and not image_urls:
-        image_urls = [generate_image(sentences[0])]
-        request.session['image_urls'] = image_urls
 
-    # TTS
-    if 'tts' in request.GET:
-        print("Let's go TTS")
-        text = request.GET.get('text', '')
+    if keyword == 'Generative':
+        story = get_object_or_404(GenStory, id=id)        
+        patterns = r'\r\n\r\n|\r\n \r\n'
+        sentences = re.split(patterns, story.body)     
 
-        if text == 'full':
-            text = story.title+'<break time="1s"/>'+story.body
+        return render(request, 'reader/genstory_detail.html', {'story': sentences, 'id' : id, 'keyword': keyword, 'title' : story.title})
+    else:
+        if not request.user.is_authenticated:
+            return redirect(f"{reverse('login')}?next={request.path}")
+        story = get_object_or_404(Story, id=id)
+        profile_id = request.session.get('selected_profile_id')
+
+        if profile_id:
+            try:
+                profile = get_object_or_404(Profile, id=profile_id, user=request.user)
+                ReadingHistory.objects.get_or_create(user=request.user, profile=profile, story_title=story.title, story_id=story.id)
+                print("Reading history saved successfully")
+            except Exception as e:
+                print(f"Error saving reading history: {e}")
+        else:
+            print("Profile ID not found in session")
+
+        patterns = r'\r\n\r\n\r\n|\r\n\r\n \r\n|\r\n \r\n \r\n|\r\n \r\n\r\n'
+        sentences = re.split(patterns, story.body)
         
-        ssml_text = f"""<speak>{text}</speak>"""
+        # 이미지
+        image_urls = request.session.get('image_urls', [])
+        if sentences and not image_urls:
+            image_urls = [generate_image(sentences[0])]
+            request.session['image_urls'] = image_urls
 
-        return generate_tts(request, ssml_text)
+        # TTS
+        if 'tts' in request.GET:
+            print("Let's go TTS")
+            text = request.GET.get('text', '')
 
-    previous_story_id = request.session.get('previous_story_id')
+            if text == 'full':
+                text = story.title+'<break time="1s"/>'+story.body
+            
+            ssml_text = f"""<speak>{text}</speak>"""
 
-    if previous_story_id != id:
-        QuizView.m_context = {}
-        path = './db.sqlite3'
-        conn = sqlite3.connect(path)
-        cursor = conn.cursor()
-        cursor.execute('DELETE FROM quiz_history')
-        conn.commit()
-        conn.close()    
-        request.session['previous_story_id'] = id
+            return generate_tts(request, ssml_text)
+
+        previous_story_id = request.session.get('previous_story_id')
+
+        if previous_story_id != id:
+            QuizView.m_context = {}
+            path = './db.sqlite3'
+            conn = sqlite3.connect(path)
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM quiz_history')
+            conn.commit()
+            conn.close()    
+            request.session['previous_story_id'] = id
+            
+        ########################################################################################################    
+        # 장고 모델에서 모든 스토리 데이터 로드
         
-    ########################################################################################################    
-    # 장고 모델에서 모든 스토리 데이터 로드
-    
-    story = get_object_or_404(Story, id=id)
-    
-    stories = Story.objects.all()
-    data = {
-        '제목': [i.title for i in stories],
-        '내용': [i.body for i in stories]
-    }
-    # 제목과 내용을 새로운 데이터프레임으로 저장
-    df = pd.DataFrame(data)
+        story = get_object_or_404(Story, id=id)
+        
+        stories = Story.objects.all()
+        data = {
+            '제목': [i.title for i in stories],
+            '내용': [i.body for i in stories]
+        }
+        # 제목과 내용을 새로운 데이터프레임으로 저장
+        df = pd.DataFrame(data)
 
-    # 모델에서 id가 해당 동화인 데이터 가져오기
-    # 제목만 따로 저장하기
-    tale_title = story.title
+        # 모델에서 id가 해당 동화인 데이터 가져오기
+        # 제목만 따로 저장하기
+        tale_title = story.title
 
-    if not tale_title:
-        return HttpResponse("Please provide a tale title.")  # 제목이 없으면 메시지 반환
+        if not tale_title:
+            return HttpResponse("Please provide a tale title.")  # 제목이 없으면 메시지 반환
 
-    tfidf = TfidfVectorizer()
-    dtm = tfidf.fit_transform(df['내용'])
-    dtm = pd.DataFrame(dtm.todense(), columns=tfidf.get_feature_names_out())
+        tfidf = TfidfVectorizer()
+        dtm = tfidf.fit_transform(df['내용'])
+        dtm = pd.DataFrame(dtm.todense(), columns=tfidf.get_feature_names_out())
 
-    nn = NearestNeighbors(n_neighbors=6, algorithm='kd_tree')
-    nn.fit(dtm)
+        nn = NearestNeighbors(n_neighbors=6, algorithm='kd_tree')
+        nn.fit(dtm)
 
-    try:
-        idx = df[df['제목'] == tale_title].index[0]
-    except IndexError:
-        return HttpResponse("Tale title not found.")  # 제목이 데이터베이스에 없으면 메시지 반환
+        try:
+            idx = df[df['제목'] == tale_title].index[0]
+        except IndexError:
+            return HttpResponse("Tale title not found.")  # 제목이 데이터베이스에 없으면 메시지 반환
 
-    result = nn.kneighbors([dtm.iloc[idx]])
-    random_value = random.randint(1,5)
-    recommended_title = df['제목'].iloc[result[1][0][random_value]]
-    
-    story = get_object_or_404(Story, title=recommended_title)
-    recommended_id = story.id
-    
+        result = nn.kneighbors([dtm.iloc[idx]])
+        random_value = random.randint(1,5)
+        recommended_title = df['제목'].iloc[result[1][0][random_value]]
+        
+        story = get_object_or_404(Story, title=recommended_title)
+        recommended_id = story.id
+        
 
-    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id, 'profile' : profile})
+        return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id, 'profile' : profile})
     ########################################################################################################    
 
 def redirect_to_quiz(request, id):
@@ -290,8 +296,12 @@ def save_to_database(story_title, question, answer, profile_id):
         print(f"Error saving to database: {e}")
         
 def rate_story(request, id):
-    story = get_object_or_404(Story, id=id)
-    
+    keyword = request.GET.get('keyword')
+    if keyword == 'Generative':
+        story = get_object_or_404(GenStory, id=id)   
+    else:
+        story = get_object_or_404(Story, id=id)
+
     if request.method == 'POST':
         starpoint = request.POST.get('starpoint')
         if starpoint:
@@ -305,8 +315,10 @@ def rate_story(request, id):
                 #return HttpResponse(status=200)
             except ValueError:
                 pass
- 
-    return redirect('reader:story_detail', id=story.id)
+    if keyword:
+        return HttpResponseRedirect(reverse('reader:search') + f'?keyword={keyword}')
+    else:
+        return HttpResponseRedirect(reverse('reader:search'))
         
 def genstory_detail(request, story_id):
     story = get_object_or_404(GenStory, id=story_id)
