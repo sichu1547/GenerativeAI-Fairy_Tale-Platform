@@ -78,6 +78,30 @@ def search(request):
 
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
 
+def generate_image(sentence):
+    # print('생성중')
+    # api_key = settings.OPENAI_API_KEY
+    # client = OpenAI(api_key = api_key)
+    
+    # try:
+    #     response = client.images.generate(
+    #         model="dall-e-3",
+    #         prompt=f"This: {sentence}. Based on this, draw a cute and lovely 2D picture using an illustration that never contains text, phrases, or speech bubbles. Never add text.",
+    #         #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
+    #         size="1024x1024",
+    #         n=1,
+    #         quality="standard",
+    #         style="natural"
+    #     )
+    #     image_url = response.data[0].url
+    #     print('성공')
+    #     return image_url
+
+    # except Exception as e:
+    #     print('실패')
+    return ""
+
+
 def story_detail(request, id):
     if not request.user.is_authenticated:
         return redirect(f"{reverse('login')}?next={request.path}")
@@ -97,9 +121,12 @@ def story_detail(request, id):
     keyword = request.GET.get('keyword')
     patterns = r'\r\n\r\n\r\n|\r\n\r\n \r\n|\r\n \r\n \r\n|\r\n \r\n\r\n'
     sentences = re.split(patterns, story.body)
-
+    
     # 이미지
-    image_urls = [generate_image(sentences[0])] if sentences else []
+    image_urls = request.session.get('image_urls', [])
+    if sentences and not image_urls:
+        image_urls = [generate_image(sentences[0])]
+        request.session['image_urls'] = image_urls
 
     # TTS
     if 'tts' in request.GET:
@@ -165,7 +192,7 @@ def story_detail(request, id):
     recommended_id = story.id
     
 
-    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id})
+    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id, 'profile' : profile})
     ########################################################################################################    
 
 def redirect_to_quiz(request, id):
@@ -199,10 +226,12 @@ qa = ConversationalRetrievalChain.from_llm(
     return_source_documents=True, output_key="answer")
 
 @csrf_exempt
-def answer_question(request):
+def answer_question(request, story_id):
     if request.method == 'POST':
+        profile_id = request.POST.get('profile_id')
         question = request.POST.get('question', None)
-        story_id = request.POST.get('story_id', None)
+        profile = get_object_or_404(Profile, id=profile_id, user=request.user)
+
         if question and story_id:
             story = get_object_or_404(Story, pk=story_id)
 
@@ -229,7 +258,7 @@ def answer_question(request):
             memory.save_context({"question": full_query}, {"answer": answer})
 
             # Save to the database
-            save_to_database(story.title, question, answer)
+            save_to_database(story.title, question, answer, profile_id)
 
             # Answer TTS
             ssml_text = f"""<speak>{answer}</speak>"""
@@ -248,9 +277,15 @@ def answer_question(request):
 
     return JsonResponse({'error': 'Invalid request'})
 
-def save_to_database(story_title, question, answer):
+def save_to_database(story_title, question, answer, profile_id):
+    print(profile_id)
     try:
-        log_entry = LogEntry(story_title=story_title, question=question, answer=answer)
+        log_entry = LogEntry.objects.create(
+            profile_id=profile_id,
+            story_title=story_title,
+            question=question,
+            answer=answer
+        )
         log_entry.save()
     except Exception as e:
         print(f"Error saving to database: {e}")

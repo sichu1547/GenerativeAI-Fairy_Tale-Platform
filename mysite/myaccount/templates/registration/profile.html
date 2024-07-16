@@ -42,7 +42,9 @@
                 <ul class="profile-list">
                     {% for profile in profiles %}
                     <li class="profile-item">
-                        <img class="profile-img" src="{{ profile.avatar.url }}" alt="Profile Image" width="50" height="50">
+                        <img class="profile-img" 
+                            src="{% if profile.avatar %}{{ profile.avatar.url }}{% else %}{% static 'images/젖소.png' %}{% endif %}" 
+                            alt="Profile Image" width="50" height="50">
                         <label class="profile-name">{{ profile.name }}</label>
                         <button type="button" id="edit-button" onclick="location.href='{% url 'profile_detail' profile.id %}'">수정하기</button>
                         <form method="post" action="{% url 'profile_delete' profile.pk %}" style="display:inline;">
