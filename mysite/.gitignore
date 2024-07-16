@@ -13,7 +13,7 @@ story_db.db
 media
 *.db
 *.sqlite3
-.bin
+*.bin
 
 # Ignore the secret.json file
 secret.json

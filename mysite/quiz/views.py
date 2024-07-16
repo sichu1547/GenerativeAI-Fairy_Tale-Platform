@@ -12,7 +12,7 @@ from django.http import HttpResponse
 from google.cloud import texttospeech
 import io
 from django.conf import settings
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage
 
 class QuizView(View):

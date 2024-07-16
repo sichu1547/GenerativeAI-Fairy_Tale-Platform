@@ -20,10 +20,10 @@ from .utils import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Story, LogEntry
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import Chroma
 from langchain.chains import ConversationalRetrievalChain
 import os
 
@@ -239,7 +239,12 @@ def answer_question(request, story_id):
             story = get_object_or_404(Story, pk=story_id)
 
             # full_query = f"{story}에 대한 질문입니다.\n{question}"
-            full_query = f"당신은 어린아이의 질문에 친절하게 답변해주는 선생님입니다. 동화 '{story}'에 대한 질문은 다음과 같고, 어린아이가 잘 이해할 수 있도록 대답해주세요.\n{question}"
+            full_query = f"""
+            당신은 어린아이의 질문에 친절하게 답변해주는 선생님입니다. 
+            동화 '{story}'에 대한 질문입니다.
+            동화 내용은 '{story.body[30]}' 이렇게 시작합니다.
+            어린아이가 잘 이해할 수 있도록 대답해주세요.
+            질문: {question}"""
         
             memory_content = memory.load_memory_variables({})
 
