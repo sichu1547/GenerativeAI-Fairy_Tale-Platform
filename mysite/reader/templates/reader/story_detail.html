@@ -177,7 +177,7 @@
             </div>
         </div>
         <div>
-            <form id="rating-form" method="post" action="{% url 'reader:rate_story' id %}">
+            <form id="rating-form" method="post" action="{% url 'reader:rate_story' id %}?keyword={{ keyword }}">
                 {% csrf_token %}
                 <label for="starpoint"></label>
                 <div class="star-rating">
