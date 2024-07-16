@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="ko">
+<head>
+    <title>{% block title %}동화 내용{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/genstory_detail.css' %}">
+</head>
+{% block content %}
+<body>
+    <div class="story-container">
+        <h1 class="story-title">{{ story.title }}</h1>
+        <div class="story-body">{{ story.body|linebreaks }}</div>
+    </div>
+</body>
+{% endblock %}
+</html>
