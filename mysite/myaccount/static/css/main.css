@@ -681,7 +681,7 @@ input.input100 {
     background-position: top center;
 }
 .slide_item.item3 {
-  background-image: url("../images/quiz2.png");
+  background-image: url("../images/random2.png");
   background-repeat: no-repeat; /* 배경 이미지의 반복을 막음 */
     background-size: auto 100%; /* 배경 이미지를 요소에 꽉 차게 함 */
     background-position: top center;

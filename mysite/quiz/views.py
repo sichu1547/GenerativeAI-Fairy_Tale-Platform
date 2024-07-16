@@ -65,10 +65,10 @@ class QuizView(View):
         keyword = request.POST.get('keyword', '')
 
         if answer == correct_answer:
-            result = "정답입니다!"
+            result = "축하합니다🥳"
             QuizView.m_context = {}
         else:
-            result = f"틀렸습니다. 정답은 {correct_answer}입니다."
+            result = "틀렸습니다😢<br>정답은 {}입니다.".format(correct_answer)
 
         return render(request, 'quiz/quiz_result.html', {'result': result, 'quiz_id': id, 'keyword': keyword})
 
