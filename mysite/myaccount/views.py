@@ -14,8 +14,6 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from review.models import Review
 from generator.models import GenStory
-# def base(request):
-#     return render(request, 'base.html')
 
 def index(request):
     return render(request, 'index.html')
@@ -64,6 +62,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth import login
 from .forms import PasswordResetForm
+
 def password_reset_request(request):
     if request.method == "POST":
         form = PasswordResetForm(request.POST)

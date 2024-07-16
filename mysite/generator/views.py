@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse, FileResponse
 from django import forms
 from django.urls import reverse
-from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
 
 from google.cloud import texttospeech

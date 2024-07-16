@@ -64,8 +64,3 @@ class LogAdmin(admin.ModelAdmin):
     list_display_links = ['story_title', 'question', 'answer']
     list_filter = ['story_title']
 admin.site.register(LogEntry, LogAdmin)
-
-# @admin.register(Tag)
-# class TagAdmin(admin.ModelAdmin):
-#     list_display = ('name',)
-#     search_fields = ('name',)

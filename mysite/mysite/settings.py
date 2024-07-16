@@ -34,7 +34,7 @@ SECRET_KEY = denv('SECRET_KEY')
 DEBUG = denv('DEBUG')
 # DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['127.0.0.1', 'mealkid.kro.kr']
 
 
 # Application definition
@@ -61,7 +61,6 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.kakao',
     "mine",
     'review',
-    'chatbot',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -84,6 +83,7 @@ MIDDLEWARE = [
     'myaccount.profile_middleware.ProfileMiddleware',
     #"debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
+
 #INTERNAL_IPS = ['127.0.0.1',] #temp
 # LOGGING = {
 #     'version': 1,
@@ -105,6 +105,7 @@ MIDDLEWARE = [
 #         },
 #     },
 # }
+
 ROOT_URLCONF = "mysite.urls"
 
 TEMPLATES = [
@@ -132,11 +133,7 @@ SOCIALACCOUNT_PROVIDERS = {
     "kakao": {
         "APP": {
             "client_id": denv('KAKAO_CLIENT_ID'),
-            # "client_id": KAKAO_CLIENT_ID,
-            #"client_id": 'os.getenv("KAKAO_CLIENT_ID")',
             "secret": denv('KAKAO_SECRET_SECRET'),
-            # "secret": KAKAO_SECRET_SECRET,
-            #"secret": os.getenv("KAKAO_SECRET_KEY"),
             "key": ""
         },
         "SCOPE": [
@@ -150,9 +147,7 @@ SOCIALACCOUNT_PROVIDERS = {
     "naver": {
         "APP": {
             "client_id": denv('NAVER_CLIENT_ID'),
-            # "client_id": NAVER_CLIENT_ID,
             "secret": denv('NAVER_CLIENT_SECRET'),
-            # "secret": NAVER_CLIENT_SECRET,
             "key": ""
         },
         "SCOPE": [
@@ -167,9 +162,7 @@ SOCIALACCOUNT_PROVIDERS = {
         "APPS": [
             {
                 "client_id": denv('GOOGLE_CLIENT_ID'),
-                # "client_id": GOOGLE_CLIENT_ID,
                 "secret": denv('GOOGLE_CLIENT_SECRET'),
-                # "secret": GOOGLE_CLIENT_SECRET,
                 "key": ""
             },
         ],

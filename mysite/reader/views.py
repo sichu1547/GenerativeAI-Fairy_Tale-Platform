@@ -35,8 +35,6 @@ from myaccount.models import ReadingHistory, Profile
 import random
 from generator.models import GenStory
 
-def index(request):
-    return render(request, 'reader/index.html')
 def search(request):
     keyword = request.GET.get('keyword')
     search_type = request.GET.get('search_type', 'title')
@@ -59,13 +57,6 @@ def list(request):
         story_list = Story.objects.filter(title__contains=search_key)
     return render(request, 'reader/index.html', {'story_all': story_list})
 
-def detail(request, id):
-    print('======================================')
-    story = get_object_or_404(Story, id=id)
-    tag_list = story.tag.all()
-    
-    return render(request, 'reader/detail.html', {'story': story, 'tag_list': tag_list})
-
 def search(request):
     keyword = request.GET.get('keyword')
     if keyword:
@@ -78,30 +69,6 @@ def search(request):
     stories = stories.order_by('-starpoint')
 
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
-
-def generate_image(sentence):
-    # print('생성중')
-    # api_key = settings.OPENAI_API_KEY
-    # client = OpenAI(api_key = api_key)
-    
-    # try:
-    #     response = client.images.generate(
-    #         model="dall-e-3",
-    #         prompt=f"This: {sentence}. Based on this, draw a cute and lovely 2D picture using an illustration that never contains text, phrases, or speech bubbles. Never add text.",
-    #         #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
-    #         size="1024x1024",
-    #         n=1,
-    #         quality="standard",
-    #         style="natural"
-    #     )
-    #     image_url = response.data[0].url
-    #     print('성공')
-    #     return image_url
-
-    # except Exception as e:
-    #     print('실패')
-    return ""
-
 
 def story_detail(request, id):
     keyword = request.GET.get('keyword')
@@ -202,7 +169,7 @@ def story_detail(request, id):
         
 
         return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id, 'profile' : profile})
-    ########################################################################################################    
+        ########################################################################################################    
 
 def redirect_to_quiz(request, id):
     keyword = request.GET.get('keyword')
