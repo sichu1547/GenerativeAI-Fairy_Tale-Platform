@@ -57,7 +57,8 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /home/ubuntu/mealkid
+          sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/mealkid:latest
           sudo docker-compose stop mealkid
           sudo docker-compose rm -f mealkid
-          sudo docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/mealkid:latest
           sudo docker-compose up -d mealkid
+          sudo docker rmi $(docker images -f "dangling=true" -q)
