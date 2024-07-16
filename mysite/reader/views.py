@@ -81,7 +81,7 @@ def search(request):
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
 
 def generate_image(sentence):
-    # print('생성중')
+    print('생성중')
     # api_key = settings.OPENAI_API_KEY
     # client = OpenAI(api_key = api_key)
     
@@ -101,8 +101,8 @@ def generate_image(sentence):
 
     # except Exception as e:
     #     print('실패')
+    #     return ""
     return ""
-
 
 def story_detail(request, id):
     if not request.user.is_authenticated:
@@ -123,9 +123,12 @@ def story_detail(request, id):
     keyword = request.GET.get('keyword')
     patterns = r'\r\n\r\n\r\n|\r\n\r\n \r\n|\r\n \r\n \r\n|\r\n \r\n\r\n'
     sentences = re.split(patterns, story.body)
-
+    
     # 이미지
-    image_urls = [generate_image(sentences[0])] if sentences else []
+    image_urls = request.session.get('image_urls', [])
+    if sentences and not image_urls:
+        image_urls = [generate_image(sentences[0])]
+        request.session['image_urls'] = image_urls
 
     if 'tts' in request.GET:
         try:

@@ -274,35 +274,24 @@
         });
         const select = document.getElementById('number-select');
  
-for (let i = 1; i <= 5; i++) {
-    const option = document.createElement('option');
-    option.value = i;
-    option.textContent = i;
-    select.appendChild(option);
-}
-        document.addEventListener('DOMContentLoaded', function() {
-            window.onload = function() {
-                setTimeout(function() {
-                    document.getElementById('curtain-left').style.animation = 'curtainOpen 1s forwards';
-                    document.getElementById('curtain-right').style.animation = 'curtainOpen 1s forwards';
-                    fadeOutPreloader();
-                }, 1000);
-            };
-
-            function fadeOutPreloader() {
-                var preloader = document.getElementById('preloader');
-                preloader.style.transition = 'opacity 1s ease';
-                preloader.style.opacity = '0';
-                setTimeout(function() {
-                    preloader.style.display = 'none';
-                }, 1000);
-            }
-        });
+        for (let i = 1; i <= 5; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            select.appendChild(option);
+        }
 
         let currentPage = 0;
         const sentences = {{ story|safe }};
         let imageUrls = {{ image_urls|safe }};
         const totalPages = sentences.length;
+
+        document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(function() {
+                    // 이미지 생성 후에 커튼을 열도록 showPage 함수로 이동
+                    showPage(currentPage);
+                }, 1000);
+        });
    
         let selectedVoice = 'ko-KR-Standard-A'; // 기본 목소리 설정
         const defaultImageUrl = "{% static 'images/default_image.jpg' %}"; // 기본 이미지 경로 설정
@@ -318,6 +307,8 @@ for (let i = 1; i <= 5; i++) {
             rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
             if (imageUrls[page]) { // 이미지 URL이 유효한지 확인
                 leftPage.style.backgroundImage = `url(${imageUrls[page]})`;
+                // 이미지가 이미 있으면 커튼 열기
+                openCurtains();
             } else {
                 generateImage(page); // 이미지가 없으면 생성
             }
@@ -392,21 +383,36 @@ for (let i = 1; i <= 5; i++) {
                             const leftPage = document.querySelector(".left-page .image-container");
                             leftPage.style.backgroundImage = `url(${imageUrl})`;
                         }
+                        // 이미지가 성공적으로 생성된 경우에만 커튼 열기
+                        openCurtains();
                     },
                     error: function() {
                         const leftPage = document.querySelector(".left-page .image-container");
                         leftPage.style.backgroundImage = `url(${defaultImageUrl})`; // 기본 이미지 URL 설정
+                        // 이미지 생성 실패 시 커튼 열기
+                        openCurtains();
                     }
                 });
             }
         }
+        function openCurtains() {
+            document.getElementById('curtain-left').style.animation = 'curtainOpen 1s forwards';
+            document.getElementById('curtain-right').style.animation = 'curtainOpen 1s forwards';
+            fadeOutPreloader();
+        }
    
         document.getElementById("previous_button").addEventListener("click", () => turnPage(-1));
         document.getElementById("next_button").addEventListener("click", () => turnPage(1));
-   
-        // 첫번째 페이지
-        showPage(currentPage);
-   
+
+        function fadeOutPreloader() {
+            var preloader = document.getElementById('preloader');
+            preloader.style.transition = 'opacity 1s ease';
+            preloader.style.opacity = '0';
+            setTimeout(function() {
+                preloader.style.display = 'none';
+            }, 1000);
+        }
+
         function selectVoice(voice) {
             selectedVoice = voice;
             updateDownloadLink();
