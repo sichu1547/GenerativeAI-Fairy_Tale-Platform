@@ -13,7 +13,51 @@
 {% block content %}
 <body>
     <div class="story-container">
-        <div class="book" id="final-book">
+        {% comment %} TTS 버튼 {% endcomment %}
+        <div class="audio-buttons">
+            <div class="inner-audio-buttons">
+                <label class="audio-button-label">
+                    <span>A1</span>
+                    <input type="radio" name="voice" value="ko-KR-Standard-A" onclick="selectVoice('ko-KR-Standard-A')">
+                </label>
+                <label class="audio-button-label">
+                    <span>B1</span>
+                    <input type="radio" name="voice" value="ko-KR-Standard-B" onclick="selectVoice('ko-KR-Standard-B')">
+                </label>
+                <label class="audio-button-label">
+                    <span>C1</span>
+                    <input type="radio" name="voice" value="ko-KR-Standard-C" onclick="selectVoice('ko-KR-Standard-C')">
+                </label>
+                <label class="audio-button-label">
+                    <span>D1</span>
+                    <input type="radio" name="voice" value="ko-KR-Standard-D" onclick="selectVoice('ko-KR-Standard-D')">
+                </label>
+                <label class="audio-button-label">
+                    <span>A2</span>
+                    <input type="radio" name="voice" value="ko-KR-Wavenet-A" onclick="selectVoice('ko-KR-Wavenet-A')">
+                </label>
+                <label class="audio-button-label">
+                    <span>B2</span>
+                    <input type="radio" name="voice" value="ko-KR-Wavenet-B" onclick="selectVoice('ko-KR-Wavenet-B')">
+                </label>
+                <label class="audio-button-label">
+                    <span>C2</span>
+                    <input type="radio" name="voice" value="ko-KR-Wavenet-C" onclick="selectVoice('ko-KR-Wavenet-C')">
+                </label>
+                <label class="audio-button-label">
+                    <span>D2</span>
+                    <input type="radio" name="voice" value="ko-KR-Wavenet-D" onclick="selectVoice('ko-KR-Wavenet-D')">
+                </label>
+            </div>
+                <button class="audio-button" onclick="readFullStory()">전체 읽기</button>
+            </div>
+            <audio id="ttsAudio" controls>
+                <source id="audioSource" src="" type="audio/mpeg">
+                브라우저가 오디오 기능을 제공하지 않습니다
+            </audio>
+            <a href="?tts=true&voice=ko-KR-Standard-A&text=full" download="audio.mp3" id="downloadLink">⬇️</a>
+        
+            <div class="book" id="final-book">
             <div class="story-page" id="left-page">
                 <div class="story-image" id="story-image-left"></div>
                 <div id="left-text"></div>
@@ -75,6 +119,64 @@
         document.addEventListener("DOMContentLoaded", function() {
             displayPages();
         });
+
+        ///////////////////////// TTS /////////////////////////
+        let selectedVoice = 'ko-KR-Standard-A'; // 기본 목소리 설정
+        let audio;
+
+        // 목소리 선택
+        function selectVoice(voice) {
+            selectedVoice = voice;
+            updateDownloadLink();
+        }
+   
+        // TTS 음성파일 다운로드
+        function updateDownloadLink() {
+            const downloadLink = document.getElementById('downloadLink');
+            downloadLink.href = `?tts=true&voice=${selectedVoice}&text=full`;
+            downloadLink.download = "{{ title }}.mp3";
+        }
+   
+        // TTS 기능
+        function playAudio(voice, text) {
+            if (audio) {
+                audio.pause(); // 기존 오디오 정지
+                audio.currentTime = 0; // 기존 오디오 재생 위치 초기화
+            }
+
+            const audioElement = document.getElementById('ttsAudio');
+            const sourceElement = document.getElementById('audioSource');
+
+            // POST 요청으로 TTS 데이터 가져오기
+            $.ajax({
+                type: 'POST',
+                url: '{% url "generator:create_story" %}',
+                data: {
+                    'voice': voice,
+                    'text': text,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function(blob) {
+                    const audioUrl = URL.createObjectURL(blob);
+                    sourceElement.src = audioUrl;
+                    audioElement.load();
+                    audioElement.play();
+                    audio = audioElement;
+                },
+                error: function(error) {
+                    console.error('TTS 요청 실패:', error);
+                }
+            });
+        }
+
+        // 전체 문장 읽기
+        function readFullStory() {
+            playAudio(selectedVoice);
+        }
+
     </script>
 </body>
 {% endblock %}

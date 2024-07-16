@@ -51,6 +51,7 @@ def generate_response(prompt, role, max_tokens=110):
         n=1,
         temperature=0.7
     )
+
     # 110 토큰으로 생성된 문장이 끊기지 않도록 최대한 완전한 문장을 반환
     content = response.choices[0].message.content.strip()
     sentences = content.split('. ')
@@ -142,6 +143,22 @@ def create_story(request):
                 'generated_stories': generated_stories,
                 'generated_images': generated_images
             }
+
+            print('='*100)
+            print(request.POST)
+
+            # 최종 결과 TTS
+            if request.POST.get('tts') == 'true':
+                print("Let's go TTS")
+                text = request.POST.get('text', '')
+
+                if text == 'full':
+                    text = final_story
+                
+                ssml_text = f"""<speak>{text}</speak>"""
+
+                return generate_tts(request, ssml_text)
+            
             return render(request, 'generator/story_result.html', context)
     else:
         # GET 요청인 경우 이야기 생성 페이지를 렌더링
@@ -166,3 +183,28 @@ def generate_image(sentence):
 
     except Exception as e:
         return ""
+    
+def generate_tts(request, ssml_text):
+    try:
+        # Google TTS 클라이언트 설정
+        client = texttospeech.TextToSpeechClient.from_service_account_json('service_account.json')
+        
+        # 선택된 목소리 가져오기
+        selected_voice = request.POST.get('voice', 'ko-KR-Standard-A')
+
+        # TTS 요청 설정
+        synthesis_input = texttospeech.SynthesisInput(ssml=ssml_text)
+        voice = texttospeech.VoiceSelectionParams(language_code="ko-KR", name=selected_voice, ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL)
+        audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
+        
+        # TTS 요청 실행
+        response = client.synthesize_speech(input=synthesis_input, voice=voice, audio_config=audio_config)
+        
+        # 음성 데이터를 메모리에 저장
+        audio_stream = io.BytesIO(response.audio_content)
+        
+        # 음성 데이터를 HTTP 응답으로 반환
+        return HttpResponse(audio_stream.getvalue(), content_type='audio/mpeg')
+    
+    except Exception as e:
+        return HttpResponse(f"Error: {e}", status=500)
