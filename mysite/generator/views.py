@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse, FileResponse
 from django import forms
 from django.urls import reverse
 
@@ -51,11 +50,15 @@ def generate_response(prompt, role, max_tokens=110):
         n=1,
         temperature=0.7
     )
-    # 110 토큰으로 생성된 문장이 끊기지 않도록 최대한 완전한 문장을 반환
     content = response.choices[0].message.content.strip()
-    sentences = content.split('. ')
-    complete_content = '. '.join(sentences[:-1]) + '.' if len(sentences) > 1 else content
-    return complete_content
+    
+    # role이 system_roles[2]가 아닌 경우에만 문장이 끊기지 않도록 처리
+    if role != system_roles[2]:
+        sentences = content.split('. ')
+        complete_content = '. '.join(sentences[:-1]) + '.' if len(sentences) > 1 else content
+        return complete_content
+    else:
+        return content
 
 # 이야기 분할 함수
 def paginate_story(story, max_length=500):
@@ -67,7 +70,7 @@ def paginate_story(story, max_length=500):
             parts.append(current_part)
             current_part = word
         else:
-            if current_part:
+            if (current_part):
                 current_part += " " + word
             else:
                 current_part = word
@@ -134,13 +137,17 @@ def create_story(request):
             # 최종 이야기 전체를 하나의 문자열로 결합하여 분할
             final_story = clean_story(" ".join(generated_stories)) # 쉼표 문제 해결
             final_story_parts = paginate_story(final_story)
+            
+            # 최종 동화를 VS 코드 파일로 저장
+            file_path = save_final_story_to_file(final_story)
 
             # 최종 이야기와 이를 분할한 파트, 생성된 이야기 및 이미지 리스트를 컨텍스트로 전달하여 렌더링
             context = {
                 'final_story': final_story,
                 'final_story_parts': final_story_parts,
                 'generated_stories': generated_stories,
-                'generated_images': generated_images
+                'generated_images': generated_images,
+                'file_path': file_path  # 파일 경로를 컨텍스트에 추가
             }
             return render(request, 'generator/story_result.html', context)
     else:
@@ -166,3 +173,9 @@ def generate_image(sentence):
 
     except Exception as e:
         return ""
+
+def save_final_story_to_file(final_story):
+    file_path = os.path.join(settings.BASE_DIR, 'final_story.txt')
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.write(final_story)
+    return file_path
