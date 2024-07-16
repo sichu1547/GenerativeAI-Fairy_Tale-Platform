@@ -27,7 +27,8 @@
             max-width: 250px;
         }
         .content-container {
-            flex: 1 0 25%;
+            flex: 1 0 25%; /* 기존 값을 수정 */
+            max-width: 300px; /* 가로 폭을 줄이기 위해 max-width 추가 */
             padding: 20px;
             margin: 10px;
             border-radius: 10px;
@@ -183,6 +184,35 @@
                 </section>
             </div>
         </div>
+
+        <!-- 동화 목록 추가 -->
+        <div class="content-container">
+            <div id="stories-container" class="profile-box">
+                <section class="content-area profile-stories">
+                    <h2 class="profile-h2">📚 내가 만든 동화</h2>
+                    <div class="profile-box">
+                        {% for story in gen_stories %}
+                            <div class="blog-post">
+                                <div class="blog-post-title">{{ story.title }}</div>
+                                <div class="blog-post-content">
+                                    <a href="{% url 'reader:genstory_detail' story.id %}">자세히 보기</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="pagination">
+                            {% for num in page_stories.paginator.page_range %}
+                                {% if page_stories.number == num %}
+                                    <span class="active">{{ num }}</span>
+                                {% else %}
+                                    <a href="?page_stories={{ num }}">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+
     </div>
 </body>
 {% endblock %}

@@ -32,7 +32,7 @@ class StoryAdmin(admin.ModelAdmin):
                 return redirect(request.get_full_path())
             
             df = pd.read_csv(csv_file)
-            path = './database/story_db.db'
+            path = './db.sqlite3'
             conn = sqlite3.connect(path)
             cursor = conn.cursor()
             cursor.execute('DELETE FROM reader_story')
