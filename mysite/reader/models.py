@@ -25,7 +25,7 @@ class Tag(models.Model):
         return self.name
     
 class LogEntry(models.Model):
-    #user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='admin_log_entries')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='admin_log_entries')
     profile_id = models.IntegerField(default=4962)
     datetime = models.DateTimeField(auto_now_add=True)
     story_title = models.CharField(max_length=200)
