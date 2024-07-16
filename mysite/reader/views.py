@@ -78,6 +78,30 @@ def search(request):
 
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
 
+def generate_image(sentence):
+    # print('생성중')
+    # api_key = settings.OPENAI_API_KEY
+    # client = OpenAI(api_key = api_key)
+    
+    # try:
+    #     response = client.images.generate(
+    #         model="dall-e-3",
+    #         prompt=f"This: {sentence}. Based on this, draw a cute and lovely 2D picture using an illustration that never contains text, phrases, or speech bubbles. Never add text.",
+    #         #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
+    #         size="1024x1024",
+    #         n=1,
+    #         quality="standard",
+    #         style="natural"
+    #     )
+    #     image_url = response.data[0].url
+    #     print('성공')
+    #     return image_url
+
+    # except Exception as e:
+    #     print('실패')
+    return ""
+
+
 def story_detail(request, id):
     if not request.user.is_authenticated:
         return redirect(f"{reverse('login')}?next={request.path}")
@@ -97,9 +121,12 @@ def story_detail(request, id):
     keyword = request.GET.get('keyword')
     patterns = r'\r\n\r\n\r\n|\r\n\r\n \r\n|\r\n \r\n \r\n|\r\n \r\n\r\n'
     sentences = re.split(patterns, story.body)
-
+    
     # 이미지
-    image_urls = [generate_image(sentences[0])] if sentences else []
+    image_urls = request.session.get('image_urls', [])
+    if sentences and not image_urls:
+        image_urls = [generate_image(sentences[0])]
+        request.session['image_urls'] = image_urls
 
     # TTS
     if 'tts' in request.GET:
