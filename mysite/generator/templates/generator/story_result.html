@@ -7,6 +7,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{% static 'css/generator.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 </head>
 {% endblock %}
 
@@ -127,16 +129,8 @@
         // 목소리 선택
         function selectVoice(voice) {
             selectedVoice = voice;
-            updateDownloadLink();
         }
-   
-        // TTS 음성파일 다운로드
-        function updateDownloadLink() {
-            const downloadLink = document.getElementById('downloadLink');
-            downloadLink.href = `?tts=true&voice=${selectedVoice}&text=full`;
-            downloadLink.download = "{{ title }}.mp3";
-        }
-   
+
         // TTS 기능
         function playAudio(voice, text) {
             if (audio) {
@@ -150,10 +144,12 @@
             // POST 요청으로 TTS 데이터 가져오기
             $.ajax({
                 type: 'POST',
-                url: '{% url "generator:create_story" %}',
+                url: '{% url "generator:create_story" %}',  // create_story 뷰에 요청
                 data: {
                     'voice': voice,
                     'text': text,
+                    'final_story': `{{ final_story }}`,
+                    'tts': 'true',  // TTS 요청임을 알리기 위한 플래그
                     'csrfmiddlewaretoken': '{{ csrf_token }}'
                 },
                 xhrFields: {
@@ -174,7 +170,7 @@
 
         // 전체 문장 읽기
         function readFullStory() {
-            playAudio(selectedVoice);
+            playAudio(selectedVoice, 'full');
         }
 
     </script>

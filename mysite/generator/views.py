@@ -83,6 +83,10 @@ def clean_story(story):
 
 def create_story(request):
     if request.method == "POST":
+        # 최종 결과 TTS
+        if request.POST.get('tts') == 'true':
+            return generate_tts(request)
+        
         initial_story = request.POST.get('initial_story', '')
         generated_stories = request.POST.getlist('generated_stories', [])
         generated_images = request.POST.getlist('generated_images', [])
@@ -149,23 +153,11 @@ def create_story(request):
                 'generated_images': generated_images,
                 'file_path': file_path  # 파일 경로를 컨텍스트에 추가
             }
-            print(context)
+            # print(context)
+            # print(final_story)
 
-            print('='*100)
-            print(request.POST)
-
-            # 최종 결과 TTS
-            if request.POST.get('tts') == 'true':
-                print("Let's go TTS")
-                text = request.POST.get('text', '')
-
-                if text == 'full':
-                    text = final_story
-                
-                ssml_text = f"""<speak>{text}</speak>"""
-
-                return generate_tts(request, ssml_text)
             
+
             return render(request, 'generator/story_result.html', context)
     else:
         # GET 요청인 경우 이야기 생성 페이지를 렌더링
@@ -198,15 +190,22 @@ def save_final_story_to_file(final_story):
     return file_path
 
     
-def generate_tts(request, ssml_text):
+def generate_tts(request):
+    # print(request.POST)
     try:
         # Google TTS 클라이언트 설정
         client = texttospeech.TextToSpeechClient.from_service_account_json('service_account.json')
         
+
         # 선택된 목소리 가져오기
         selected_voice = request.POST.get('voice', 'ko-KR-Standard-A')
+        text = request.POST.get('text', '')
+
+        if text == 'full':
+            text = request.POST.get('final_story', '')
 
         # TTS 요청 설정
+        ssml_text = f"""<speak>{text}</speak>"""
         synthesis_input = texttospeech.SynthesisInput(ssml=ssml_text)
         voice = texttospeech.VoiceSelectionParams(language_code="ko-KR", name=selected_voice, ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL)
         audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
