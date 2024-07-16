@@ -416,17 +416,20 @@
             }, 1000);
         }
 
+        // 목소리 선택
         function selectVoice(voice) {
             selectedVoice = voice;
             updateDownloadLink();
         }
    
+        // TTS 음성파일 다운로드
         function updateDownloadLink() {
             const downloadLink = document.getElementById('downloadLink');
             downloadLink.href = `?tts=true&voice=${selectedVoice}&text=full`;
             downloadLink.download = "{{ title }}.mp3";
         }
    
+        // TTS 기능
         function playAudio(voice) {
             const audioElement = document.getElementById('ttsAudio');
             const sourceElement = document.getElementById('audioSource');
@@ -438,6 +441,7 @@
             audioElement.play();
         }
    
+        // 문장 읽기(선택한 문장 읽기를 위한 로직)
         function readSentence(index) {
             const sentence = sentences[index];
             const audioElement = document.getElementById('ttsAudio');
@@ -461,6 +465,7 @@
             document.getElementById(`sentence-${index}`).classList.add('highlight');
         }
    
+        // 전체 문장 읽기
         function readFullStory() {
             const audioElement = document.getElementById('ttsAudio');
             const sourceElement = document.getElementById('audioSource');
@@ -624,7 +629,7 @@
         audio = new Audio(audioUrl);
         audio.play();
     }
-    
+
     ///////////////////////// 챗봇script ///////////////////////////////////////
     document.addEventListener('DOMContentLoaded', (event) => {
 

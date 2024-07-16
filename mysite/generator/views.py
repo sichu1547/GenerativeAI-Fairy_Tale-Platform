@@ -2,8 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse, FileResponse
 from django import forms
 from django.urls import reverse
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
+from langchain_community.vectorstores import Chroma
 
 from google.cloud import texttospeech
 import io
@@ -83,6 +82,10 @@ def clean_story(story):
 
 def create_story(request):
     if request.method == "POST":
+        # 최종 결과 TTS
+        if request.POST.get('tts') == 'true':
+            return generate_tts(request)
+        
         initial_story = request.POST.get('initial_story', '')
         generated_stories = request.POST.getlist('generated_stories', [])
         generated_images = request.POST.getlist('generated_images', [])
@@ -191,3 +194,35 @@ def save_final_story_to_database(final_story, profile, user, title):
         Gen_Story.save()
     except Exception as e:
         print(f"Error saving to database: {e}")
+    
+def generate_tts(request):
+    # print(request.POST)
+    try:
+        # Google TTS 클라이언트 설정
+        client = texttospeech.TextToSpeechClient.from_service_account_json('service_account.json')
+        
+
+        # 선택된 목소리 가져오기
+        selected_voice = request.POST.get('voice', 'ko-KR-Standard-A')
+        text = request.POST.get('text', '')
+
+        if text == 'full':
+            text = request.POST.get('final_story', '')
+
+        # TTS 요청 설정
+        ssml_text = f"""<speak>{text}</speak>"""
+        synthesis_input = texttospeech.SynthesisInput(ssml=ssml_text)
+        voice = texttospeech.VoiceSelectionParams(language_code="ko-KR", name=selected_voice, ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL)
+        audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
+        
+        # TTS 요청 실행
+        response = client.synthesize_speech(input=synthesis_input, voice=voice, audio_config=audio_config)
+        
+        # 음성 데이터를 메모리에 저장
+        audio_stream = io.BytesIO(response.audio_content)
+        
+        # 음성 데이터를 HTTP 응답으로 반환
+        return HttpResponse(audio_stream.getvalue(), content_type='audio/mpeg')
+    
+    except Exception as e:
+        return HttpResponse(f"Error: {e}", status=500)

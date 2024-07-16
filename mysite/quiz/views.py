@@ -12,7 +12,7 @@ from django.http import HttpResponse
 from google.cloud import texttospeech
 import io
 from django.conf import settings
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage
 
 class QuizView(View):
@@ -103,14 +103,14 @@ class QuizView(View):
         chat = ChatOpenAI(model="gpt-4o", openai_api_key=api_key)
         
         prompt = f"다음 문단을 읽고 최대한 간단하고 본문에 명시된 답변이 나오게 질문을 하나 만들고 그에 대한 정답 1개와 정답과 비슷한 보기를 정답을 포함해서 3개를 제시해라:\n\n{paragraph}"
-        response = chat(messages=[HumanMessage(content=prompt)])
+        response = chat.invoke([HumanMessage(content=prompt)])
 
         lines = response.content.split('\n\n')     
         question = lines[0].replace("질문: ", "")
         cnt = 0
         while self.is_answer_asked(question) and cnt < 5:
             cnt += 1
-            response = chat(messages=[HumanMessage(content=prompt)])
+            response = chat.invoke([HumanMessage(content=prompt)])
             lines = response.content.split('\n\n')     
             question = lines[0].replace("질문: ", "")
 

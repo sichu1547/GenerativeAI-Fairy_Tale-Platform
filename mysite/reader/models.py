@@ -19,14 +19,8 @@ class Story(models.Model):
     def get_absolute_url(self):
         return reverse("reader:detail", kwargs={"id": self.id})
     
-class Tag(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    
-    def __str__(self):
-        return self.name
-    
 class LogEntry(models.Model):
-    #user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='admin_log_entries')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='admin_log_entries')
     profile_id = models.IntegerField(default=4962)
     datetime = models.DateTimeField(auto_now_add=True)
     story_title = models.CharField(max_length=200)

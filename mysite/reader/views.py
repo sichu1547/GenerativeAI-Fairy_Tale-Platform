@@ -20,10 +20,10 @@ from .utils import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Story, LogEntry
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import Chroma
 from langchain.chains import ConversationalRetrievalChain
 import os
 from django.http import HttpResponseRedirect
@@ -35,8 +35,6 @@ from myaccount.models import ReadingHistory, Profile
 import random
 from generator.models import GenStory
 
-def index(request):
-    return render(request, 'reader/index.html')
 def search(request):
     keyword = request.GET.get('keyword')
     search_type = request.GET.get('search_type', 'title')
@@ -59,13 +57,6 @@ def list(request):
         story_list = Story.objects.filter(title__contains=search_key)
     return render(request, 'reader/index.html', {'story_all': story_list})
 
-def detail(request, id):
-    print('======================================')
-    story = get_object_or_404(Story, id=id)
-    tag_list = story.tag.all()
-    
-    return render(request, 'reader/detail.html', {'story': story, 'tag_list': tag_list})
-
 def search(request):
     keyword = request.GET.get('keyword')
     if keyword:
@@ -78,30 +69,6 @@ def search(request):
     stories = stories.order_by('-starpoint')
 
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
-
-def generate_image(sentence):
-    # print('생성중')
-    # api_key = settings.OPENAI_API_KEY
-    # client = OpenAI(api_key = api_key)
-    
-    # try:
-    #     response = client.images.generate(
-    #         model="dall-e-3",
-    #         prompt=f"This: {sentence}. Based on this, draw a cute and lovely 2D picture using an illustration that never contains text, phrases, or speech bubbles. Never add text.",
-    #         #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
-    #         size="1024x1024",
-    #         n=1,
-    #         quality="standard",
-    #         style="natural"
-    #     )
-    #     image_url = response.data[0].url
-    #     print('성공')
-    #     return image_url
-
-    # except Exception as e:
-    #     print('실패')
-    return ""
-
 
 def story_detail(request, id):
     keyword = request.GET.get('keyword')
@@ -202,7 +169,7 @@ def story_detail(request, id):
         
 
         return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id, 'profile' : profile})
-    ########################################################################################################    
+        ########################################################################################################    
 
 def redirect_to_quiz(request, id):
     keyword = request.GET.get('keyword')
@@ -244,14 +211,16 @@ def answer_question(request, story_id):
         if question and story_id:
             story = get_object_or_404(Story, pk=story_id)
 
-            # full_query = f"{story}에 대한 질문입니다.\n{question}"
-            full_query = f"당신은 어린아이의 질문에 친절하게 답변해주는 선생님입니다. 동화 '{story}'에 대한 질문은 다음과 같고, 어린아이가 잘 이해할 수 있도록 대답해주세요.\n{question}"
+            role = "당신은 어린아이의 질문에 친절하게 답변해주는 선생님입니다."
+            temp = story.body.split('.')
+            sentences = '. '.join(temp[:1]) + '.'
+            full_query = f"{role} '{sentences}'로 시작하는 동화 '{story}'에 대한 질문은 다음과 같습니다. 어린아이가 잘 이해할 수 있도록 250자 이하로 대답해주세요.\n{question}"
         
             memory_content = memory.load_memory_variables({})
 
             # Perform the query
-            result = qa({"question": full_query, "chat_history": memory_content["chat_history"]})
-            # print(result)
+            result = qa.invoke({"question": full_query, "chat_history": memory_content["chat_history"]})
+            print(result)
 
             # Output the answer obtained from LangChain
             answer = result["answer"]
@@ -259,8 +228,8 @@ def answer_question(request, story_id):
                 src_doc = result['source_documents'][0].page_content.split('\n')[0]
             else:
                 src_doc = 'Got No Source Document'
-            print('Question:', question)
-            print('Answer:', answer)
+            # print('Question:', question)
+            # print('Answer:', answer)
             print('Source Document:', src_doc)
 
             # Save to memory
