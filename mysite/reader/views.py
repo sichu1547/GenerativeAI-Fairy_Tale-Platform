@@ -4,10 +4,8 @@ from quiz.views import QuizView
 import re
 from django.db.models import Q
 from django.http import HttpResponse
-from google.cloud import texttospeech
 import io
 import sqlite3
-from openai import OpenAI
 import requests
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -17,8 +15,8 @@ from django.views import View
 from myaccount.models import Profile
 from myaccount.models import ReadingHistory
 from django.utils.decorators import method_decorator
+from .utils import *
     
-# fairytales/views.py
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Story, LogEntry
@@ -123,39 +121,24 @@ def story_detail(request, id):
     keyword = request.GET.get('keyword')
     patterns = r'\r\n\r\n\r\n|\r\n\r\n \r\n|\r\n \r\n \r\n|\r\n \r\n\r\n'
     sentences = re.split(patterns, story.body)
-
+    
     # 이미지
-    image_urls = [generate_image(sentences[0])] if sentences else []
+    image_urls = request.session.get('image_urls', [])
+    if sentences and not image_urls:
+        image_urls = [generate_image(sentences[0])]
+        request.session['image_urls'] = image_urls
 
+    # TTS
     if 'tts' in request.GET:
-        try:
-            # Google TTS 클라이언트 설정
-            client = texttospeech.TextToSpeechClient.from_service_account_json('service_account.json')
+        print("Let's go TTS")
+        text = request.GET.get('text', '')
 
-            # 선택된 목소리 가져오기
-            selected_voice = request.GET.get('voice', 'ko-KR-Standard-A')
-            text = request.GET.get('text', '')
-            if text == 'full':
-                text = story.title+'<break time="1s"/>'+story.body
+        if text == 'full':
+            text = story.title+'<break time="1s"/>'+story.body
+        
+        ssml_text = f"""<speak>{text}</speak>"""
 
-            ssml_text = f"""<speak>{text}</speak>"""
-            # ssml_text = f"""<speak>{story.title+'<break time="1s"/>'+story.body}</speak>"""
-
-            # TTS 요청 설정
-            synthesis_input = texttospeech.SynthesisInput(ssml=ssml_text)
-            voice = texttospeech.VoiceSelectionParams(language_code="ko-KR", name=selected_voice, ssml_gender=texttospeech.SsmlVoiceGender.NEUTRAL)
-            audio_config = texttospeech.AudioConfig(audio_encoding=texttospeech.AudioEncoding.MP3)
-
-            # TTS 요청 실행
-            response = client.synthesize_speech(input=synthesis_input, voice=voice, audio_config=audio_config)
-
-            # 음성 데이터를 메모리에 저장
-            audio_stream = io.BytesIO(response.audio_content)
-
-            # 음성 데이터를 HTTP 응답으로 반환
-            return HttpResponse(audio_stream.getvalue(), content_type='audio/mpeg')
-        except Exception as e:
-            return HttpResponse(f"Error: {e}", status=500)
+        return generate_tts(request, ssml_text)
 
     previous_story_id = request.session.get('previous_story_id')
 
@@ -227,6 +210,7 @@ def generate_image_view(request):
     return JsonResponse({'error': 'No sentence provided'}, status=400)
 
 
+############################ 읽기 챗봇 ############################
 # Initialize OpenAI embeddings, Chroma database, and ChatOpenAI model
 embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
 persist_directory = os.path.join(settings.BASE_DIR, 'database')
@@ -256,20 +240,38 @@ def answer_question(request):
 
             # Perform the query
             result = qa({"question": full_query, "chat_history": memory_content["chat_history"]})
+            # print(result)
 
             # Output the answer obtained from LangChain
             answer = result["answer"]
-            print(result)
+            if result['source_documents'] != []:
+                src_doc = result['source_documents'][0].page_content.split('\n')[0]
+            else:
+                src_doc = 'Got No Source Document'
+            print('Question:', question)
+            print('Answer:', answer)
+            print('Source Document:', src_doc)
 
             # Save to memory
             memory.save_context({"question": full_query}, {"answer": answer})
 
             # Save to the database
             save_to_database(story.title, question, answer)
-            
-            # print(memory.load_memory_variables({})["chat_history"])
 
-            return JsonResponse({'answer': answer})
+            # Answer TTS
+            ssml_text = f"""<speak>{answer}</speak>"""
+            tts_response = generate_tts(request, ssml_text)
+
+            if tts_response.status_code == 200:
+                audio_content = tts_response.content.decode('latin1')
+                return JsonResponse({
+                    'answer': answer,
+                    'audio_content': audio_content  # Binary data를 문자열로 인코딩
+                })
+            else:
+                return JsonResponse({'answer': answer, 'error': 'TTS 생성 실패'})
+
+            # print(memory.load_memory_variables({})["chat_history"])
 
     return JsonResponse({'error': 'Invalid request'})
 
@@ -281,17 +283,19 @@ def save_to_database(story_title, question, answer):
         print(f"Error saving to database: {e}")
         
 def rate_story(request, id):
-    story = get_object_or_404(Story, pk=id)
-   
+    story = get_object_or_404(Story, id=id)
+    
     if request.method == 'POST':
         starpoint = request.POST.get('starpoint')
         if starpoint:
             try:
                 starpoint = int(starpoint)
-                if 1 <= starpoint <= 5:  # 별점이 1에서 5 사이의 값인지 확인
-                    story.starpoint = starpoint
+                if 1 <= starpoint <= 5:
+                    story.starcount += 1
+                    story.starsum += starpoint
+                    story.starpoint = story.starsum / story.starcount
                     story.save()
-                    # 별점 저장 성공
+                #return HttpResponse(status=200)
             except ValueError:
                 pass
  

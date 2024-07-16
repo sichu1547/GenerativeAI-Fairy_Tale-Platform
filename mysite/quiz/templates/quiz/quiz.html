@@ -87,12 +87,11 @@
         }
 
         function playAudio(voice) {
-            const text = '{{ quizzes }}';
             const audioElement = document.getElementById('ttsAudio');
             const sourceElement = document.getElementById('audioSource');
             const downloadLink = document.getElementById('downloadLink');
             
-            const ttsUrl = `/generate-tts?text=${encodeURIComponent(text)}&voice=${voice}`;
+            const ttsUrl = `?tts=true&voice=${voice}`;
             sourceElement.src = ttsUrl;
             audioElement.load();
             audioElement.play();
@@ -144,21 +143,5 @@
         </audio>
         <a href="?tts=true" download="audio.mp3" id="downloadLink">⬇️</a>
     </div>
-    <script>
-            function playAudio(voice) {
-            const audioElement = document.getElementById('ttsAudio');
-            const sourceElement = document.getElementById('audioSource');
-            const downloadLink = document.getElementById('downloadLink');
-            
-            // 오디오 소스 URL 업데이트
-            const ttsUrl = `?tts=true&voice=${voice}`;
-            sourceElement.src = ttsUrl;
-            audioElement.load();
-            audioElement.play();
-            
-            // 다운로드 링크 업데이트
-            downloadLink.href = ttsUrl;
-        }
-    </script>
 </body>
 </html>

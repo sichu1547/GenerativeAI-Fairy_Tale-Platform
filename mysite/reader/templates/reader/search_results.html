@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 {% extends "base.html" %}
 {% load static %}
+{% load custom_filters %}
 <html lang="ko">
 <head>
     <title>{% block title %}🔍 검색 결과</title>
@@ -76,6 +77,23 @@
         .link-click-animation:hover::before {
             left: 0;
         }
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .star {
+            width: 20px;
+            height: 20px;
+            margin-right: 2px;
+            background-image: url("{% static 'images/realstar.png' %}");
+            background-size: cover;
+        }
+
+        .star.full {
+            background-image: url("{% static 'images/full-star.png' %}");
+        }
     </style>
 </head>{% endblock %}
 {% block content %}
@@ -85,7 +103,7 @@
         <div id="curtain-right" class="curtain"></div>
     </div>
     <div class="search-results-container">
-        <h1><img src="{% static 'images/결과로고.png' %}"></h1>
+        <h1 class='h'>🔍 검색 결과</h1>
         <div class="books">
             <ul class="gallery">
                 {% for story in stories %}
@@ -93,19 +111,24 @@
                     <div class="overlay"></div>
                     <a class='link-click-animation' href="{% url 'reader:story_detail' story.id %}?keyword={{ keyword }}">
                         {% if story.image %}
-                            <img class="card" src="{{ story.image.url }}" alt="{{ story.title }}">
+                        <img class="card" src="{{ story.image.url }}" alt="{{ story.title }}">
                         {% else %}
-                            <img class="card" src="{% static 'images/상자.png' %}" alt="{{ story.title }}">
+                        <img class="card" src="{% static 'images/상자.png' %}" alt="{{ story.title }}">
                         {% endif %}
                         <span class="book-title">{{ story.title }}</span>
                     </a>
+                    <div class="star-rating">
+                        {% for i in 5|to_range %}
+                        <div class="star {% if i <= story.starpoint %}full{% endif %}"></div>
+                        {% endfor %}
+                    </div>
                 </li>
                 {% endfor %}
             </ul>
         </div>
     </div>
     <script>
-        $(document).ready(function() {
+     $(document).ready(function() {
             $('.link-click-animation').on('click', function(e) {
                 e.preventDefault();
 
@@ -119,12 +142,11 @@
                     window.location.href = targetUrl;
                 }, 1000);
             });
-
-            $(window).on('load', function() {
-                $('#preloader').hide();
-            });
         });
-
+        $(window).on('pageshow', function(event) {
+            console.log('뒤로가기 이벤트 발생');
+            preloader.style.display = 'none';
+        });
         var containers = document.querySelectorAll('.container1');
         containers.forEach(function(container) {
             var overlay = container.querySelector('.overlay');
