@@ -107,8 +107,8 @@ def create_story(request):
             
             # 사용자 입력을 generated_stories에 저장
             if stage > 0:
-                generated_stories.append(user_input)
-            generated_stories.append(response.strip('.')) # 문장 끝의 점을 제거하고 추가
+                generated_stories.append(' '+ user_input +' ')
+            generated_stories.append(response.strip()) # 문장 끝의 점을 제거하고 추가
             
             # 생성된 이야기를 바탕으로 이미지를 생성하고 리스트에 추가
             image_url = generate_image(response)
@@ -136,8 +136,8 @@ def create_story(request):
             
             # 사용자 입력을 generated_stories에 저장
             if stage > 0:
-                generated_stories.append(user_input)
-            generated_stories.append(final_response.strip('.')) # 문장 끝의 점을 제거하고 추가
+                generated_stories.append(' '+ user_input +' ')
+            generated_stories.append(final_response.strip()) # 문장 끝의 점을 제거하고 추가
             
             # 최종 이야기 전체를 하나의 문자열로 결합하여 분할
             final_story = clean_story(" ".join(generated_stories)) # 쉼표 문제 해결

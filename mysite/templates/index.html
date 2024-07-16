@@ -25,7 +25,9 @@
                                 <h1><img src="{% static 'images/메인로고.png' %}"></h1>
                                 <form action="{% url 'reader:search' %}" method="GET" style="display: inline;">
                                     <input type='text' name='keyword' value="{{ keyword }}">
-                                    <input type='submit' value='검색'>
+                                    <button type="submit" style="border: none; background: none;">
+                                        <img src="{% static 'images/검색바.png' %}" alt="검색">
+                                    </button>
                                 </form>
                                 <!--
                                 <div class="mb32"><h1> 상상력이 세상을 만든다 </h1></div>
