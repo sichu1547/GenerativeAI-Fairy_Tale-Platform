@@ -509,15 +509,16 @@ for (let i = 1; i <= 5; i++) {
                 dotCount = (dotCount % 3) + 1;
                 loadingMessage.text("생각 중이야" + ".".repeat(dotCount));
             }, 500);
-
+        
             
             $.ajax({
                 type: 'POST',
-                url: '{% url "reader:answer_question" %}',
+                url: '{% url "reader:answer_question" id %}',
                 data: {
                     'csrfmiddlewaretoken': '{{ csrf_token }}',
                     'question': question,
-                    'story_id': '{{ id }}'
+                    'story_id': '{{ id }}',
+                    'profile_id' : '{{ profile.id }}'
                 },
                 dataType: 'json',
                 success: function(data) {

@@ -142,6 +142,7 @@ def create_story(request):
                 'generated_stories': generated_stories,
                 'generated_images': generated_images
             }
+            print(context)
             return render(request, 'generator/story_result.html', context)
     else:
         # GET 요청인 경우 이야기 생성 페이지를 렌더링
