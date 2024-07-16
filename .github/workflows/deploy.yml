@@ -61,4 +61,4 @@ jobs:
           sudo docker-compose stop mealkid
           sudo docker-compose rm -f mealkid
           sudo docker-compose up -d mealkid
-          sudo docker rmi $(docker images -f "dangling=true" -q)
+          sudo docker rmi $(sudo docker images -f "dangling=true" -q)
