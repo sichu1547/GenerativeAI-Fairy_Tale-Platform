@@ -36,6 +36,7 @@
             background: #fff;
             display: flex;
             flex-direction: column;
+            font-family: 'Ownglyph_ryuttung-Rg', Arial, sans-serif;
         }
         .profile-box {
             background: #fff;
@@ -138,9 +139,8 @@
                     <div class="profile-box">
                         {% for history in page_histories %}
                             <div class="blog-post">
-                                <div class="blog-post-title">{{ history.story_title }}</div>
-                                <div class="blog-post-content">
-                                    <a href="{% url 'reader:story_detail' history.story_id %}">자세히 보기</a>
+                                <div class="blog-post-title">
+                                    <a href="{% url 'reader:story_detail' history.story_id %}">{{ history.story_title }}</a>
                                 </div>
                             </div>
                         {% endfor %}
@@ -165,9 +165,8 @@
                     <div class="profile-box">
                         {% for review in page_reviews %}
                             <div class="blog-post">
-                                <div class="blog-post-title">{{ review.title }}</div>
-                                <div class="blog-post-content">
-                                    <a href="{% url 'review:review_list' profile.id %}">자세히 보기</a>
+                                <div class="blog-post-title">
+                                    <a href="{% url 'review:review_list' profile.id %}">{{ review.story_title }}</a>
                                 </div>
                             </div>
                         {% endfor %}
