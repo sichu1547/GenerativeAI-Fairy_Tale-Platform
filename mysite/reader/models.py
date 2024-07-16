@@ -12,6 +12,7 @@ class Story(models.Model):
     starpoint = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)], blank=True, null=True, default=0)
     starcount = models.IntegerField(default=0)
     starsum = models.IntegerField(default=0)
+    image = models.ImageField(upload_to='images/', blank=True, null=True)
     def __str__(self):
         return self.title
     

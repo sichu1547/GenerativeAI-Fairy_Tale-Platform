@@ -183,8 +183,9 @@
                             <div class="blog-post">
                                 <a href="{% url 'review:review_list' review.id %}"></a>
                                 <div class="blog-post-title">
-                                    <a href="{% url 'review:review_list' review.id %}">{{ review.story_title }}</a>
-                                    {{ review.story_title }}
+                                    {% comment %} <a href="{% url 'review:review_list' review.id %}">{{ review.story_title }}</a> {% endcomment %}
+                                    {{ review.story_title }} 
+                                    {{ review.title }}
                                 </div>
                             </div>
                         {% endfor %}
@@ -212,7 +213,7 @@
                             <div class="blog-post">
                                 <div class="blog-post-title">{{ story.title }}</div>
                                 <div class="blog-post-content">
-                                    <a href="{% url 'reader:story_detail' story.id %}?keyword=Generative">자세히 보기</a>
+                                    <a href="{% url 'reader:story_detail' story.id %}?keyword=Generative"></a>
                                 </div>
                             </div>
                         {% endfor %}
