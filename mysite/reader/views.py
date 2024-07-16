@@ -244,14 +244,16 @@ def answer_question(request, story_id):
         if question and story_id:
             story = get_object_or_404(Story, pk=story_id)
 
-            # full_query = f"{story}에 대한 질문입니다.\n{question}"
-            full_query = f"당신은 어린아이의 질문에 친절하게 답변해주는 선생님입니다. 동화 '{story}'에 대한 질문은 다음과 같고, 어린아이가 잘 이해할 수 있도록 대답해주세요.\n{question}"
+            role = "당신은 어린아이의 질문에 친절하게 답변해주는 선생님입니다."
+            temp = story.body.split('.')
+            sentences = '. '.join(temp[:1]) + '.'
+            full_query = f"{role} '{sentences}'로 시작하는 동화 '{story}'에 대한 질문은 다음과 같습니다. 어린아이가 잘 이해할 수 있도록 250자 이하로 대답해주세요.\n{question}"
         
             memory_content = memory.load_memory_variables({})
 
             # Perform the query
             result = qa({"question": full_query, "chat_history": memory_content["chat_history"]})
-            # print(result)
+            print(result)
 
             # Output the answer obtained from LangChain
             answer = result["answer"]
@@ -259,8 +261,8 @@ def answer_question(request, story_id):
                 src_doc = result['source_documents'][0].page_content.split('\n')[0]
             else:
                 src_doc = 'Got No Source Document'
-            print('Question:', question)
-            print('Answer:', answer)
+            # print('Question:', question)
+            # print('Answer:', answer)
             print('Source Document:', src_doc)
 
             # Save to memory

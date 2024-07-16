@@ -61,7 +61,7 @@ admin.site.register(Story, StoryAdmin)
 
 class LogAdmin(admin.ModelAdmin):
     list_display = ['id', 'datetime', 'story_title', 'question', 'answer']
-    list_display_links = ['story_title', 'question']
+    list_display_links = ['story_title', 'question', 'answer']
     list_filter = ['story_title']
 admin.site.register(LogEntry, LogAdmin)
 
