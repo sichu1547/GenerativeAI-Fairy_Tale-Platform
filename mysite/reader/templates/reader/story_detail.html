@@ -275,10 +275,10 @@
         const totalPages = sentences.length;
 
         document.addEventListener('DOMContentLoaded', function() {
-                setTimeout(function() {
-                    // 이미지 생성 후에 커튼을 열도록 showPage 함수로 이동
-                    showPage(currentPage);
-                }, 1000);
+            setTimeout(function() {
+                showPage(currentPage);
+                generateImages(); // 모든 이미지를 미리 생성                
+            }, 1000);
         });
    
         let selectedVoice = 'ko-KR-Standard-A'; // 기본 목소리 설정
@@ -295,14 +295,11 @@
             rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
             if (imageUrls[page]) { // 이미지 URL이 유효한지 확인
                 leftPage.style.backgroundImage = `url(${imageUrls[page]})`;
-                // 이미지가 이미 있으면 커튼 열기
-                openCurtains();
+                openCurtains(); // 이미지를 로드한 후 커튼 열기
             } else {
-                generateImage(page); // 이미지가 없으면 생성
+                leftPage.style.backgroundImage = `url(${defaultImageUrl})`; // 기본 이미지 URL 설정
             }
-   
-            generateImage(currentPage + 1); // 다음 페이지의 이미지 생성
- 
+
             // 마지막 페이지에서만 rating-form, 하단 buttons 보이기
             if (page >= totalPages - 1) {
                 document.getElementById('quiz_button').style.display = "inline-block";
@@ -367,31 +364,26 @@
             }, 500);
         }
    
-        function generateImage(page) {
-            if (page < totalPages && !imageUrls[page]) {
-                $.ajax({
-                    url: "{% url 'reader:generate_image' %}",
-                    method: "GET",
-                    data: { sentence: sentences[page] },
-                    success: function(response) {
-                        const imageUrl = response.image_url || defaultImageUrl; // 기본 이미지 URL 설정
-                        imageUrls[page] = imageUrl;
-                        if (currentPage === page) {
-                            const leftPage = document.querySelector(".left-page .image-container");
-                            leftPage.style.backgroundImage = `url(${imageUrl})`;
+        function generateImages() {
+            for (let i = 1; i < totalPages; i++) { // 첫 번째 이미지는 이미 있으므로 1부터 시작
+                if (!imageUrls[i]) {
+                    $.ajax({
+                        url: "{% url 'reader:generate_image' %}",
+                        method: "GET",
+                        data: { sentence: sentences[i] },
+                        success: function(response) {
+                            const imageUrl = response.image_url || defaultImageUrl; // 기본 이미지 URL 설정
+                            imageUrls[i] = imageUrl;
+                        },
+                        error: function() {
+                            imageUrls[i] = defaultImageUrl; // 기본 이미지 URL 설정
                         }
-                        // 이미지가 성공적으로 생성된 경우에만 커튼 열기
-                        openCurtains();
-                    },
-                    error: function() {
-                        const leftPage = document.querySelector(".left-page .image-container");
-                        leftPage.style.backgroundImage = `url(${defaultImageUrl})`; // 기본 이미지 URL 설정
-                        // 이미지 생성 실패 시 커튼 열기
-                        openCurtains();
-                    }
-                });
+                    });
+                }
             }
+            request.session['image_urls'] = imageUrls; // 이미지 URL을 세션에 저장
         }
+        
         function openCurtains() {
             document.getElementById('curtain-left').style.animation = 'curtainOpen 1s forwards';
             document.getElementById('curtain-right').style.animation = 'curtainOpen 1s forwards';
