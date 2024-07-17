@@ -68,7 +68,7 @@ class QuizView(View):
             result = "축하합니다🥳"
             QuizView.m_context = {}
         else:
-            result = "틀렸습니다😢<br>정답은 {}입니다.".format(correct_answer)
+            result = "틀렸습니다😢<br>다시 풀어보세요!".format(correct_answer)
 
         return render(request, 'quiz/quiz_result.html', {'result': result, 'quiz_id': id, 'keyword': keyword})
 

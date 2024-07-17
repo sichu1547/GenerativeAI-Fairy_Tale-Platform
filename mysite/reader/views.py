@@ -35,20 +35,20 @@ from myaccount.models import ReadingHistory, Profile
 import random
 from generator.models import GenStory
 
-def search(request):
-    keyword = request.GET.get('keyword')
-    search_type = request.GET.get('search_type', 'title')
-    if keyword:
-        if search_type == 'title':
-            stories = Story.objects.filter(title__icontains=keyword)
-        else:
-            stories = Story.objects.filter(category__icontains=keyword)
-    else:
-        stories = Story.objects.all() 
-   # 정수형 필드에 대해 정렬 적용
-    stories = stories.order_by('starpoint')
+# def search(request):
+#     keyword = request.GET.get('keyword')
+#     search_type = request.GET.get('search_type', 'title')
+#     if keyword:
+#         if search_type == 'title':
+#             stories = Story.objects.filter(title__icontains=keyword)
+#         else:
+#             stories = Story.objects.filter(category__icontains=keyword)
+#     else:
+#         stories = Story.objects.all() 
+#    # 정수형 필드에 대해 정렬 적용
+#     stories = stories.order_by('starpoint')
         
-    return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
+#     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
 
 def list(request):
     story_list = Story.objects.all()
@@ -71,6 +71,8 @@ def search(request):
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
 
 def story_detail(request, id):
+    if not request.user.is_authenticated:
+        return redirect(f"{reverse('login')}?next={request.path}")
     keyword = request.GET.get('keyword')
 
     if keyword == 'Generative':
@@ -80,8 +82,6 @@ def story_detail(request, id):
 
         return render(request, 'reader/genstory_detail.html', {'story': sentences, 'id' : id, 'keyword': keyword, 'title' : story.title})
     else:
-        if not request.user.is_authenticated:
-            return redirect(f"{reverse('login')}?next={request.path}")
         story = get_object_or_404(Story, id=id)
         profile_id = request.session.get('selected_profile_id')
 
@@ -98,11 +98,9 @@ def story_detail(request, id):
         patterns = r'\r\n\r\n\r\n|\r\n\r\n \r\n|\r\n \r\n \r\n|\r\n \r\n\r\n'
         sentences = re.split(patterns, story.body)
         
-        # 이미지
-        image_urls = request.session.get('image_urls', [])
-        if sentences and not image_urls:
-            image_urls = [generate_image(sentences[0])]
-            request.session['image_urls'] = image_urls
+        # 이미지 썸네일 가져오기
+        image_urls = [story.image.url] if story.image else []
+        request.session['image_urls'] = image_urls
 
         # TTS
         if 'tts' in request.GET:
@@ -163,10 +161,8 @@ def story_detail(request, id):
         result = nn.kneighbors([dtm.iloc[idx]])
         random_value = random.randint(1,5)
         recommended_title = df['제목'].iloc[result[1][0][random_value]]
-        
-        story = get_object_or_404(Story, title=recommended_title)
+        story = Story.objects.filter(title=recommended_title).first()
         recommended_id = story.id
-        
 
         return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id, 'profile' : profile})
         ########################################################################################################    
