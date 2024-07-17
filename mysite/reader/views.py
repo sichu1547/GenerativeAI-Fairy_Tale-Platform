@@ -98,10 +98,10 @@ def story_detail(request, id):
         patterns = r'\r\n\r\n\r\n|\r\n\r\n \r\n|\r\n \r\n \r\n|\r\n \r\n\r\n'
         sentences = re.split(patterns, story.body)
         
-        # 이미지
+        # 이미지 썸네일 가져오기
         image_urls = [story.image.url] if story.image else []
         request.session['image_urls'] = image_urls
-        
+
         # TTS
         if 'tts' in request.GET:
             print("Let's go TTS")
