@@ -13,6 +13,9 @@ from myaccount.models import Profile
 import os
 from openai import OpenAI
 from django.conf import settings
+import string
+import json
+
 
 client = OpenAI(
     api_key=settings.OPENAI_API_KEY
@@ -26,8 +29,8 @@ def index(request):
 # GPT 시스템 역할 정의
 system_roles = [
     "입력된 이야기를 동화의 시작으로 만들고, 입력된 내용에 따라 한국어 문장을 만들어 이야기를 연결한 문장을 만들어 보세요.",
-    "입력한 정보를 이용하여 연결된 동화의 중간 부분을 한국어로 만들어주세요",
-    "입력한 정보를 이용하여 한국어로 세 줄로 연결된 동화의 결말을 만들어 보세요."
+    "입력된 이야기에 이어서 동화의 중간 부분을 한국어로 만들어 보세요.",
+    "입력된 이야기에 이어서 한국어로 세 줄로 연결된 동화의 결말을 만들어 보세요."
 ]
 
 # 전체 이야기를 기반으로 질문 프롬프트 생성 함수
@@ -59,27 +62,6 @@ def generate_response(prompt, role, max_tokens=110):
     else:
         return content
 
-# 이야기 분할 함수
-def paginate_story(story, max_length=500):
-    words = story.split()
-    parts = []
-    current_part = ""
-    for word in words:
-        if len(current_part) + len(word) + 1 > max_length:
-            parts.append(current_part)
-            current_part = word
-        else:
-            if (current_part):
-                current_part += " " + word
-            else:
-                current_part = word
-    if current_part:
-        parts.append(current_part)
-    return parts
-
-def clean_story(story):
-    return story.replace(',', '').replace(' ,', '').replace(', ', '').replace('..', '.').strip()
-
 def create_story(request):
     if request.method == "POST":
         # 최종 결과 TTS
@@ -88,11 +70,13 @@ def create_story(request):
         
         initial_story = request.POST.get('initial_story', '')
         generated_stories = request.POST.getlist('generated_stories', [])
+        generated_story_parts_json = request.POST.get('generated_story_parts', '[]')
+        generated_story_parts = json.loads(generated_story_parts_json)
         generated_images = request.POST.getlist('generated_images', [])
         stage = int(request.POST.get('stage', 0))
         user_input = request.POST.get('user_input', '')
         profile_id = request.session.get('selected_profile_id')
-        profile = get_object_or_404(Profile, id=profile_id, user=request.user)        
+        profile = get_object_or_404(Profile, id=profile_id, user=request.user)
 
         # 스테이지가 0보다 크면 사용자 입력을 이야기 뒤에 추가
         if stage > 0:
@@ -104,14 +88,18 @@ def create_story(request):
         if stage < 3:
             role = system_roles[stage]
             response = generate_response(story, role)
+        
+            generated_story = user_input + " " + response.strip()
             
-            # 사용자 입력을 generated_stories에 저장
-            if stage > 0:
-                generated_stories.append(' '+ user_input +' ')
-            generated_stories.append(response.strip()) # 문장 끝의 점을 제거하고 추가
+            # generated_stories에 생성된 이야기 추가
+            generated_stories.append(generated_story.strip())
+            
+            # 중복이 없도록 generated_story_parts에 생성된 이야기 파트 추가
+            if generated_story.strip() not in generated_story_parts:
+                generated_story_parts.append(generated_story.strip())
             
             # 생성된 이야기를 바탕으로 이미지를 생성하고 리스트에 추가
-            image_url = generate_image(response)
+            image_url = generate_image(generated_story_parts[-1])
             if not image_url:
                 image_url = ""
             generated_images.append(image_url)
@@ -121,8 +109,9 @@ def create_story(request):
 
             # 생성된 이야기, 이미지, 질문 프롬프트, 스테이지 정보를 컨텍스트로 전달하여 렌더링
             context = {
-                'story': clean_story(" ".join(generated_stories)), # 쉼표 문제 해결
+                'story': " ".join(generated_stories),
                 'generated_stories': generated_stories,
+                'generated_story_parts': json.dumps(generated_story_parts),
                 'stage': stage + 1,
                 'question_prompt': question_prompt,
                 'generated_images': generated_images
@@ -134,14 +123,18 @@ def create_story(request):
             final_prompt = f"{story}\n이 이야기를 어떻게 마무리할까요?"
             final_response = generate_response(final_prompt, role, max_tokens=300)
             
-            # 사용자 입력을 generated_stories에 저장
-            if stage > 0:
-                generated_stories.append(' '+ user_input +' ')
-            generated_stories.append(final_response.strip()) # 문장 끝의 점을 제거하고 추가
+            final_generated_story = user_input + " " + final_response.strip()
+            
+            # generated_stories에 생성된 이야기 추가
+            generated_stories.append(final_generated_story.strip())
+            
+            # 중복이 없도록 generated_story_parts에 생성된 이야기 파트 추가
+            if final_generated_story.strip() not in generated_story_parts:
+                generated_story_parts.append(final_generated_story.strip())
+           
             
             # 최종 이야기 전체를 하나의 문자열로 결합하여 분할
-            final_story = clean_story(" ".join(generated_stories)) # 쉼표 문제 해결
-            final_story_parts = paginate_story(final_story)
+            final_story = " ".join(generated_stories)
             
             # db
             title_prompt = f"{final_story}\n이 이야기의 제목을 지어주세요"
@@ -152,36 +145,38 @@ def create_story(request):
             # 최종 이야기와 이를 분할한 파트, 생성된 이야기 및 이미지 리스트를 컨텍스트로 전달하여 렌더링
             context = {
                 'final_story': final_story,
-                'final_story_parts': final_story_parts,
                 'generated_stories': generated_stories,
                 'generated_images': generated_images,
+                'generated_story_parts': json.dumps(generated_story_parts),
                 'file_path': file_path  # 파일 경로를 컨텍스트에 추가
             }
-
             return render(request, 'generator/story_result.html', context)
     else:
         # GET 요청인 경우 이야기 생성 페이지를 렌더링
         return render(request, 'generator/create_story.html')
 
-def generate_image(sentence):
-    # print('이미지 생성 중')
-    # api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
-    # client = OpenAI(api_key = api_key)
-    
-    # try:
-    #     response = client.images.generate(
-    #         model="dall-e-3",
-    #         prompt=f"다음은 동화 내용이야: {sentence}. 이 내용을 기반으로 그림을 그려줘. 귀여운 그림체로 부드러운 색조와 간단한 형태를 사용해 그려줘.",
-    #         size="1024x1024",
-    #         n=1,
-    #         quality="standard",
-    #         style="natural"
-    #     )
-    #     image_url = response.data[0].url
-    return ""
 
-    # except Exception as e:
-    #     return ""
+
+def generate_image(sentence):
+    print('이미지 생성 중')
+    api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
+    client = OpenAI(api_key = api_key)
+    
+    try:
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=f"Create a cute and colorful children's book illustration. The scene should be inspired by the following sentence: '{sentence}'. Ensure the style is drawn with soft lines, bright and pastel colors, and a friendly, playful feel. The background should be detailed but not too complex, keeping it engaging but simple for children. Use a hand-drawn, cartoon-like style. The image should only consist of picture elements, NOT TEXT.",
+            size="1024x1024",
+            n=1,
+            quality="standard",
+            style="natural"
+        )
+        image_url = response.data[0].url
+        return image_url
+
+    except Exception as e:
+        return ""
+    #return ""
 
 def save_final_story_to_database(final_story, profile, user, title):
     try:

@@ -35,7 +35,8 @@
                     <input type="hidden" name="initial_story" value="{{ initial_story }}">
                     <input type="hidden" name="story" value="{{ story }}">
                     <input type="hidden" name="stage" value="{{ stage }}">
-                    <input type="hidden" name="generated_stories" value="{{ generated_stories|join:',' }}">
+                    <input type="hidden" name="generated_stories" value="{{ generated_stories|join:' ' }}">
+                    <input type="hidden" name="generated_story_parts" value='{{ generated_story_parts|safe }}'>
                     <input type="hidden" name="generated_images" value="{{ generated_images|join:',' }}">
                     <div class="question-prompt">
                         <label for="user_input" class="question">{{ question_prompt }}</label>
@@ -55,9 +56,10 @@
     </div>
     <script>
         const generatedStories = {{ generated_stories|safe }};
-        const generatedImages = {{ generated_images|safe }};
+        const generatedStoryParts = {{ generated_story_parts|safe }};
+        const generatedImages = `{{ generated_images|safe }}`.split(',').map(img => img.replace(/[\[\]']/g, '').trim());
         const defaultImage = "{% static 'images/default_image.jpg' %}";
-        let currentPage = generatedStories.length - 1;
+        let currentPage = generatedStoryParts.length - 1;
 
         function updateStoryPage() {
 
@@ -72,27 +74,27 @@
               
               
             const imageUrl = (generatedImages[currentPage] && isValidUrl(generatedImages[currentPage])) ? generatedImages[currentPage] : defaultImage;
-            document.getElementById('story-content').innerText = generatedStories[currentPage] || "No story content available";
+            document.getElementById('story-content').innerText = generatedStoryParts[currentPage] || "No story content available";
             document.getElementById('story-image-part').src = imageUrl;
             document.getElementById('prev-btn').disabled = currentPage === 0;
-            document.getElementById('next-btn').disabled = currentPage === generatedStories.length - 1;
+            document.getElementById('next-btn').disabled = currentPage === generatedStoryParts.length - 1;
         }
 
         function navigateStory(direction) {
             const newPage = currentPage + direction;
-            if (newPage >= 0 && newPage < generatedStories.length) {
+            if (newPage >= 0 && newPage < generatedStoryParts.length) {
                 currentPage = newPage;
                 updateStoryPage();
             }
         }
 
         function setLastPage() {
-            currentPage = generatedStories.length;
+            currentPage = generatedStoryParts.length;
             return true; // form submission continues
         }
 
         document.addEventListener("DOMContentLoaded", function() {
-            currentPage = generatedStories.length - 1;
+            currentPage = generatedStoryParts.length - 1;
             updateStoryPage();
         });
 
