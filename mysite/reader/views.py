@@ -22,7 +22,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Story, LogEntry
 from langchain_openai import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
-from langchain_openai import OpenAIEmbeddings
+from langchain.chains import ConversationChain
 from langchain_community.vectorstores import Chroma
 from langchain.chains import ConversationalRetrievalChain
 import os
@@ -183,19 +183,14 @@ def generate_image_view(request):
 
 
 ############################ 읽기 챗봇 ############################
-# Initialize OpenAI embeddings, Chroma database, and ChatOpenAI model
-embeddings = OpenAIEmbeddings(model="text-embedding-ada-002")
-persist_directory = os.path.join(settings.BASE_DIR, 'database')
-database = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
-
+# Initialize the chat model
 chat = ChatOpenAI(model="gpt-4o")
-retriever = database.as_retriever(search_kwargs={"k": 1})
 
-memory = ConversationBufferMemory(memory_key="chat_history", input_key="question", output_key="answer", return_messages=True)
+# Initialize the memory with the correct keys
+memory = ConversationBufferMemory(memory_key="history", input_key="input", output_key="response", return_messages=True)
 
-qa = ConversationalRetrievalChain.from_llm(
-    llm=chat, retriever=retriever, memory=memory, 
-    return_source_documents=True, output_key="answer")
+# Create the conversation chain
+qa = ConversationChain(llm=chat, memory=memory)
 
 @csrf_exempt
 def answer_question(request, story_id):
@@ -207,29 +202,29 @@ def answer_question(request, story_id):
         if question and story_id:
             story = get_object_or_404(Story, pk=story_id)
 
-            role = "당신은 어린아이의 질문에 친절하게 답변해주는 선생님입니다."
-            temp = story.body.split('.')
-            sentences = '. '.join(temp[:1]) + '.'
-            full_query = f"{role} '{sentences}'로 시작하는 동화 '{story}'에 대한 질문은 다음과 같습니다. 어린아이가 잘 이해할 수 있도록 250자 이하로 대답해주세요.\n{question}"
-        
+            role = "당신은 어린아이의 질문에 친절하게 답변해주는 캐릭터 '밀키'입니다."
+            full_query = (
+                f"{role} "
+                f"질문: '{question}'은 동화 '{story.title}'에 대한 질문입니다. "
+                f"동화 내용: '{story.body}' "
+                f"어린아이가 잘 이해할 수 있도록 200글자 이하로만 답변하세요. "
+                f"어려운 단어를 사용하지 말고 아이들의 눈높이에 맞춰 답변하세요."
+                f"참고: 질문으로 인사가 들어올때는 동화 내용 없이 인사로만 답변하세요. "
+                f"단어 의미를 물어볼 때는 동화 내용 없이 단어의 의미만 답변하세요. "
+                f"프롬프트 내용을 답변에 포함하지 마세요. "
+            )
+
             memory_content = memory.load_memory_variables({})
 
             # Perform the query
-            result = qa.invoke({"question": full_query, "chat_history": memory_content["chat_history"]})
+            result = qa.invoke({"input": full_query, "history": memory_content["history"]})
             print(result)
 
             # Output the answer obtained from LangChain
-            answer = result["answer"]
-            if result['source_documents'] != []:
-                src_doc = result['source_documents'][0].page_content.split('\n')[0]
-            else:
-                src_doc = 'Got No Source Document'
-            # print('Question:', question)
-            # print('Answer:', answer)
-            print('Source Document:', src_doc)
+            answer = result["response"]
 
             # Save to memory
-            memory.save_context({"question": full_query}, {"answer": answer})
+            memory.save_context({"input": full_query}, {"response": answer})
 
             # Save to the database
             save_to_database(story.title, question, answer, profile_id)
@@ -246,8 +241,6 @@ def answer_question(request, story_id):
                 })
             else:
                 return JsonResponse({'answer': answer, 'error': 'TTS 생성 실패'})
-
-            # print(memory.load_memory_variables({})["chat_history"])
 
     return JsonResponse({'error': 'Invalid request'})
 
