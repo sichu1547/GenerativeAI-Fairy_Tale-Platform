@@ -132,8 +132,11 @@
             $('.link-click-animation').on('click', function(e) {
                 e.preventDefault();
 
-                // 프리로더 보이기
-                $('#preloader').show();
+                var targetUrl = $(this).attr('href');
+                if (!targetUrl.endsWith("?keyword=Generative")) { // 생성 동화는 커튼 필요 없음
+                    // 프리로더 보이기
+                    $('#preloader').show();
+                }
 
                 // 실제 페이지로 이동
                 var targetUrl = $(this).attr('href');

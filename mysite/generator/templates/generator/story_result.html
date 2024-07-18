@@ -78,9 +78,9 @@
     </div>
     <script>
         let currentPage = 0;
-        const finalStoryParts = `{{ final_story|linebreaks|safe }}`.split('\n\n');  // 문단 구분
+        const generatedStories = JSON.parse(`{{ generated_story_parts|escapejs }}`);
         const generatedImages = `{{ generated_images|safe }}`.split(',').map(img => img.replace(/[\[\]']/g, '').trim());
-        const totalParts = finalStoryParts.length;
+        const totalParts = generatedStories.length;
         const defaultImage = "{% static 'images/default_image.jpg' %}";
 
         function displayPages() {
@@ -92,9 +92,9 @@
             const leftIndex = currentPage * 2;
             const rightIndex = leftIndex + 1;
 
-            leftText.innerHTML = leftIndex < totalParts ? `<p>${finalStoryParts[leftIndex]}</p>` : '';
-            rightText.innerHTML = rightIndex < totalParts ? `<p>${finalStoryParts[rightIndex]}</p>` : '';
-            
+            leftText.innerHTML = leftIndex < totalParts ? `<p>${generatedStories[leftIndex]}</p>` : '';
+            rightText.innerHTML = rightIndex < totalParts ? `<p>${generatedStories[rightIndex]}</p>` : '';
+
             const isValidUrl = (url) => {
                 try {
                     new URL(url);
@@ -108,8 +108,15 @@
             rightImage.innerHTML =''
 
             leftImage.innerHTML = isValidUrl(generatedImages[leftIndex]) ? `<img class="final-story-image" src="${generatedImages[leftIndex]}" alt="Generated Story Image">` : `<img class="final-story-image" src="${defaultImage}" alt="Generated Story Image">`;
-            if (rightIndex < totalParts) {
+            if (rightIndex < totalParts - 1) {
                 rightImage.innerHTML = isValidUrl(generatedImages[rightIndex]) ? `<img class="final-story-image" src="${generatedImages[rightIndex]}" alt="Generated Story Image">` : `<img class="final-story-image" src="${defaultImage}" alt="Generated Story Image">`
+            }
+
+            if (rightIndex == totalParts - 1) {
+                rightImage.style.display='none';
+            }
+            else {
+                rightImage.style.display='flex';
             }
 
             const prevButton = document.getElementById('prev-btn');
@@ -120,8 +127,6 @@
             } else {
                 prevButton.classList.remove('disabled');
             }
-
-            console.log(rightIndex)
         
             if (rightIndex === totalParts - 1) {
                 nextButton.classList.add('disabled');

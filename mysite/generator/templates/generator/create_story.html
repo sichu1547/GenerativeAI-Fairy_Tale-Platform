@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{% static 'css/generator.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 {% endblock %}
 
@@ -34,17 +35,18 @@
                     <input type="hidden" name="initial_story" value="{{ initial_story }}">
                     <input type="hidden" name="story" value="{{ story }}">
                     <input type="hidden" name="stage" value="{{ stage }}">
-                    <input type="hidden" name="generated_stories" value="{{ generated_stories|join:',' }}">
+                    <input type="hidden" name="generated_stories" value="{{ generated_stories|join:' ' }}">
+                    <input type="hidden" name="generated_story_parts" value='{{ generated_story_parts|safe }}'>
                     <input type="hidden" name="generated_images" value="{{ generated_images|join:',' }}">
                     <div class="question-prompt">
                         <label for="user_input" class="question">{{ question_prompt }}</label>
                     </div>
                     <div class="story-input">
-                        <input type="text" id="user_input" name="user_input" placeholder="다음 부분을 입력하세요" required>
+                        <input type="text" id="user_input" name="user_input" placeholder="다음 부분을 입력하세요..." required>
                         <div class="buttons">
                             <button id="story-button" type="submit">동화 만들기</button>
                             <div class="voice-recognition">
-                                <button type="button" onclick="startRecognition()">🎙️</button>
+                                <button type="button" id="speech-button">🎙️</button>
                             </div>
                         </div>
                     </div>
@@ -54,9 +56,10 @@
     </div>
     <script>
         const generatedStories = {{ generated_stories|safe }};
-        const generatedImages = {{ generated_images|safe }};
+        const generatedStoryParts = {{ generated_story_parts|safe }};
+        const generatedImages = `{{ generated_images|safe }}`.split(',').map(img => img.replace(/[\[\]']/g, '').trim());
         const defaultImage = "{% static 'images/default_image.jpg' %}";
-        let currentPage = generatedStories.length - 1;
+        let currentPage = generatedStoryParts.length - 1;
 
         function updateStoryPage() {
 
@@ -71,28 +74,34 @@
               
               
             const imageUrl = (generatedImages[currentPage] && isValidUrl(generatedImages[currentPage])) ? generatedImages[currentPage] : defaultImage;
-            document.getElementById('story-content').innerText = generatedStories[currentPage] || "No story content available";
+            document.getElementById('story-content').innerText = generatedStoryParts[currentPage] || "No story content available";
             document.getElementById('story-image-part').src = imageUrl;
             document.getElementById('prev-btn').disabled = currentPage === 0;
-            document.getElementById('next-btn').disabled = currentPage === generatedStories.length - 1;
+            document.getElementById('next-btn').disabled = currentPage === generatedStoryParts.length - 1;
         }
 
         function navigateStory(direction) {
             const newPage = currentPage + direction;
-            if (newPage >= 0 && newPage < generatedStories.length) {
+            if (newPage >= 0 && newPage < generatedStoryParts.length) {
                 currentPage = newPage;
                 updateStoryPage();
             }
         }
 
         function setLastPage() {
-            currentPage = generatedStories.length;
+            currentPage = generatedStoryParts.length;
             return true; // form submission continues
         }
 
         document.addEventListener("DOMContentLoaded", function() {
-            currentPage = generatedStories.length - 1;
+            currentPage = generatedStoryParts.length - 1;
             updateStoryPage();
+        });
+
+        document.getElementById('speech-button').addEventListener('click', function() {
+            startRecognition();
+            document.getElementById('speech-button').innerHTML = '🔴';  // 🎙️ 이모지를 🔴 이모지로 변경
+            document.getElementById('user_input').setAttribute('placeholder', '녹음 중...'); 
         });
 
         function startRecognition() {
@@ -104,22 +113,29 @@
 
                 recognition.onresult = function(event) {
                     var transcript = event.results[0][0].transcript;
-                    document.getElementById('user_input').value += transcript;
+                    document.getElementById('user_input').value = transcript;
+                    document.getElementById('speech-button').innerHTML = '🎙️';  // 🔴 이모지를 🎙️ 이모지로 변경
+                    document.getElementById('user_input').setAttribute('placeholder', '다음 부분을 입력하세요...');  // "녹음 중"을 "다음 부분을 입력하세요..."로 변경
                 };
 
                 recognition.onerror = function(event) {
                     console.error('Recognition error:', event.error);
+                    document.getElementById('speech-button').innerHTML = '🎙️';
+                    document.getElementById('user_input').setAttribute('placeholder', '다음 부분을 입력하세요...');
                 };
 
                 recognition.onend = function() {
                     console.log('Recognition ended');
+                    document.getElementById('speech-button').innerHTML = '🎙️';
+                    document.getElementById('user_input').setAttribute('placeholder', '다음 부분을 입력하세요...');
                 };
             } else {
                 alert('이 브라우저에서는 음성 인식이 지원되지 않습니다.');
+                document.getElementById('speech-button').innerHTML = '🎙️';
+                document.getElementById('user_input').setAttribute('placeholder', '다음 부분을 입력하세요...');
             }
         }
     </script>
 </body>
-
-{% endblock %}
 </html>
+{% endblock %}

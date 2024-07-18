@@ -5,27 +5,26 @@ from django.conf import settings
 from openai import OpenAI
 
 def generate_image(sentence):
-    # print('생성중')
-    # api_key = settings.OPENAI_API_KEY
-    # client = OpenAI(api_key = api_key)
+    print('생성중')
+    api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
+    client = OpenAI(api_key = api_key)
     
-    # try:
-    #     response = client.images.generate(
-    #         model="dall-e-3",
-    #         prompt=f"This: {sentence}. Based on this, draw a cute and lovely 2D picture using an illustration that never contains text, phrases, or speech bubbles. Never add text.",
-    #         #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
-    #         size="1024x1024",
-    #         n=1,
-    #         quality="standard",
-    #         style="natural"
-    #     )
-    #     image_url = response.data[0].url
-    #     print('성공')
-    #     return image_url
+    try:
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=f"Create a cute and colorful children's book illustration. The scene should be inspired by the following sentence: '{sentence}'. Ensure the style is drawn with soft lines, bright and pastel colors, and a friendly, playful feel. The background should be detailed but not too complex, keeping it engaging but simple for children. Use a hand-drawn, cartoon-like style. The image should only consist of picture elements, NOT TEXT.",
+            size="1024x1024",
+            n=1,
+            quality="standard",
+            style="natural"
+        )
+        image_url = response.data[0].url
+        print('성공')
+        return image_url
 
-    # except Exception as e:
-    #     print('실패')
-    return ""
+    except Exception as e:
+        print('실패')
+        return ""
 
 def generate_tts(request, ssml_text):
     try:

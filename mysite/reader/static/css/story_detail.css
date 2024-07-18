@@ -171,6 +171,12 @@ input[type="radio"][name="voice"]:checked {
     scrollbar-color: #bfb4ff transparent;  /* 스크롤바 색상 및 트랙 색상 */
 }
 
+.left-page .text-container {
+    overflow-y: auto; /* 세로 스크롤바 추가 */
+    scrollbar-width: thin;  /* 스크롤바 얇게 설정 */
+    scrollbar-color: #bfb4ff transparent;  /* 스크롤바 색상 및 트랙 색상 */
+}
+
 
 /* 웹킷 기반 브라우저에서 스크롤바 숨기기 */
 .right-page::-webkit-scrollbar {
