@@ -7,15 +7,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{% static 'css/generator.css' %}">
+    <style>
+        /* 로딩 GIF를 숨기기 위한 기본 스타일 */
+        #loading {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            height: 7em;
+            width: 7em;
+            overflow: visible;
+            margin: auto;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            text-align: center; /* Center the content horizontally */
+        }
+        
+        #loading img {
+            display: block; /* Ensures the image is a block element */
+            margin: 0 auto; /* Centers the image horizontally */
+        }
+        
+        #loading a {
+            display: block; /* Ensures the anchor tag behaves like a block element */
+            margin-top: 5px; /* Adjust as needed to create space between image and text */
+            color: black; /* Example text color */
+            text-decoration: none; /* Remove underline */
+        }
+    </style>
 </head>
 {% endblock %}
 
 {% block content %}
 <body>
+    <!-- 로딩 GIF 추가 -->
+    <div id="loading">
+        <img src="{% static 'images/책넘기기.gif' %}" alt="Loading...">
+        <a>생성중!</a>
+    </div>
+
     <div class="story-container">
         <div class="book" id="index-book">
             <div class="story-page">
-                <form id="index-form" action="create_story" method="post" enctype="application/x-www-form-urlencoded">
+                <form id="index-form" action="create_story" method="post" enctype="application/x-www-form-urlencoded" onsubmit="showLoading()">
                     {% csrf_token %}
                     <div id="file-module-1">
                         <label class="generator-h1" for="initial_story">📒 이야기의 시작을 입력하세요</label>
@@ -34,6 +69,9 @@
         </div>
     </div>
     <script>
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
 
         document.getElementById('speech-button').addEventListener('click', function() {
             startRecognition();
@@ -74,6 +112,5 @@
         }
     </script>
 </body>
-
 {% endblock %}
 </html>

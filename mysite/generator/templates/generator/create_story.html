@@ -8,11 +8,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{% static 'css/generator.css' %}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* 로딩 GIF를 숨기기 위한 기본 스타일 */
+        #loading {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            height: 7em;
+            width: 7em;
+            overflow: visible;
+            margin: auto;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            text-align: center; /* Center the content horizontally */
+        }
+        
+        #loading img {
+            display: block; /* Ensures the image is a block element */
+            margin: 0 auto; /* Centers the image horizontally */
+        }
+        
+        #loading a {
+            display: block; /* Ensures the anchor tag behaves like a block element */
+            margin-top: 5px; /* Adjust as needed to create space between image and text */
+            color: black; /* Example text color */
+            text-decoration: none; /* Remove underline */
+        }
+    </style>
 </head>
 {% endblock %}
 
 {% block content %}
 <body>
+    <!-- 로딩 GIF 추가 -->
+    <div id="loading">
+        <img src="{% static 'images/책넘기기.gif' %}" alt="Loading...">
+        <a>생성중!</a>
+    </div>
+
     <div class="story-container">
         <div class="book" id="create-book">
             <div class="story-page">
@@ -81,21 +116,33 @@
         }
 
         function navigateStory(direction) {
+            showLoading();  // 로딩 표시
             const newPage = currentPage + direction;
             if (newPage >= 0 && newPage < generatedStoryParts.length) {
                 currentPage = newPage;
                 updateStoryPage();
             }
+            hideLoading();  // 로딩 숨기기
         }
 
         function setLastPage() {
+            showLoading();  // 로딩 표시
             currentPage = generatedStoryParts.length;
             return true; // form submission continues
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
         }
 
         document.addEventListener("DOMContentLoaded", function() {
             currentPage = generatedStoryParts.length - 1;
             updateStoryPage();
+            hideLoading();  // 로딩 숨기기
         });
 
         document.getElementById('speech-button').addEventListener('click', function() {
