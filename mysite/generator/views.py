@@ -27,7 +27,8 @@ def index(request):
 system_roles = [
     "입력된 이야기를 동화의 시작으로 만들고, 입력된 내용에 따라 한국어 문장을 만들어 이야기를 연결한 문장을 만들어 보세요.",
     "입력한 정보를 이용하여 연결된 동화의 중간 부분을 한국어로 만들어주세요",
-    "입력한 정보를 이용하여 한국어로 세 줄로 연결된 동화의 결말을 만들어 보세요."
+    "입력한 정보를 이용하여 앞 내용과 다른 연결된 동화의 중간 부분을 한국어로 만들어주세요",
+    "입력한 정보를 연결하여 한국어로 세 줄로 연결된 동화의 결말을 만들어 보세요."
 ]
 
 # 전체 이야기를 기반으로 질문 프롬프트 생성 함수
@@ -47,12 +48,12 @@ def generate_response(prompt, role, max_tokens=110):
         ],
         max_tokens=max_tokens,
         n=1,
-        temperature=0.7
+        temperature=0.8
     )
     content = response.choices[0].message.content.strip()
     
     # role이 system_roles[2]가 아닌 경우에만 문장이 끊기지 않도록 처리
-    if role != system_roles[2]:
+    if role != system_roles[3]:
         sentences = content.split('. ')
         complete_content = '. '.join(sentences[:-1]) + '.' if len(sentences) > 1 else content
         return complete_content
@@ -60,7 +61,7 @@ def generate_response(prompt, role, max_tokens=110):
         return content
 
 # 이야기 분할 함수
-def paginate_story(story, max_length=500):
+def paginate_story(story, max_length=300):
     words = story.split()
     parts = []
     current_part = ""
@@ -130,7 +131,7 @@ def create_story(request):
             return render(request, 'generator/create_story.html', context)
         else:
             # 스테이지가 3인 경우, 최종 이야기 결말을 생성
-            role = system_roles[2]
+            role = system_roles[3]
             final_prompt = f"{story}\n이 이야기를 어떻게 마무리할까요?"
             final_response = generate_response(final_prompt, role, max_tokens=300)
             
