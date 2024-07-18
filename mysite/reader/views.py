@@ -232,7 +232,7 @@ def answer_question(request, story_id):
             memory.save_context({"question": full_query}, {"answer": answer})
 
             # Save to the database
-            save_to_database(story.title, question, answer, profile_id)
+            save_to_database(story.title, question, answer, profile_id, request.user)
 
             # Answer TTS
             ssml_text = f"""<speak>{answer}</speak>"""
@@ -251,13 +251,14 @@ def answer_question(request, story_id):
 
     return JsonResponse({'error': 'Invalid request'})
 
-def save_to_database(story_title, question, answer, profile_id):
+def save_to_database(story_title, question, answer, profile_id, user):
     try:
         log_entry = LogEntry.objects.create(
             profile_id=profile_id,
             story_title=story_title,
             question=question,
-            answer=answer
+            answer=answer,
+            user = user
         )
         log_entry.save()
     except Exception as e:

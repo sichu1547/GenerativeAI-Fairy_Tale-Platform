@@ -20,7 +20,7 @@ class Story(models.Model):
         return reverse("reader:detail", kwargs={"id": self.id})
     
 class LogEntry(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='admin_log_entries')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='admin_log_entries', default=1)
     profile_id = models.IntegerField(default=4962)
     datetime = models.DateTimeField(auto_now_add=True)
     story_title = models.CharField(max_length=200)
