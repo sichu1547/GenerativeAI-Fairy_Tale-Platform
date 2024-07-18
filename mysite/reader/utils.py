@@ -6,26 +6,25 @@ from openai import OpenAI
 
 def generate_image(sentence):
     print('생성중')
-    api_key = settings.OPENAI_API_KEY
+    api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
     client = OpenAI(api_key = api_key)
     
     try:
         response = client.images.generate(
             model="dall-e-3",
-            prompt=f"Here is the text of a fairy tale: {sentence}. Create a friendly and cute fairy tale scene image based on this sentence. There are no letters, symbols, or any kind of text in the image. Design this scene to look inviting and welcoming to children with a cute and joyful atmosphere. The image must come out as one scene in one image.",
-            #prompt=f"Here is the text of a fairy tale: {sentence}. Based on this text, create an illustration for the story. Draw in a hand-drawn style with soft colors, simplified shapes.",
+            prompt=f"Create a cute and colorful children's book illustration. The scene should be inspired by the following sentence: '{sentence}'. Ensure the style is drawn with soft lines, bright and pastel colors, and a friendly, playful feel. The background should be detailed but not too complex, keeping it engaging but simple for children. Use a hand-drawn, cartoon-like style. The image should only consist of picture elements, NOT TEXT.",
             size="1024x1024",
             n=1,
             quality="standard",
-            style="vivid"
+            style="natural"
         )
         image_url = response.data[0].url
         print('성공')
         return image_url
 
     except Exception as e:
-        print('실패', e)
-    return ""
+        print('실패')
+        return ""
 
 def generate_tts(request, ssml_text):
     try:

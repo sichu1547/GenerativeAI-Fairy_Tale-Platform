@@ -169,6 +169,7 @@ p {
     margin-bottom: 10px !important;
     scrollbar-width: thin;  /* 스크롤바 얇게 설정 */
     scrollbar-color: #ffa07a transparent;  /* 스크롤바 색상 및 트랙 색상 */
+    padding-right: 10px;
 }
 
 .story-image {
@@ -286,7 +287,7 @@ input[type="text"] {
 #left-text, #right-text {
     margin: 0;
     padding-top: 0;
-    padding-bottom: 0;
+    padding-bottom: 20px;
 }
 
 .voice-recognition {
