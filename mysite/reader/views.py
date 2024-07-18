@@ -208,9 +208,10 @@ def answer_question(request, story_id):
                 f"질문: '{question}'은 동화 '{story.title}'에 대한 질문입니다. "
                 f"동화 내용: '{story.body}' "
                 f"어린아이가 잘 이해할 수 있도록 200글자 이하로만 답변하세요. "
-                f"어려운 단어를 사용하지 말고 아이들의 눈높이에 맞춰 답변하세요."
+                f"어려운 단어를 사용하지 말고 아이들의 눈높이에 맞춰 답변하세요. "
                 f"참고: 질문으로 인사가 들어올때는 동화 내용 없이 인사로만 답변하세요. "
                 f"단어 의미를 물어볼 때는 동화 내용 없이 단어의 의미만 답변하세요. "
+                f"동화 내용에 대한 답변을 해줄 때 맨 앞에 인사를 붙이지 마세요."
                 f"프롬프트 내용을 답변에 포함하지 마세요. "
             )
 
@@ -227,7 +228,7 @@ def answer_question(request, story_id):
             memory.save_context({"input": full_query}, {"response": answer})
 
             # Save to the database
-            save_to_database(story.title, question, answer, profile_id)
+            save_to_database(story.title, question, answer, profile_id, profile.name, request.user)  # request.user 전달
 
             # Answer TTS
             ssml_text = f"""<speak>{answer}</speak>"""
@@ -237,17 +238,19 @@ def answer_question(request, story_id):
                 audio_content = tts_response.content.decode('latin1')
                 return JsonResponse({
                     'answer': answer,
-                    'audio_content': audio_content  # Binary data를 문자열로 인코딩
+                    'audio_content': audio_content
                 })
             else:
                 return JsonResponse({'answer': answer, 'error': 'TTS 생성 실패'})
 
     return JsonResponse({'error': 'Invalid request'})
 
-def save_to_database(story_title, question, answer, profile_id):
+def save_to_database(story_title, question, answer, profile_id, profile_name, user):
     try:
         log_entry = LogEntry.objects.create(
+            user=user,  # 현재 요청 사용자
             profile_id=profile_id,
+            profile_name=profile_name,
             story_title=story_title,
             question=question,
             answer=answer
