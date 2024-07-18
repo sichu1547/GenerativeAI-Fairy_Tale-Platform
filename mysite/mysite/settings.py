@@ -22,19 +22,19 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 2000 # csv파일 수정 개수 제한
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-denv = environ.Env(DEBUG=(bool, True))
+env = environ.Env(DEBUG=(bool, True))
 environ.Env.read_env(
     env_file=os.path.join(BASE_DIR, '.env.dev')
 )
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = denv('SECRET_KEY')
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = denv('DEBUG')
+DEBUG = env('DEBUG')
 # DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'mealkid.kro.kr']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'mealkid.kro.kr']
 
 
 # Application definition
@@ -132,8 +132,8 @@ SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_PROVIDERS = {
     "kakao": {
         "APP": {
-            "client_id": denv('KAKAO_CLIENT_ID'),
-            "secret": denv('KAKAO_SECRET_SECRET'),
+            "client_id": env('KAKAO_CLIENT_ID'),
+            "secret": env('KAKAO_SECRET_SECRET'),
             "key": ""
         },
         "SCOPE": [
@@ -146,8 +146,8 @@ SOCIALACCOUNT_PROVIDERS = {
     },
     "naver": {
         "APP": {
-            "client_id": denv('NAVER_CLIENT_ID'),
-            "secret": denv('NAVER_CLIENT_SECRET'),
+            "client_id": env('NAVER_CLIENT_ID'),
+            "secret": env('NAVER_CLIENT_SECRET'),
             "key": ""
         },
         "SCOPE": [
@@ -161,8 +161,8 @@ SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "APPS": [
             {
-                "client_id": denv('GOOGLE_CLIENT_ID'),
-                "secret": denv('GOOGLE_CLIENT_SECRET'),
+                "client_id": env('GOOGLE_CLIENT_ID'),
+                "secret": env('GOOGLE_CLIENT_SECRET'),
                 "key": ""
             },
         ],
@@ -175,8 +175,8 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     }
 }
-OPENAI_API_KEY = denv('OPENAI_API_KEY')
-OPENAI_API_KEY_FOR_IMAGE_GEN = denv('OPENAI_API_KEY_FOR_IMAGE_GEN')
+OPENAI_API_KEY = env('OPENAI_API_KEY')
+OPENAI_API_KEY_FOR_IMAGE_GEN = env('OPENAI_API_KEY_FOR_IMAGE_GEN')
 
 WSGI_APPLICATION = "mysite.wsgi.application"
 
@@ -247,6 +247,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com' 
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = denv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = denv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
