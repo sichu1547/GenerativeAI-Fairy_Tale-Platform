@@ -26,15 +26,7 @@
         font-size: 2em;
         color: #000;
     }
-   
-    @keyframes curtainOpen {
-        0% {
-            width: 50%;
-        }
-        100% {
-            width: 0;
-        }
-    }
+    
     .sticky-div {
         display:none;
         position: fixed;
@@ -108,7 +100,8 @@
             <button class="arrow-button" id="previous_button">←</button>
             <div class="book">
                 <div class="left-page">
-                    <div class="image-container" style="background-image: url('{{ image_urls.0 }}');"></div>
+                    <div class="text-container">
+                    </div>
                 </div>
                 <div class="spine">
                     <div class="spiral"></div>
@@ -124,9 +117,6 @@
                 </div>
                 <div class="right-page">
                     <div class="text-container">
-                        {% for sentence in story %}
-                            <p onclick="readSentence({{ forloop.counter0 }})" id="sentence-{{ forloop.counter0 }}">{{ sentence }}</p>
-                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -233,26 +223,31 @@
         let currentPage = 0;
         const sentences = {{ story|safe }};
         const totalPages = sentences.length;
-
-        document.addEventListener('DOMContentLoaded', function() {
-                setTimeout(function() {
-                    // 이미지 생성 후에 커튼을 열도록 showPage 함수로 이동
-                    showPage(currentPage);
-                }, 1000);
-        });
-   
+        
         let selectedVoice = 'ko-KR-Standard-A'; // 기본 목소리 설정
         const defaultImageUrl = "{% static 'images/default_image.jpg' %}"; // 기본 이미지 경로 설정
- 
+        
         function showPage(page) {
+            const leftPage = document.querySelector(".left-page .text-container");
             const rightPage = document.querySelector(".right-page .text-container");
-   
+        
+            leftPage.innerHTML = "";
             rightPage.innerHTML = "";
-   
-            rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
- 
-            // 마지막 페이지에서만 "퀴즈 시작" 및 "독후감 쓰기" 버튼 보이기
-            if (page >= totalPages - 1) {
+        
+            if (page % 2 === 0) {
+                leftPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
+                if (page + 1 < totalPages) {
+                    rightPage.innerHTML = `<p onclick="readSentence(${page + 1})" id="sentence-${page + 1}">${sentences[page + 1]}</p>`;
+                }
+            } else {
+                rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
+                if (page + 1 < totalPages) {
+                    leftPage.innerHTML = `<p onclick="readSentence(${page + 1})" id="sentence-${page + 1}">${sentences[page + 1]}</p>`;
+                }
+            }
+        
+            // 마지막 페이지에서만 "평가", "이전 동화", "다음 동화" 버튼 보이기
+            if (page >= totalPages - 2) {
                 document.getElementById('rating-form').style.display = "flex";
                 document.getElementById('next_tale_button').style.display = "inline-block";
                 document.getElementById('prev_tale_button').style.display = "inline-block";
@@ -261,7 +256,7 @@
                 document.getElementById('next_tale_button').style.display = "none";
                 document.getElementById('prev_tale_button').style.display = "none";
             }
-            
+        
             const prevButton = document.getElementById('previous_button');
             const nextButton = document.getElementById('next_button');
         
@@ -271,34 +266,34 @@
                 prevButton.classList.remove('disabled');
             }
         
-            if (currentPage === totalPages - 1) {
+            if (currentPage >= totalPages - 2) {
                 nextButton.classList.add('disabled');
             } else {
                 nextButton.classList.remove('disabled');
             }
         }
-   
+        
         function turnPage(direction) {
             const book = document.querySelector('.book');
-       
+        
             // 첫번째 페이지에서 앞으로 넘기려고 하는지 체크
-            if (direction === -1 && currentPage === 0) {
+            if (direction === -2 && currentPage === 0) {
                 return;
             }
-       
-            // 마지막 페이지에서 뒤로 넘기려고 하는지 체크
-            if (direction === 1 && (currentPage === totalPages - 1)) {
+        
+            // 마지막 페이지에서 뒤로 넘기려고 하는지 체크 
+            if (direction === 2 && currentPage >= totalPages - 2) {
                 return;
             }
-       
-            if (direction === 1) {
+        
+            if (direction === 2) {
                 book.classList.add('turn-right');
                 book.classList.remove('turn-left');
-            } else if (direction === -1) {
+            } else if (direction === -2) {
                 book.classList.add('turn-left');
                 book.classList.remove('turn-right');
             }
-       
+        
             setTimeout(() => {
                 currentPage += direction;
                 if (currentPage < 0) currentPage = 0;
@@ -308,9 +303,13 @@
                 book.classList.remove('turn-left');
             }, 500);
         }
-   
-        document.getElementById("previous_button").addEventListener("click", () => turnPage(-1));
-        document.getElementById("next_button").addEventListener("click", () => turnPage(1));
+        
+        document.getElementById("previous_button").addEventListener("click", () => turnPage(-2));
+        document.getElementById("next_button").addEventListener("click", () => turnPage(2));
+        
+        // 처음 페이지 로드 시 첫 페이지 표시
+        showPage(currentPage);
+        
 
         function fadeOutPreloader() {
             var preloader = document.getElementById('preloader');
@@ -670,25 +669,45 @@
         }
     });
     
-    // 동화 이동하기
-    function prevPage(id) {
-        if (id == 01){
-            window.location.href = `/reader/story/442/`;
-        } else{
-            id = id - 1;
-            window.location.href = `/reader/story/${id}/`;
-        }
+
+    // 주소 유효성 확인 함수
+    function checkUrl(url, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('HEAD', url, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                if (xhr.status >= 200 && xhr.status < 400) {
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            }
+        };
+        xhr.send();
     }
 
-    // 동화 이동하기
-    function nextPage(id) {
-        if (id == 442){
-            window.location.href = `/reader/story/01/`;
-        } else{
-            id = id + 1;
-            window.location.href = `/reader/story/${id}/`;
-        }
+    // 이전 생성 동화로 이동하기 (이전 동화가 있어야만 이동 가능)
+    function prevPage(id) {
+        id = id - 1;
+        var url = `/reader/story/${id}/?keyword=Generative`;
+        checkUrl(url, function(isValid) {
+            if (isValid) {
+                window.location.href = url;
+            }
+        });
     }
+
+    // 다음 생성 동화로 이동하기 (다음 동화가 있어야만 이동 가능)
+    function nextPage(id) {
+        id = id + 1;
+        var url = `/reader/story/${id}/?keyword=Generative`;
+        checkUrl(url, function(isValid) {
+            if (isValid) {
+                window.location.href = url;
+            }
+        });
+    }
+
 
 
     </script>
