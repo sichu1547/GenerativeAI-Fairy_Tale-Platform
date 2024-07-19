@@ -279,11 +279,16 @@ def rate_story(request, id):
                 #return HttpResponse(status=200)
             except ValueError:
                 pass
-    return JsonResponse({'message': '별점이 저장되었습니다!'}, status=200)
     if keyword:
         return HttpResponseRedirect(reverse('reader:search') + f'?keyword={keyword}')
     else:
         return HttpResponseRedirect(reverse('reader:search'))
+    
+    # return JsonResponse({'message': '별점이 저장되었습니다!'}, status=200)
+    # if keyword:
+    #     return HttpResponseRedirect(reverse('reader:search') + f'?keyword={keyword}')
+    # else:
+    #     return HttpResponseRedirect(reverse('reader:search'))
         
 def genstory_detail(request, story_id):
     story = get_object_or_404(GenStory, id=story_id)
