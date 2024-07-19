@@ -4,7 +4,7 @@
 <html lang="ko">
 
 {% block content %}
-<body>
+<body class='service'>
     <div class='service-text'>
         <h1>서비스 소개</h1>
         <hr class="custom-hr">
@@ -18,7 +18,7 @@
         <img src="{% static 'images/quiz.png' %}" alt="서비스4">
         <p>4. 동화를 읽은 후 퀴즈를 풀거나 독후감을 작성하며 학습을 강화합니다.</P>
     </div>
-    <div class="clearfix"></div>
+    
     <div class='effect'>
         <h1>기대 효과</h1>
         <hr class="custom-hr">
@@ -70,10 +70,19 @@
 </body>
 
 <style>
+
+    @font-face {
+        font-family: 'Pretendard-Regular';
+        src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+        font-weight: 400;
+        font-style: normal;
+    }
+    
     body {
+        font-family: Pretendard-Regular, sans-serif;
         background-color: #B9E9FF; /* 전체 페이지 배경색 */
         color: #000000; /* 전체 텍스트 색상 */
-        font-size: 16px;
+        font-size: 20px;
     }
     
     h1 {
@@ -98,7 +107,7 @@
         height: auto;
         display: block;
         margin: 0 auto 10px; /* 가운데 정렬 */
-        border: 1px solid #000000; /* 검은색 테두리 추가 */
+        border: 10px solid white; /* 검은색 테두리 추가 */
         border-radius: 8px; /* 테두리 둥글게 조절 */
     }
 
@@ -117,7 +126,7 @@
     .team-member {
         width: 200px;
         text-align: center;
-        margin: 20px;
+        margin: 10px;
         padding: 20px;
         border-radius: 10px;
     }

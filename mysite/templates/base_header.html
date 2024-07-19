@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="profile" href="https://gmpg.org/xfn/11">
 <link rel="pingback" href="https://colorlibhub.com/shapely/xmlrpc.php">
+<link rel="stylesheet" type="text/css" href="../static/base.css">
 
 <meta name="robots" content="noindex,nofollow" />
 
@@ -39,6 +40,12 @@ span.dropdown-toggle.shapely-dropdown {
 ul.slides img {
     width: auto;
 }
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
 </style>
 </head>
 <body class="home page-template page-template-page-templates page-template-template-home page-template-page-templatestemplate-home-php page page-id-1863 has-sidebar-right elementor-default elementor-kit-2257">
@@ -60,6 +67,7 @@ ul.slides img {
                                 <ul id="menu" class="menu">
                                     <li><a href="{% url 'reader:list' %}">읽기</a></li>
                                     <li><a href="{% url 'generator:index' %}">만들기</a></li>
+                                    <li><a href="{% url 'mine:index' %}">서비스 소개</a></li> 
                                     {% if user.is_authenticated %}
                                         <li>
                                             <a href="/" id="logout-link">로그아웃</a>

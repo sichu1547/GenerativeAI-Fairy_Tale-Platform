@@ -170,6 +170,7 @@ ul.slides img {
                                             <li><a href="{% url 'generator:index' %}">만들기</a></li>
                                             <li><a href="{% url 'reader:search' %}?keyword=Generative">생성 동화</a></li>
                                         {% endif %}
+                                        <li><a href="{% url 'mine:index' %}">서비스 소개</a></li> 
                                         <li>
                                             <a href="/" id="logout-link">로그아웃</a>
                                             <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
@@ -181,7 +182,10 @@ ul.slides img {
                                         {% else %}
                                             <li><a href="{% url 'profile' %}">내 정보</a></li>
                                         {% endif %}
+
                                     {% else %}
+                                        <li><a href="{% url 'mine:index' %}">서비스 소개</a></li> 
+
                                         {% if request.path != '/myaccount/login/'%}
                                             <li><a href="{% url 'login' %}">로그인</a></li>
                                         {% endif %}
