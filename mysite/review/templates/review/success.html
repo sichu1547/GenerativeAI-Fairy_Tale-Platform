@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>독후감이 성공적으로 저장되었습니다!</h1>
+{% load static %}
+<a href = "{% url 'reader:list' %}">
+        <img class="in-title" alt="Portfolio Section" src="{% static 'images/소.jpg' %}">
+</a>
 {% comment %} <a href="{% url 'reader:story_list' %}">목록으로 돌아가기</a> {% endcomment %}
 {% endblock %}

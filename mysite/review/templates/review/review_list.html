@@ -4,9 +4,16 @@
 📚 내 독후감 리스트 📚
 {% endblock %}
 {% block content %}
-<style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&display=swap" rel="stylesheet"><style>
+    .gamja-flower-regular {
+        font-family: "Gamja Flower", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+      }
     .review-container {
-        background: url("{% static 'images/image2.png' %}") no-repeat center center;
+        background: url("{% static 'images/배경.png' %}") no-repeat center center;
         background-size: cover;
         padding: 20px;
         border-radius: 10px;
@@ -27,8 +34,9 @@
     }
     .review-question label {
         font-weight: bold;
+        color: black; /* 텍스트 색상 */
         margin-bottom: 5px;
-        margin-left: 30px;
+        font-size: 25px; /* 절대 크기 */
     }
     .review-question textarea {
         width: 100%;
@@ -37,20 +45,7 @@
         border-radius: 5px;
         border: 1px solid #ddd;
         resize: none;
-    }
-    .review-question::before {
-        content: "Q";
-        position: absolute;
-        left: 0;
-        background: skyblue;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2em;
-        color: black;
+        font-size: 25px; /* 절대 크기 */
     }
 
     .submit-button-container {
@@ -68,29 +63,51 @@
     .submit-button:hover {
         background-color: #45a049;
     }
+    .review-middle {
+        display: flex; /* 부모 요소를 flex container로 설정 */
+        justify-content: space-between; /* 자식 요소들 사이에 균등한 간격 배분 */
+        gap: 10px; /* 자식 요소들 사이에 간격 설정 */
+    }
+    .review-middle textarea {
+        height: 500px;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        resize: none;
+    }
+    .n {
+        text-shadow:
+        -1px -1px 0 #fff,   /* 왼쪽 위 */
+        1px -1px 0 #fff,    /* 오른쪽 위 */
+        -1px 1px 0 #fff,    /* 왼쪽 아래 */
+        1px 1px 0 #fff;     /* 오른쪽 아래 */
+    }
 </style>
-<div class="review-container">
-    <h1>{{ review.story_title }}에 대한 독후감 수정하기</h1>
+<div class="review-container jua-regular">
+    <h1>{{ review.story_title }} 독후감 수정하기</h1>
     <form method="post" action="{% url 'review:review_list' review.id %}" class="review-form">
         {% csrf_token %}
         <div class="review-question">
-            <label for="title"> 제목</label>
+            <label for="title">💁🏽 독후감의 이름을 수정해주세요!</label>
             {{ form.title }}
         </div>
-        <div class="review-question">
-            <label for="main_character"> 누구의 이야기인가요?</label>
-            {{ form.main_character }}
+        <div class="review-middle">
+            <div class="review-question">
+                <label for="main_character">💁🏽 누구의 이야기인가요?</label>
+                {{ form.main_character }}
+            </div>
+            <div class="review-question">
+                <label for="content">💁🏽 무슨 일이 일어났나요?</label>
+                {{ form.content }}
+            </div>
+            <div class="review-question">
+                <label for="ending">💁🏽 어떻게 되었나요?</label>
+                {{ form.ending }}
+            </div>
         </div>
-        <div class="review-question">
-            <label for="content"> 무슨 일이 일어났나요?</label>
-            {{ form.content }}
-        </div>
-        <div class="review-question">
-            <label for="ending"> 어떻게 되었나요?</label>
-            {{ form.ending }}
-        </div>
-        <div class="review-question">
-            <label for="author_thoughts"> 작가의 생각</label>
+        
+        <div class="review-question n">
+            <label for="author_thoughts">💁🏽 나의 생각</label>
             {{ form.author_thoughts }}
         </div>
         <div class="submit-button-container">
