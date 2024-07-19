@@ -26,13 +26,13 @@
                 <a class="profile-select" href="{% url 'profile' %}">➡️ 전체 프로필 관리<br></a>
             </div>
             <div class="profile-select-btn">
-                <a class="profile-select" href="#" onclick="showContent('profile-form-container')">🔑 프로필 수정<br></a>
+                <a class="profile-select" href="#" onclick="showContent('profile-form-container')">🔑 프로필 수정</a>
             </div>
             <div class="profile-select-btn">
-                <a class="profile-select" href="#" onclick="showContent('history-container')">📜 열람 기록<br></a>
+                <a class="profile-select" href="#" onclick="showContent('history-container')">📜 열람 기록</a>
             </div>
             <div class="profile-select-btn">
-                <a class="profile-select" href="#" onclick="showContent('reviews-container')">✏️ 독후감<br></a>
+                <a class="profile-select" href="#" onclick="showContent('reviews-container')">✏️ 독후감</a>
             </div>
             <div class="profile-select-btn">
                 <a class="profile-select" href="#" onclick="showContent('stories-container')">📚 내가 만든 동화</a>
@@ -75,7 +75,7 @@
                                 {% if page_histories.number == num %}
                                     <span class="active">{{ num }}</span>
                                 {% else %}
-                                    <a href="?page_histories={{ num }}">{{ num }}</a>
+                                    <a href="?page_histories={{ num }}&container=history-container">{{ num }}</a>
                                 {% endif %}
                             {% endfor %}
                         </div>
@@ -101,7 +101,7 @@
                                 {% if page_reviews.number == num %}
                                     <span class="active">{{ num }}</span>
                                 {% else %}
-                                    <a href="?page_reviews={{ num }}">{{ num }}</a>
+                                    <a href="?page_reviews={{ num }}&container=reviews-container">{{ num }}</a>
                                 {% endif %}
                             {% endfor %}
                         </div>
@@ -125,7 +125,7 @@
                                 {% if page_stories.number == num %}
                                     <span class="active">{{ num }}</span>
                                 {% else %}
-                                    <a href="?page_stories={{ num }}">{{ num }}</a>
+                                    <a href="?page_stories={{ num }}&container=stories-container">{{ num }}</a>
                                 {% endif %}
                             {% endfor %}
                         </div>
@@ -135,7 +135,6 @@
         </div>
     </div>
     
-
     <script>
         function showContent(id) {
             var containers = document.querySelectorAll('.profile-box');
@@ -149,10 +148,16 @@
                 }
             });
         }
-    
-        // 페이지 로드 시 기본으로 profile-form-container 표시
+
+        function getParameterByName(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 페이지 로드 시 URL 파라미터로부터 container ID 가져오기
         document.addEventListener('DOMContentLoaded', function() {
-            showContent('profile-form-container');
+            var containerId = getParameterByName('container') || 'profile-form-container';
+            showContent(containerId);
         });
     </script>
 </body>
