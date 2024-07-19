@@ -14,6 +14,8 @@ media
 *.db
 *.sqlite3
 *.bin
+# .env.dev
+# service_account.json
 
 # Ignore the secret.json file
 secret.json
