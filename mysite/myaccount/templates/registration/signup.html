@@ -31,41 +31,6 @@
 {% endblock %}
 {% block content %}
 <body style="background-color: #666666;">
-	
-	<div class="limiter">
-		<div class="container-login100">
-			<div class="wrap-login100">
-				
-				<form method="post" class="login100-form validate-form">
-					{% csrf_token%}
-					<span class="login100-form-title p-b-43">
-						회원가입
-					</span>
-					
-					
-					<div class="wrap-input100 validate-input" data-validate = "Username is required">
-						<input class="input100" type="text" name="username">
-						<span class="focus-input100"></span>
-						<span class="label-input100">아이디</span>
-					</div>
-					
-					
-					<div class="wrap-input100 validate-input" data-validate="Password is required">
-						<input class="input100" type="password" name="password1">
-						<span class="focus-input100"></span>
-						<span class="label-input100">비밀번호</span>
-					</div>
-					<div class="wrap-input100 validate-input" data-validate="Confirm Password is required">
-						<input class="input100" type="password" name="password2">
-						<span class="focus-input100"></span>
-						<span class="label-input100">비밀번호 확인</span>
-					</div> 
-					<div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
-						<input class="input100" type="email" name="email">
-						<span class="focus-input100"></span>
-						<span class="label-input100">이메일</span>
-					</div>
-
     <div class="limiter">
         <div class="container-login100">
             <div class="wrap-login100">
@@ -96,7 +61,24 @@
                         <span class="focus-input100"></span>
                         <span class="label-input100">이메일</span>
                     </div>
+                    <div class="login100-form-social flex-c-m">
+                        <a href="{% provider_login_url 'google' %}" class="login100-form-social-item flex-c-m bg1 m-r-5">
+                            <img src="{% static 'images/icons/google_icon.png' %}" alt="Google Image" style="width: 20px; height: 20px;">
+                        </a>
 
+                        <a href="{% provider_login_url 'naver' %}" class="login100-form-social-item flex-c-m bg2 m-r-5">
+                            <img src="{% static 'images/icons/naver_icon.png' %}" alt="Naver Image" style="width: 20px; height: 20px;">
+                        </a>
+
+                        <a href="{% provider_login_url 'kakao' %}" class="login100-form-social-item flex-c-m bg3 m-r-5">
+                            <img src="{% static 'images/icons/kakaotalk_icon.png' %}" alt="Kakaotalk Image" style="width: 18px; height: 18px;">
+                        </a>
+					</div>
+                    <div class="text-center p-b-20">
+                        <span class="txt2">
+                            SNS 계정으로 로그인
+                        </span>
+                    </div>
                     <!-- 개인정보 동의 섹션 -->
                     <div class="privacy-section">
                         <div class="privacy-title">
@@ -120,7 +102,7 @@
                             </div>
                         </div>
                         <div class="privacy-item">
-                            <input type="checkbox" id="agree_real_id" name="agree_real_id" required>
+                            <input type="checkbox" id="agree_real_id" name="agree_real_id">
                             <label for="agree_real_id"><strong>실명 인증된 아이디로 가입</strong> (선택)</label>
                             <div class="privacy-content scrollable-p">
                                 <p>실명 인증된 아이디로 가입하시면 본인인증이 필요한 서비스를 가입 후 바로 이용하실 수 있어요.</p>
@@ -143,25 +125,6 @@
                         </button>
                     </div>
                     
-                    <div class="text-center p-t-46 p-b-20">
-                        <span class="txt2">
-                            SNS 계정으로 로그인
-                        </span>
-                    </div>
-
-                    <div class="login100-form-social flex-c-m">
-                        <a href="{% provider_login_url 'google' %}" class="login100-form-social-item flex-c-m bg1 m-r-5">
-                            <img src="{% static 'images/icons/google_icon.png' %}" alt="Google Image" style="width: 20px; height: 20px;">
-                        </a>
-
-                        <a href="{% provider_login_url 'naver' %}" class="login100-form-social-item flex-c-m bg2 m-r-5">
-                            <img src="{% static 'images/icons/naver_icon.png' %}" alt="Naver Image" style="width: 20px; height: 20px;">
-                        </a>
-
-                        <a href="{% provider_login_url 'kakao' %}" class="login100-form-social-item flex-c-m bg3 m-r-5">
-                            <img src="{% static 'images/icons/kakaotalk_icon.png' %}" alt="Kakaotalk Image" style="width: 18px; height: 18px;">
-                        </a>
-					</div>
 				</form>
 				
 				<div class="login100-more">
@@ -220,7 +183,7 @@
 
         // 필수 항목이 체크되지 않은 경우 경고
         $('form').submit(function(event) {
-            if (!$('#agree_terms').prop('checked') || !$('#agree_privacy').prop('checked') || !$('#agree_real_id').prop('checked')) {
+            if (!$('#agree_terms').prop('checked') || !$('#agree_privacy').prop('checked')) {
                 alert('필수 항목에 동의해 주세요.');
                 event.preventDefault();
             }

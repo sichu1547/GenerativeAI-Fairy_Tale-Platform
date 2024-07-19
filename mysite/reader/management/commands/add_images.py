@@ -22,9 +22,9 @@ class Command(BaseCommand):
 
                 try:
                     story = Story.objects.get(id=story_id)
-                    if story.image:
-                        print(f'Story ID {story_id} already has an image. Skipping...')
-                        continue
+                    # if story.image:
+                    #     print(f'Story ID {story_id} already has an image. Skipping...')
+                    #     continue
 
                     image_path = os.path.join(image_dir, image_file)
                     if os.path.exists(image_path):

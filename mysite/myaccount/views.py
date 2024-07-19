@@ -178,7 +178,6 @@ def profile_detail(request, pk):
 
 @login_required
 def choose_profile(request, profile_id):
-    print(1)
     profile = get_object_or_404(Profile, id=profile_id, user=request.user)
     request.session['selected_profile_id'] = profile.id
     request.session['selected_profile_avatar'] = profile.avatar.url
@@ -248,3 +247,6 @@ def profile_delete(request, pk):
             del request.session['selected_profile_name']
         return redirect('profile')  # 모든 프로필 목록으로 리다이렉트
     return redirect('profile')
+
+def privacy_policy_view(request):
+    return render(request, 'registration/privacy_policy.html') 

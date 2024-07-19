@@ -22,4 +22,5 @@ urlpatterns = [
     path('reset_show_attendance_modal/', views.reset_show_attendance_modal, name='reset_show_attendance_modal'),
     path('profile/<int:pk>/edit/', views.edit_profile, name='edit_profile'),
     path('profile/<int:pk>/delete/', views.profile_delete, name='profile_delete'),
+    path('privacy_policy/', views.privacy_policy_view, name='privacy_policy'),
 ]

@@ -596,6 +596,7 @@ input.input100 {
   font-size: 18px;
   color: #fff;
   border-radius: 50%;
+  margin : 10px;
 }
 
 .login100-form-social-item:hover {

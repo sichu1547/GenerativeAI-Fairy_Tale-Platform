@@ -312,7 +312,7 @@
         function showPage(page) {
             const leftPage = document.querySelector(".left-page .image-container");
             const rightPage = document.querySelector(".right-page .text-container");
-            
+            openCurtains();
             imageUrls = cleanImageUrls(imageUrls);
 
             leftPage.innerHTML = "";
@@ -322,8 +322,7 @@
 
             // 세션에서 가져온 이미지 URL을 사용
             if (imageUrls[page]) { // 이미지 URL이 유효한지 확인
-                leftPage.style.backgroundImage = `url(${imageUrls[page]})`;
-                openCurtains();
+                leftPage.style.backgroundImage = `url(${imageUrls[page]})`;               
             }
 
             // 마지막 페이지에서만 rating-form, 하단 buttons 보이기

@@ -71,8 +71,8 @@ def search(request):
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
 
 def story_detail(request, id):
-    if not request.user.is_authenticated:
-        return redirect(f"{reverse('login')}?next={request.path}")
+    # if not request.user.is_authenticated:
+    #     return redirect(f"{reverse('login')}?next={request.path}")
     keyword = request.GET.get('keyword')
 
     if keyword == 'Generative':
@@ -84,7 +84,7 @@ def story_detail(request, id):
     else:
         story = get_object_or_404(Story, id=id)
         profile_id = request.session.get('selected_profile_id')
-
+        profile = None
         if profile_id:
             try:
                 profile = get_object_or_404(Profile, id=profile_id, user=request.user)
@@ -219,7 +219,6 @@ def answer_question(request, story_id):
 
             # Perform the query
             result = qa.invoke({"input": full_query, "history": memory_content["history"]})
-            print(result)
 
             # Output the answer obtained from LangChain
             answer = result["response"]
@@ -253,8 +252,7 @@ def save_to_database(story_title, question, answer, profile_id, profile_name, us
             profile_name=profile_name,
             story_title=story_title,
             question=question,
-            answer=answer,
-            user = user
+            answer=answer
         )
         log_entry.save()
     except Exception as e:
@@ -262,6 +260,7 @@ def save_to_database(story_title, question, answer, profile_id, profile_name, us
         
 def rate_story(request, id):
     keyword = request.GET.get('keyword')
+
     if keyword == 'Generative':
         story = get_object_or_404(GenStory, id=id)   
     else:
@@ -280,6 +279,7 @@ def rate_story(request, id):
                 #return HttpResponse(status=200)
             except ValueError:
                 pass
+    return JsonResponse({'message': '별점이 저장되었습니다!'}, status=200)
     if keyword:
         return HttpResponseRedirect(reverse('reader:search') + f'?keyword={keyword}')
     else:
@@ -294,13 +294,11 @@ def update_image_session(request):
         image_urls = json.loads(request.POST.get('image_urls', '[]'))
         image_urls = [url for url in image_urls if url is not None]
         request.session['image_urls'] = image_urls
-        print('set')
-        print(image_urls)        
+     
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'failed'}, status=400)
 
 def get_image_session(request):
     image_urls = request.session.get('image_urls', [])
-    print('get')
-    print(image_urls)
+
     return JsonResponse({'image_urls': image_urls})
