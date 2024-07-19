@@ -19,3 +19,4 @@ google-cloud-texttospeech
 langchain_openai
 gunicorn
 langchain_community
+mysqlclient
