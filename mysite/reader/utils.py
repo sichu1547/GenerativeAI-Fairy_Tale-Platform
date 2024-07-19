@@ -6,8 +6,8 @@ from openai import OpenAI
 
 def generate_image(sentence):
     print('생성중')
-    api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
-    client = OpenAI(api_key = api_key)
+    # api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
+    # client = OpenAI(api_key = api_key)
     
     try:
         response = client.images.generate(
@@ -29,7 +29,7 @@ def generate_image(sentence):
 def generate_tts(request, ssml_text):
     try:
         # Google TTS 클라이언트 설정
-        client = texttospeech.TextToSpeechClient.from_service_account_json('service_account.json')
+        client = texttospeech.TextToSpeechClient.from_service_account_json(settings.GOOGLE_APPLICATION_CREDENTIALS)
         
         # 선택된 목소리 가져오기
         selected_voice = request.GET.get('voice', 'ko-KR-Standard-A')
