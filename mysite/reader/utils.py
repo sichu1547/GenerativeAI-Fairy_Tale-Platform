@@ -5,7 +5,7 @@ from django.conf import settings
 from openai import OpenAI
 
 def generate_image(sentence):
-    print('생성중')
+    # print('생성중')
     # api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
     # client = OpenAI(api_key = api_key)
     
@@ -16,15 +16,15 @@ def generate_image(sentence):
     #         size="1024x1024",
     #         n=1,
     #         quality="standard",
-    #         style="natural"
+    #         style="vivid"
     #     )
     #     image_url = response.data[0].url
     #     print('성공')
     #     return image_url
 
     # except Exception as e:
-    #     print('실패')
-    #     return ""
+    #     print('실패', e)
+    return ""
 
 def generate_tts(request, ssml_text):
     try:

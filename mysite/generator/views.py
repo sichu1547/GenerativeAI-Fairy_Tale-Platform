@@ -3,7 +3,8 @@ from django.http import HttpResponse, JsonResponse, FileResponse
 from django import forms
 from django.urls import reverse
 from langchain_community.vectorstores import Chroma
-
+from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import User
 from google.cloud import texttospeech
 import io
 import pandas as pd
@@ -22,8 +23,7 @@ client = OpenAI(
 )
 
 def index(request):
-    if not request.user.is_authenticated:
-        return redirect(f"{reverse('login')}?next={request.path}")
+
     return render(request, 'generator/index.html')
 
 # GPT 시스템 역할 정의
@@ -73,12 +73,16 @@ def create_story(request):
         generated_stories = request.POST.getlist('generated_stories', [])
         generated_story_parts_json = request.POST.get('generated_story_parts', '[]')
         generated_story_parts = json.loads(generated_story_parts_json)
+
         generated_images = request.POST.getlist('generated_images', [])
         stage = int(request.POST.get('stage', 0))
         user_input = request.POST.get('user_input', '')
         profile_id = request.session.get('selected_profile_id')
-        profile = get_object_or_404(Profile, id=profile_id, user=request.user)
-
+        
+        if profile_id:
+            profile = get_object_or_404(Profile, id=profile_id, user=request.user)
+        else:
+            profile = Profile.objects.get(id=settings.DEFAULT_PROFILE_ID)
         # 스테이지가 0보다 크면 사용자 입력을 이야기 뒤에 추가
         if stage > 0:
             story = " ".join(generated_stories) + " " + user_input
@@ -89,12 +93,12 @@ def create_story(request):
         if stage < 3:
             role = system_roles[stage]
             response = generate_response(story, role)
-        
+
             generated_story = user_input + " " + response.strip()
-            
+
             # generated_stories에 생성된 이야기 추가
             generated_stories.append(generated_story.strip())
-            
+
             # 중복이 없도록 generated_story_parts에 생성된 이야기 파트 추가
             if generated_story.strip() not in generated_story_parts:
                 generated_story_parts.append(generated_story.strip())
@@ -141,7 +145,11 @@ def create_story(request):
             title_prompt = f"{final_story}\n이 이야기의 제목을 지어주세요"
             title_response = generate_response(title_prompt, role, max_tokens=300)   
             title = title_response.split('"')[1]
-            file_path = save_final_story_to_database(final_story, profile, request.user, title)
+            user = request.user
+            default_user = User.objects.get(id=settings.DEFAULT_USER_ID)
+            if not user.is_authenticated:
+                user = default_user
+            file_path = save_final_story_to_database(final_story, profile, user, title)
 
             # 최종 이야기와 이를 분할한 파트, 생성된 이야기 및 이미지 리스트를 컨텍스트로 전달하여 렌더링
             context = {
@@ -159,25 +167,25 @@ def create_story(request):
 
 
 def generate_image(sentence):
-    print('이미지 생성 중')
-    api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
-    client = OpenAI(api_key = api_key)
+    # print('이미지 생성 중')
+    # api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
+    # client = OpenAI(api_key = api_key)
     
-    try:
-        response = client.images.generate(
-            model="dall-e-3",
-            prompt=f"Create a cute and colorful children's book illustration. The scene should be inspired by the following sentence: '{sentence}'. Ensure the style is drawn with soft lines, bright and pastel colors, and a friendly, playful feel. The background should be detailed but not too complex, keeping it engaging but simple for children. Use a hand-drawn, cartoon-like style. The image should only consist of picture elements, NOT TEXT.",
-            size="1024x1024",
-            n=1,
-            quality="standard",
-            style="natural"
-        )
-        image_url = response.data[0].url
-        return image_url
+    # try:
+    #     response = client.images.generate(
+    #         model="dall-e-3",
+    #         prompt=f"Create a cute and colorful children's book illustration. The scene should be inspired by the following sentence: '{sentence}'. Ensure the style is drawn with soft lines, bright and pastel colors, and a friendly, playful feel. The background should be detailed but not too complex, keeping it engaging but simple for children. Use a hand-drawn, cartoon-like style. The image should only consist of picture elements, NOT TEXT.",
+    #         size="1024x1024",
+    #         n=1,
+    #         quality="standard",
+    #         style="natural"
+    #     )
+    #     image_url = response.data[0].url
+    #     return image_url
 
-    except Exception as e:
-        return ""
-    #return ""
+    # except Exception as e:
+    #     return ""
+    return ""
 
 def save_final_story_to_database(final_story, profile, user, title):
     try:
@@ -192,7 +200,6 @@ def save_final_story_to_database(final_story, profile, user, title):
         print(f"Error saving to database: {e}")
     
 def generate_tts(request):
-    # print(request.POST)
     try:
         # Google TTS 클라이언트 설정
         client = texttospeech.TextToSpeechClient.from_service_account_json('service_account.json')
@@ -222,3 +229,4 @@ def generate_tts(request):
     
     except Exception as e:
         return HttpResponse(f"Error: {e}", status=500)
+    

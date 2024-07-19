@@ -7,6 +7,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/quiz.css' %}">
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById("quizForm2");
+            form.addEventListener("submit", function(event) {
+                event.preventDefault();  // 폼 제출 기본 동작 방지
+                goBack();  // 브라우저 뒤로가기
+            });
+        });
+    </script>
 </head>{% endblock %}
 {% block content %}
 <body>
@@ -33,7 +45,7 @@
                 </div>
             </form>
             <div class="lower-buttons">
-                <form id="quizForm2" method="get" action="{% url 'reader:story_detail' story.id %}">
+                <form id="quizForm2" method="get" action="#">
                     <input type="hidden" name="keyword" value="{{ keyword }}">
                     <button type="submit" id="quiz-button">본문으로</button>
                 </form>

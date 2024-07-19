@@ -22,7 +22,7 @@ class Story(models.Model):
     
 
 class LogEntry(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='log_entries')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='admin_log_entries', default=1)
     profile_id = models.IntegerField(default=4962)
     profile_name = models.CharField(max_length=255, default='')
     datetime = models.DateTimeField(auto_now_add=True)

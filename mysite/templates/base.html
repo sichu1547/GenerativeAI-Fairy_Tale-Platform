@@ -170,6 +170,7 @@ ul.slides img {
                                             <li><a href="{% url 'generator:index' %}">만들기</a></li>
                                             <li><a href="{% url 'reader:search' %}?keyword=Generative">생성 동화</a></li>
                                         {% endif %}
+                                        <li><a href="{% url 'mine:index' %}">서비스 소개</a></li> 
                                         <li>
                                             <a href="/" id="logout-link">로그아웃</a>
                                             <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
@@ -181,8 +182,14 @@ ul.slides img {
                                         {% else %}
                                             <li><a href="{% url 'profile' %}">내 정보</a></li>
                                         {% endif %}
+
                                     {% else %}
+                                        <li><a href="{% url 'mine:index' %}">서비스 소개</a></li> 
+
                                         {% if request.path != '/myaccount/login/'%}
+                                            <li><a href="{% url 'reader:list' %}">읽기</a></li>
+                                            <li><a href="{% url 'generator:index' %}">만들기</a></li>
+                                            <li><a href="{% url 'reader:search' %}?keyword=Generative">생성 동화</a></li>
                                             <li><a href="{% url 'login' %}">로그인</a></li>
                                         {% endif %}
                                         <li><a href="{% url 'signup' %}">회원가입</a></li>
@@ -205,38 +212,31 @@ ul.slides img {
 </div>
 
 <footer id="colophon" class="site-footer footer bg-dark" role="contentinfo">
-   <!--<div class="container footer-inner">
-    <div class="vs1-container">
-    <a href="/admin/">
-      <img src="{% static 'images/젖소.png' %}" alt="문의"/>
-    </a>
-  </div>-->
-
-  
-        <div class="row">
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="site-info col-sm-6">
+            <div class="copyright-text">
+                © 2024 MealKid. All rights reserved.
+            </div>
+            <div class="footer-credits">
+                <li><a href="{% url 'privacy_policy' %}">개인정보처리방침</a></li>
+            </div>
         </div>
-        <div class="row">
-            <div class="site-info col-sm-6">
-                <div class="copyright-text">
-                </div>
-                <div class="footer-credits">
-                    Theme by <a href="https://colorlib.com/" target="_blank" rel="nofollow noopener" title="Colorlib">Colorlib</a> Powered by <a href="http://wordpress.org/" target="_blank" title="WordPress.org">WordPress</a>
-                </div>
-            </div>
-            <div class="col-sm-6 text-right">
-                <nav id="social" class="social-icons">
-                    <ul id="menu-social-items" class="list-inline social-list">
-                        <li id="menu-item-1893" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1893"><a href="https://facebook.com/colorlib"><i class="social_icon fa"><span>Colorlib</span></i></a></li>
-                        <li id="menu-item-1894" class="twitter"><a href="https://twitter.com/colorlib"><i class="social_icon fa"><span>Twitter</span></i></a></li>
-                        <li id="menu-item-1895" class="linkedin"><a href="https://www.linkedin.com/company-beta/18049034/"><i class="social_icon fa"><span>Linkedin</span></i></a></li>
-                        <li id="menu-item-1923" class="youtube"><a href="https://youtube.com/c/Colorlib"><i class="social_icon fa"><span>Youtube</span></i></a></li>
-                        <li id="menu-item-1924" class="insta"><a href="https://www.instagram.com/colorlib/"><i class="social_icon fa"><span>Instagram</span></i></a></li>
-                    </ul>
-                </nav>
-            </div>
+        <div class="col-sm-6 text-right">
+            <nav id="social" class="social-icons">
+                <ul id="menu-social-items" class="list-inline social-list">
+                    <li id="menu-item-1893" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1893"><a href="https://facebook.com/colorlib"><i class="social_icon fa"><span>Colorlib</span></i></a></li>
+                    <li id="menu-item-1894" class="twitter"><a href="https://twitter.com/colorlib"><i class="social_icon fa"><span>Twitter</span></i></a></li>
+                    <li id="menu-item-1895" class="linkedin"><a href="https://www.linkedin.com/company-beta/18049034/"><i class="social_icon fa"><span>Linkedin</span></i></a></li>
+                    <li id="menu-item-1923" class="youtube"><a href="https://youtube.com/c/Colorlib"><i class="social_icon fa"><span>Youtube</span></i></a></li>
+                    <li id="menu-item-1924" class="insta"><a href="https://www.instagram.com/colorlib/"><i class="social_icon fa"><span>Instagram</span></i></a></li>
+                </ul>
+            </nav>
         </div>
     </div>
 </footer>
+
 
 <script type="text/javascript">
     jQuery(document).ready(function($) {
