@@ -4,67 +4,69 @@
 <html lang="ko">
 
 {% block content %}
-<body class='service'>
-    <div class='service-text'>
-        <h1>서비스 소개</h1>
-        <hr class="custom-hr">
-        <p>Meal Kid는 직접 조리해야 완성되는 밀키트처럼 직접 컨텐츠에 참여하여 창의력과 상상력을 향상시켜주고 개인 맞춤형 학습 경험을 제공하는 유아 동화 플랫폼입니다.</p>
-        <img src="{% static 'images/read.png' %}" alt="서비스1">
-        <p>1. 400여편의 동화를 음성으로 들을 수 있는 기능을 통해 아이들에게 책 읽기의 즐거움을 선사합니다.</p>
-        <img src="{% static 'images/chatbot.png' %}" alt="서비스2">
-        <p>2. 챗봇 '밀키'가 동화와 관련된 질문에 답해주어 아이들의 호기심을 충족시켜줍니다.</P>
-        <img src="{% static 'images/gen1.png' %}" alt="서비스3">
-        <p>3. 아이들이 직접 동화를 만들어볼 수 있는 기능을 통해 상상력을 발휘할 수 있습니다.</P>
-        <img src="{% static 'images/quiz.png' %}" alt="서비스4">
-        <p>4. 동화를 읽은 후 퀴즈를 풀거나 독후감을 작성하며 학습을 강화합니다.</P>
-    </div>
-    
-    <div class='effect'>
-        <h1>기대 효과</h1>
-        <hr class="custom-hr">
-        <p>1. 상상력 및 창의력 항상 : 다양한 상황과 캐릭터를 통해 상상력과 창의적 사고를 촉진시킵니다.</p>
-        <p>2. 개인 맞춤형 학습 경험 제공 : AI로 아이의 취향에 맞춘 동화를 추천하여 학습의 재미와 몰입도를 높일 수 있습니다.</p>
-        <p>3. 대화형 학습을 통한 언어 능력과 의사소통 능력 향상 : AI와의 대화를 통해 언어와 의사소통 능력을 자연스럽게 향상시킵니다.</p>
-        <p>4. 지속적인 학습에 대한 동기 부여 및 성취감 제공 : 출석체크와 퀴즈를 통해 학습 참여와 성취감을 높입니다.</p>
-        <p>5. 편리한 사용성과 접근성 : Django 기반 웹 시스템으로 PC와 모바일에서 쉽게 접근 가능합니다.</p>
-        <p>6. 유해한 콘텐츠로부터 보호 : 선별된 동화만 제공하여 유해 콘텐츠로부터 아이들을 보호합니다.</p>
-    </div>
+<body>
+    <div class='service'>
+        <div class='service-text'>
+            <h1>서비스 소개</h1>
+            <hr class="custom-hr">
+            <p>Meal Kid는 직접 조리해야 완성되는 밀키트처럼 직접 컨텐츠에 참여하여 창의력과 상상력을 향상시켜주고 개인 맞춤형 학습 경험을 제공하는 유아 동화 플랫폼입니다.</p>
+            <img src="{% static 'images/read.png' %}" alt="서비스1">
+            <p>1. 400여편의 동화를 음성으로 들을 수 있는 기능을 통해 아이들에게 책 읽기의 즐거움을 선사합니다.</p>
+            <img src="{% static 'images/chatbot.png' %}" alt="서비스2">
+            <p>2. 챗봇 '밀키'가 동화와 관련된 질문에 답해주어 아이들의 호기심을 충족시켜줍니다.</P>
+            <img src="{% static 'images/gen1.png' %}" alt="서비스3">
+            <p>3. 아이들이 직접 동화를 만들어볼 수 있는 기능을 통해 상상력을 발휘할 수 있습니다.</P>
+            <img src="{% static 'images/quiz.png' %}" alt="서비스4">
+            <p>4. 동화를 읽은 후 퀴즈를 풀거나 독후감을 작성하며 학습을 강화합니다.</P>
+        </div>
+        
+        <div class='effect'>
+            <h1>기대 효과</h1>
+            <hr class="custom-hr">
+            <p>1. 상상력 및 창의력 항상 : 다양한 상황과 캐릭터를 통해 상상력과 창의적 사고를 촉진시킵니다.</p>
+            <p>2. 개인 맞춤형 학습 경험 제공 : AI로 아이의 취향에 맞춘 동화를 추천하여 학습의 재미와 몰입도를 높일 수 있습니다.</p>
+            <p>3. 대화형 학습을 통한 언어 능력과 의사소통 능력 향상 : AI와의 대화를 통해 언어와 의사소통 능력을 자연스럽게 향상시킵니다.</p>
+            <p>4. 지속적인 학습에 대한 동기 부여 및 성취감 제공 : 출석체크와 퀴즈를 통해 학습 참여와 성취감을 높입니다.</p>
+            <p>5. 편리한 사용성과 접근성 : Django 기반 웹 시스템으로 PC와 모바일에서 쉽게 접근 가능합니다.</p>
+            <p>6. 유해한 콘텐츠로부터 보호 : 선별된 동화만 제공하여 유해 콘텐츠로부터 아이들을 보호합니다.</p>
+        </div>
 
-    <h1>팀원 소개</h1>
-    <hr class="custom-hr">
-    <div class="team-container">
-        <div class="team-member">
-            <img src="{% static 'images/photo1.jpg' %}" alt="팀원 1">
-            <p>정창민 (BE)</p>
-        </div>
-        <div class="team-member">
-            <img src="{% static 'images/photo1.jpg' %}" alt="팀원 2">
-            <p>양원석 (BE)</p>
-        </div>
-        <div class="team-member">
-            <img src="{% static 'images/photo1.jpg' %}" alt="팀원 3">
-            <p>최성민 (BE)</p>
-        </div>
-        <div class="team-member">
-            <img src="{% static 'images/photo1.jpg' %}" alt="팀원 4">
-            <p>이혜빈 (AI)</p>
-        </div>
-        <div class="clearfix"></div>
-        <div class="team-member">
-            <img src="{% static 'images/photo1.jpg' %}" alt="팀원 5">
-            <p>김연송 (AI)</p>
-        </div>
-        <div class="team-member">
-            <img src="{% static 'images/photo1.jpg' %}" alt="팀원 6">
-            <p>김가은 (AI)</p>
-        </div>
-        <div class="team-member">
-            <img src="{% static 'images/photo1.jpg' %}" alt="팀원 7">
-            <p>서원준 (FE)</p>
-        </div>
-        <div class="team-member">
-            <img src="{% static 'images/photo1.jpg' %}" alt="팀원 8">
-            <p>조유빈 (FE)</p>
+        <h1>팀원 소개</h1>
+        <hr class="custom-hr">
+        <div class="team-container">
+            <div class="team-member">
+                <img src="{% static 'images/photo1.jpg' %}" alt="팀원 1">
+                <p>정창민 (BE)</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/photo1.jpg' %}" alt="팀원 2">
+                <p>양원석 (BE)</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/photo1.jpg' %}" alt="팀원 3">
+                <p>최성민 (BE)</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/photo1.jpg' %}" alt="팀원 4">
+                <p>이혜빈 (AI)</p>
+            </div>
+            <div class="clearfix"></div>
+            <div class="team-member">
+                <img src="{% static 'images/photo1.jpg' %}" alt="팀원 5">
+                <p>김연송 (AI)</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/photo1.jpg' %}" alt="팀원 6">
+                <p>김가은 (AI)</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/photo1.jpg' %}" alt="팀원 7">
+                <p>서원준 (FE)</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/photo1.jpg' %}" alt="팀원 8">
+                <p>조유빈 (FE)</p>
+            </div>
         </div>
     </div>
 </body>
@@ -79,10 +81,13 @@
     }
     
     body {
-        font-family: Pretendard-Regular, sans-serif;
         background-color: #B9E9FF; /* 전체 페이지 배경색 */
         color: #000000; /* 전체 텍스트 색상 */
         font-size: 20px;
+    }
+
+    .service{
+        font-family: 'Pretendard-Regular', sans-serif;
     }
     
     h1 {
