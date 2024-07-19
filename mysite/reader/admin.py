@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from .models import *
 import pandas as pd
 import sqlite3
+import mysql.connector
 
 class StoryAdmin(admin.ModelAdmin):
     list_display = ['id', 'title', 'category']
@@ -31,9 +32,13 @@ class StoryAdmin(admin.ModelAdmin):
                 self.message_user(request, "This is not a csv file")
                 return redirect(request.get_full_path())
             
-            df = pd.read_csv(csv_file)
-            path = './db.sqlite3'
-            conn = sqlite3.connect(path)
+            df = pd.read_csv(csv_file, encoding='cp949')
+            conn = mysql.connector.connect(
+                host = settings.DB_HOST,
+                user = settings.DB_USER,
+                password = settings.DB_PASSWORD,
+                database = settings.DB_NAME
+            )   
             cursor = conn.cursor()
             cursor.execute('DELETE FROM reader_story')
             conn.commit()

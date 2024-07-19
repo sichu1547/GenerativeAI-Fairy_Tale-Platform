@@ -7,6 +7,7 @@ import re
 import pdb
 import sqlite3
 import os
+import mysql.connector
 
 from django.http import HttpResponse
 from google.cloud import texttospeech
@@ -73,9 +74,13 @@ class QuizView(View):
         return render(request, 'quiz/quiz_result.html', {'result': result, 'quiz_id': id, 'keyword': keyword})
 
     def is_answer_asked(self, question):
-        conn = sqlite3.connect(self.path)
+        conn = mysql.connector.connect(
+            host = settings.DB_HOST,
+            user = settings.DB_USER,
+            password = settings.DB_PASSWORD,
+            database = settings.DB_NAME
+        )   
         cursor = conn.cursor()
-
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS quiz_history(
             id INTEGER PRIMARY KEY,
@@ -86,15 +91,20 @@ class QuizView(View):
         ''')
         conn.commit()
 
-        cursor.execute('SELECT * FROM quiz_history WHERE question = ?', (question, ))
+        cursor.execute('SELECT * FROM quiz_history WHERE question = %s', (question, ))
         result = cursor.fetchone()
         conn.close()
         return result is not None
 
     def save_question(self, story_id, question, answer):
-        conn = sqlite3.connect(self.path)
+        conn = mysql.connector.connect(
+            host = settings.DB_HOST,
+            user = settings.DB_USER,
+            password = settings.DB_PASSWORD,
+            database = settings.DB_NAME
+        )   
         cursor = conn.cursor()
-        cursor.execute('INSERT INTO quiz_history (story_id, question, answer) VALUES (?, ?, ?)', (story_id, question, answer))
+        cursor.execute('INSERT INTO quiz_history (story_id, question, answer) VALUES (%s, %s, %s)', (story_id, question, answer))
         conn.commit()
         conn.close()
 

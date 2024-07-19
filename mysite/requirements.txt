@@ -20,3 +20,4 @@ langchain_openai
 gunicorn
 langchain_community
 mysqlclient
+mysql-connector-python

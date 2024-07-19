@@ -34,6 +34,7 @@ from .models import Story
 from myaccount.models import ReadingHistory, Profile
 import random
 from generator.models import GenStory
+import mysql.connector
 
 # def search(request):
 #     keyword = request.GET.get('keyword')
@@ -118,8 +119,12 @@ def story_detail(request, id):
 
         if previous_story_id != id:
             QuizView.m_context = {}
-            path = './db.sqlite3'
-            conn = sqlite3.connect(path)
+            conn = mysql.connector.connect(
+                host = settings.DB_HOST,
+                user = settings.DB_USER,
+                password = settings.DB_PASSWORD,
+                database = settings.DB_NAME
+            )   
             cursor = conn.cursor()
             cursor.execute('DELETE FROM quiz_history')
             conn.commit()
