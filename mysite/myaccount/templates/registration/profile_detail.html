@@ -8,136 +8,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
-    <style>
-        .profile-container {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: flex-start;
-            flex-wrap: nowrap;
-            align-items: stretch;
-        }
-        .info-container {
-            flex: 0 0 15%;
-            padding: 20px;
-            margin: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            background: #fff;
-            max-width: 250px;
-        }
-        .content-container {
-            flex: 1 0 25%; /* 기존 값을 수정 */
-            max-width: 300px; /* 가로 폭을 줄이기 위해 max-width 추가 */
-            padding: 20px;
-            margin: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            background: #fff;
-            display: flex;
-            flex-direction: column;
-            font-family: 'Ownglyph_ryuttung-Rg', Arial, sans-serif;
-        }
-        .profile-box {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            flex: 1;
-        }
-        .profile-list {
-            list-style: none;
-            padding: 0;
-        }
-        .profile-item {
-            margin-bottom: 10px;
-        }
-        .add-profile {
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .file-input-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .blog-post {
-            margin-bottom: 20px;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: relative; /* 상대 위치로 설정 */
-        }
-        .blog-post a {
-            position: absolute; /* 절대 위치로 설정 */
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1; /* 가장 앞에 위치하게 설정 */
-            text-decoration: none; /* 링크 밑줄 제거 */
-            color: inherit; /* 글자 색상 상속 */
-        }
-        .blog-post-title {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-            z-index: 2;
-            color: #745cf9;
-        }
-        .blog-post-content {
-            font-size: 1em;
-            line-height: 1.5;
-            z-index: 2;
-            color: #745cf9;
-        }
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .pagination a, .pagination span {
-            margin: 0 5px;
-            padding: 5px 10px;
-            text-decoration: none;
-            color: #000;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        .pagination .active {
-            background-color: #007bff;
-            color: #fff;
-            border-color: #007bff;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/profile_detail.css' %}">
 </head>
 {% endblock %}
 
 {% block content %}
 <body>
-    <div class="profile-container">
+    <div class="my-container">
         <div class="info-container">
             <h2 class="profile-h2" style="font-size: 18px;">👤내 정보</h2>
             <p class="info-text">안녕하세요😊 <br>{{ profile.name }}님!</p>
-            <p class="info-text">이메일: {{ user.email }}</p>
-            <a class="profile-select" href="{% url 'select_account' %}">➡️ 프로필 선택</a>
-            <a class="profile-select" href="{% url 'profile' %}"><br>➡️ 전체 프로필 관리</a>
+            <p class="email-text">이메일: {{ user.email }}</p>
+            <div class="profile-select-btn">
+                <a class="profile-select" href="{% url 'select_account' %}">➡️ 프로필 선택<br></a>
+            </div>
+            <div class="profile-select-btn">
+                <a class="profile-select" href="{% url 'profile' %}">➡️ 전체 프로필 관리<br></a>
+            </div>
+            <div class="profile-select-btn">
+                <a class="profile-select" href="#" onclick="showContent('profile-form-container')">🔑 프로필 수정<br></a>
+            </div>
+            <div class="profile-select-btn">
+                <a class="profile-select" href="#" onclick="showContent('history-container')">📜 열람 기록<br></a>
+            </div>
+            <div class="profile-select-btn">
+                <a class="profile-select" href="#" onclick="showContent('reviews-container')">✏️ 독후감<br></a>
+            </div>
+            <div class="profile-select-btn">
+                <a class="profile-select" href="#" onclick="showContent('stories-container')">📚 내가 만든 동화</a>
+            </div>
         </div>
 
         <div class="content-container">
             <div id="profile-form-container" class="profile-box">
                 <form id="profile-form" method="post" enctype="multipart/form-data" class="content-area profile-change">
                     {% csrf_token %}
+                    <h2 class="profile-h2">🔑 프로필 수정</h2>
                     <div class="add-profile">
                         <p class="id-name-p">
-                            <label class="id-name-label" for="id_name">이름</label>
+                            <label class="id-name-label" for="id_name">이름 :</label>
                             <input type="text" name="name" maxlength="255" required="" id="id_name" value="{{ form.name.value }}">
                         </p>
                         <p class="id-avatar-p">
-                            <label class="id-avatar-label" for="id_avatar">프로필 사진:</label>
+                            <label class="id-avatar-label" for="id_avatar">프로필 사진 :</label>
                             <img class="profile-img" src="{{ profile.avatar.url }}" alt="Profile Image" width="50" height="50">
                             <input type="file" name="avatar" accept="image/*" id="id_avatar">
                         </p>
@@ -145,13 +58,10 @@
                     </div>
                 </form>
             </div>
-        </div>
-
-        <div class="content-container">
-            <div id="history-container" class="profile-box">
+            <div id="history-container" class="profile-box" style="display: none;">
                 <section class="content-area profile-history">
-                    <h2 class="profile-h2">📚 열람 기록</h2>
-                    <div class="profile-box">
+                    <h2 class="profile-h2">📜 열람 기록</h2>
+                    <div class="read-history">
                         {% for history in page_histories %}
                             <div class="blog-post">
                                 <a href="{% url 'reader:story_detail' history.story_id %}"></a>
@@ -172,13 +82,10 @@
                     </div>
                 </section>
             </div>
-        </div>
-
-        <div class="content-container">
-            <div id="reviews-container" class="profile-box">
+            <div id="reviews-container" class="profile-box" style="display: none;">
                 <section class="content-area profile-reviews">
                     <h2 class="profile-h2">✏️ 독후감</h2>
-                    <div class="profile-box">
+                    <div class="review">
                         {% for review in page_reviews %}
                             <div class="blog-post">
                                 <a href="{% url 'review:review_list' review.id %}"></a>
@@ -201,14 +108,10 @@
                     </div>
                 </section>
             </div>
-        </div>
-
-        <!-- 동화 목록 추가 -->
-        <div class="content-container">
-            <div id="stories-container" class="profile-box">
+            <div id="stories-container" class="profile-box" style="display: none;">
                 <section class="content-area profile-stories">
                     <h2 class="profile-h2">📚 내가 만든 동화</h2>
-                    <div class="profile-box">
+                    <div class="my-story">
                         {% for story in gen_stories %}
                             <div class="blog-post">
                                 <div class="blog-post-title">{{ story.title }}</div>
@@ -230,8 +133,29 @@
                 </section>
             </div>
         </div>
-
     </div>
+    
+
+    <script>
+        function showContent(id) {
+            var containers = document.querySelectorAll('.profile-box');
+            containers.forEach(function(container) {
+                if (container.id === id) {
+                    container.style.display = 'block';
+                    container.classList.add('active');
+                } else {
+                    container.style.display = 'none';
+                    container.classList.remove('active');
+                }
+            });
+        }
+    
+        // 페이지 로드 시 기본으로 profile-form-container 표시
+        document.addEventListener('DOMContentLoaded', function() {
+            showContent('profile-form-container');
+        });
+    </script>
 </body>
+
 {% endblock %}
 </html>
