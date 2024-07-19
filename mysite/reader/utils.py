@@ -16,15 +16,15 @@ def generate_image(sentence):
             size="1024x1024",
             n=1,
             quality="standard",
-            style="natural"
+            style="vivid"
         )
         image_url = response.data[0].url
         print('성공')
         return image_url
 
     except Exception as e:
-        print('실패')
-        return ""
+        print('실패', e)
+    return ""
 
 def generate_tts(request, ssml_text):
     try:

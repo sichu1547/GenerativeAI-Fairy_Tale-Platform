@@ -80,7 +80,12 @@
         display: flex;
         cursor: pointer;
     }
-   
+    .text-container {
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+    }   
     .star {
         width: 50px;
         height: 50px;
@@ -276,28 +281,49 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
-                showPage(currentPage);
-                generateImages(); // 모든 이미지를 미리 생성                
+                $.ajax({
+                    url: "{% url 'reader:get_image_session' %}",
+                    method: "GET",
+                    success: function(response) {
+                        imageUrls = response.image_urls || [];
+                        console.log('Loaded image URLs from session:', imageUrls);
+                        imageUrls = cleanImageUrls(imageUrls);
+                        showPage(currentPage);
+                        generateImages(currentPage);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Ajax request failed:', textStatus, errorThrown);
+                    }                    
+                });
             }, 1000);
         });
-   
+        function cleanImageUrls(imageUrls) {
+            const cleanedUrls = [];
+            for (let i = 0; i < imageUrls.length; i++) {
+                if (imageUrls[i]) {
+                    cleanedUrls.push(imageUrls[i]);
+                }
+            }
+            return cleanedUrls;
+        }
         let selectedVoice = 'ko-KR-Standard-A'; // 기본 목소리 설정
         const defaultImageUrl = "{% static 'images/default_image.jpg' %}"; // 기본 이미지 경로 설정
    
         function showPage(page) {
             const leftPage = document.querySelector(".left-page .image-container");
             const rightPage = document.querySelector(".right-page .text-container");
-   
+            
+            imageUrls = cleanImageUrls(imageUrls);
+
             leftPage.innerHTML = "";
             rightPage.innerHTML = "";
             leftPage.style.backgroundImage = ""; // 이전 배경이미지 clear
-   
-            rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
+            rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;            
+
+            // 세션에서 가져온 이미지 URL을 사용
             if (imageUrls[page]) { // 이미지 URL이 유효한지 확인
                 leftPage.style.backgroundImage = `url(${imageUrls[page]})`;
-                openCurtains(); // 이미지를 로드한 후 커튼 열기
-            } else {
-                leftPage.style.backgroundImage = `url(${defaultImageUrl})`; // 기본 이미지 URL 설정
+                openCurtains();
             }
 
             // 마지막 페이지에서만 rating-form, 하단 buttons 보이기
@@ -330,12 +356,12 @@
                 nextButton.classList.add('disabled');
             } else {
                 nextButton.classList.remove('disabled');
-            }
+            }            
         }
    
         function turnPage(direction) {
             const book = document.querySelector('.book');
-       
+            
             // 첫번째 페이지에서 앞으로 넘기려고 하는지 체크
             if (direction === -1 && currentPage === 0) {
                 return;
@@ -345,7 +371,7 @@
             if (direction === 1 && (currentPage === totalPages - 1)) {
                 return;
             }
-       
+
             if (direction === 1) {
                 book.classList.add('turn-right');
                 book.classList.remove('turn-left');
@@ -364,26 +390,61 @@
             }, 500);
         }
    
-        function generateImages() {
-            for (let i = 1; i < totalPages; i++) { // 첫 번째 이미지는 이미 있으므로 1부터 시작
-                if (!imageUrls[i]) {
+let currentImageIndex = 0;
+let concurrentRequests = 0;
+const maxConcurrentRequests = totalPages;
+
+function generateImages() {
+    while (concurrentRequests < maxConcurrentRequests && currentImageIndex < totalPages) {
+        if (!imageUrls[currentImageIndex]) {
+            concurrentRequests++;
+            $.ajax({
+                url: "{% url 'reader:generate_image' %}",
+                method: "GET",
+                data: { sentence: sentences[currentImageIndex] },
+                success: function(response) {
+                    const imageUrl = response.image_url || defaultImageUrl; // 기본 이미지 URL 설정
+                    imageUrls[currentImageIndex] = imageUrl;
+                    // 세션 업데이트 요청
                     $.ajax({
-                        url: "{% url 'reader:generate_image' %}",
-                        method: "GET",
-                        data: { sentence: sentences[i] },
-                        success: function(response) {
-                            const imageUrl = response.image_url || defaultImageUrl; // 기본 이미지 URL 설정
-                            imageUrls[i] = imageUrl;
+                        url: "{% url 'reader:update_image_session' %}",
+                        method: "POST",
+                        data: {
+                            image_urls: JSON.stringify(imageUrls),
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
                         },
-                        error: function() {
-                            imageUrls[i] = defaultImageUrl; // 기본 이미지 URL 설정
+                        success: function() {
+                            showPage(currentPage); // 페이지 업데이트
                         }
                     });
+                },
+                error: function() {
+                    imageUrls[currentImageIndex] = defaultImageUrl; // 기본 이미지 URL 설정
+                    // 세션 업데이트 요청
+                    $.ajax({
+                        url: "{% url 'reader:update_image_session' %}",
+                        method: "POST",
+                        data: {
+                            image_urls: JSON.stringify(imageUrls),
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function() {
+                            showPage(currentPage); // 페이지 업데이트
+                        }
+                    });
+                },
+                complete: function() {
+                    concurrentRequests--;
+                    generateImages(); // 다음 이미지를 생성
                 }
-            }
-            request.session['image_urls'] = imageUrls; // 이미지 URL을 세션에 저장
+            });
+            currentImageIndex++;
+        } else {
+            currentImageIndex++;
         }
-        
+    }
+}
+
         function openCurtains() {
             document.getElementById('curtain-left').style.animation = 'curtainOpen 1s forwards';
             document.getElementById('curtain-right').style.animation = 'curtainOpen 1s forwards';

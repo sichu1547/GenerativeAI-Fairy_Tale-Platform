@@ -292,3 +292,19 @@ def rate_story(request, id):
 def genstory_detail(request, story_id):
     story = get_object_or_404(GenStory, id=story_id)
     return render(request, 'reader/genstory_detail.html', {'story': story})
+import json
+def update_image_session(request):
+    if request.method == "POST":
+        image_urls = json.loads(request.POST.get('image_urls', '[]'))
+        image_urls = [url for url in image_urls if url is not None]
+        request.session['image_urls'] = image_urls
+        print('set')
+        print(image_urls)        
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'failed'}, status=400)
+
+def get_image_session(request):
+    image_urls = request.session.get('image_urls', [])
+    print('get')
+    print(image_urls)
+    return JsonResponse({'image_urls': image_urls})
