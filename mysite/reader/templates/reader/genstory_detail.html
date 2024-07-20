@@ -424,7 +424,8 @@
                     'csrfmiddlewaretoken': '{{ csrf_token }}',
                     'question': question,
                     'story_id': '{{ id }}',
-                    'profile_id' : '{{ profile.id }}'
+                    'profile_id' : '{{ profile.id }}',
+                    'keyword' : '{{ keyword }}'
                 },
                 dataType: 'json',
                 success: function(data) {

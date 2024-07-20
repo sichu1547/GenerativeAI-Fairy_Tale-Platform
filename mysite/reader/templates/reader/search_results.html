@@ -109,7 +109,14 @@
                 {% for story in stories %}
                 <li class='book container1'>
                     <div class="overlay"></div>
-                    <a class='link-click-animation' href="{% url 'reader:story_detail' story.id %}?keyword={{ keyword }}">
+                    {% comment %} <a class='link-click-animation' href="{% url 'reader:story_detail' story.id %}?keyword={{ keyword }}"> {% endcomment %}
+                    <a class='link-click-animation' 
+                        href=
+                            "{% if keyword == 'Generative' %}
+                                {% url 'reader:genstory_detail' story.id %}?keyword={{ keyword }}
+                            {% else %}
+                                {% url 'reader:story_detail' story.id %}?keyword={{ keyword }}
+                            {% endif %}">
                         {% if story.image %}
                         <img class="card" src="{{ story.image.url }}" alt="{{ story.title }}">
                         {% else %}

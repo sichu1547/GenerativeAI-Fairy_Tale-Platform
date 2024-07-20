@@ -76,101 +76,96 @@ def story_detail(request, id):
     #     return redirect(f"{reverse('login')}?next={request.path}")
     keyword = request.GET.get('keyword')
 
-    if keyword == 'Generative':
-        story = get_object_or_404(GenStory, id=id)        
-        patterns = r'\r\n\r\n|\r\n \r\n'
-        sentences = re.split(patterns, story.body)     
-
-        return render(request, 'reader/genstory_detail.html', {'story': sentences, 'id' : id, 'keyword': keyword, 'title' : story.title})
-    else:
-        story = get_object_or_404(Story, id=id)
-        profile_id = request.session.get('selected_profile_id')
-        profile = None
-        if profile_id:
-            try:
-                profile = get_object_or_404(Profile, id=profile_id, user=request.user)
-                ReadingHistory.objects.get_or_create(user=request.user, profile=profile, story_title=story.title, story_id=story.id)
-                print("Reading history saved successfully")
-            except Exception as e:
-                print(f"Error saving reading history: {e}")
-        else:
-            print("Profile ID not found in session")
-
-        patterns = r'\r\n\r\n\r\n|\r\n\r\n \r\n|\r\n \r\n \r\n|\r\n \r\n\r\n'
-        sentences = re.split(patterns, story.body)
-        
-        # 이미지 썸네일 가져오기
-        image_urls = [story.image.url] if story.image else []
-        request.session['image_urls'] = image_urls
-
-        # TTS
-        if 'tts' in request.GET:
-            print("Let's go TTS")
-            text = request.GET.get('text', '')
-
-            if text == 'full':
-                text = story.title+'<break time="1s"/>'+story.body
-            
-            ssml_text = f"""<speak>{text}</speak>"""
-
-            return generate_tts(request, ssml_text)
-
-        previous_story_id = request.session.get('previous_story_id')
-
-        if previous_story_id != id:
-            QuizView.m_context = {}
-            conn = mysql.connector.connect(
-                host = settings.DB_HOST,
-                user = settings.DB_USER,
-                password = settings.DB_PASSWORD,
-                database = settings.DB_NAME
-            )   
-            cursor = conn.cursor()
-            cursor.execute('DELETE FROM quiz_history')
-            conn.commit()
-            conn.close()    
-            request.session['previous_story_id'] = id
-            
-        ########################################################################################################    
-        # 장고 모델에서 모든 스토리 데이터 로드
-        
-        story = get_object_or_404(Story, id=id)
-        
-        stories = Story.objects.all()
-        data = {
-            '제목': [i.title for i in stories],
-            '내용': [i.body for i in stories]
-        }
-        # 제목과 내용을 새로운 데이터프레임으로 저장
-        df = pd.DataFrame(data)
-
-        # 모델에서 id가 해당 동화인 데이터 가져오기
-        # 제목만 따로 저장하기
-        tale_title = story.title
-
-        if not tale_title:
-            return HttpResponse("Please provide a tale title.")  # 제목이 없으면 메시지 반환
-
-        tfidf = TfidfVectorizer()
-        dtm = tfidf.fit_transform(df['내용'])
-        dtm = pd.DataFrame(dtm.todense(), columns=tfidf.get_feature_names_out())
-
-        nn = NearestNeighbors(n_neighbors=6, algorithm='kd_tree')
-        nn.fit(dtm)
-
+    story = get_object_or_404(Story, id=id)
+    profile_id = request.session.get('selected_profile_id')
+    profile = None
+    if profile_id:
         try:
-            idx = df[df['제목'] == tale_title].index[0]
-        except IndexError:
-            return HttpResponse("Tale title not found.")  # 제목이 데이터베이스에 없으면 메시지 반환
+            profile = get_object_or_404(Profile, id=profile_id, user=request.user)
+            ReadingHistory.objects.get_or_create(user=request.user, profile=profile, story_title=story.title, story_id=story.id)
+            print("Reading history saved successfully")
+        except Exception as e:
+            print(f"Error saving reading history: {e}")
+    else:
+        print("Profile ID not found in session")
 
-        result = nn.kneighbors([dtm.iloc[idx]])
-        random_value = random.randint(1,5)
-        recommended_title = df['제목'].iloc[result[1][0][random_value]]
-        story = Story.objects.filter(title=recommended_title).first()
-        recommended_id = story.id
+    patterns = r'\r\n\r\n\r\n|\r\n\r\n \r\n|\r\n \r\n \r\n|\r\n \r\n\r\n'
+    sentences = re.split(patterns, story.body)
+    
+    # 이미지 썸네일 가져오기
+    image_urls = [story.image.url] if story.image else []
+    request.session['image_urls'] = image_urls
 
-        return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id, 'profile' : profile})
-        ########################################################################################################    
+    # TTS
+    if 'tts' in request.GET:
+        print("Here's Story TTS")
+        print(request.GET)
+        print(story.title)
+        text = request.GET.get('text', '')
+
+        if text == 'full':
+            text = story.title+'<break time="1s"/>'+story.body
+        
+        ssml_text = f"""<speak>{text}</speak>"""
+
+        return generate_tts(request, ssml_text)
+
+    previous_story_id = request.session.get('previous_story_id')
+
+    if previous_story_id != id:
+        QuizView.m_context = {}
+        conn = mysql.connector.connect(
+            host = settings.DB_HOST,
+            user = settings.DB_USER,
+            password = settings.DB_PASSWORD,
+            database = settings.DB_NAME
+        )   
+        cursor = conn.cursor()
+        cursor.execute('DELETE FROM quiz_history')
+        conn.commit()
+        conn.close()    
+        request.session['previous_story_id'] = id
+        
+    ########################################################################################################    
+    # 장고 모델에서 모든 스토리 데이터 로드
+    
+    story = get_object_or_404(Story, id=id)
+    
+    stories = Story.objects.all()
+    data = {
+        '제목': [i.title for i in stories],
+        '내용': [i.body for i in stories]
+    }
+    # 제목과 내용을 새로운 데이터프레임으로 저장
+    df = pd.DataFrame(data)
+
+    # 모델에서 id가 해당 동화인 데이터 가져오기
+    # 제목만 따로 저장하기
+    tale_title = story.title
+
+    if not tale_title:
+        return HttpResponse("Please provide a tale title.")  # 제목이 없으면 메시지 반환
+
+    tfidf = TfidfVectorizer()
+    dtm = tfidf.fit_transform(df['내용'])
+    dtm = pd.DataFrame(dtm.todense(), columns=tfidf.get_feature_names_out())
+
+    nn = NearestNeighbors(n_neighbors=6, algorithm='kd_tree')
+    nn.fit(dtm)
+
+    try:
+        idx = df[df['제목'] == tale_title].index[0]
+    except IndexError:
+        return HttpResponse("Tale title not found.")  # 제목이 데이터베이스에 없으면 메시지 반환
+
+    result = nn.kneighbors([dtm.iloc[idx]])
+    random_value = random.randint(1,5)
+    recommended_title = df['제목'].iloc[result[1][0][random_value]]
+    story = Story.objects.filter(title=recommended_title).first()
+    recommended_id = story.id
+
+    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id, 'profile' : profile})
+    ########################################################################################################    
 
 def redirect_to_quiz(request, id):
     keyword = request.GET.get('keyword')
@@ -205,7 +200,10 @@ def answer_question(request, story_id):
         profile = get_object_or_404(Profile, id=profile_id, user=request.user)
 
         if question and story_id:
-            story = get_object_or_404(Story, pk=story_id)
+            if request.POST.get('keyword') == 'Generative':
+                story = get_object_or_404(GenStory, pk=story_id)
+            else:
+                story = get_object_or_404(Story, pk=story_id)
 
             role = "당신은 어린아이의 질문에 친절하게 답변해주는 캐릭터 '밀키'입니다."
             full_query = (
@@ -296,9 +294,29 @@ def rate_story(request, id):
     #     return HttpResponseRedirect(reverse('reader:search'))
         
 def genstory_detail(request, story_id):
-    story = get_object_or_404(GenStory, id=story_id)
-    return render(request, 'reader/genstory_detail.html', {'story': story})
+    story = get_object_or_404(GenStory, id=story_id)   
+    patterns = r'\r\n\r\n|\r\n \r\n'
+    sentences = re.split(patterns, story.body)
+    keyword = request.GET.get('keyword')
+    profile_id = request.session.get('selected_profile_id')
+    profile = get_object_or_404(Profile, id=profile_id, user=request.user)
+    
+    # TTS
+    if 'tts' in request.GET:
+        print("Here's GenStory TTS")
+        text = request.GET.get('text', '')
+
+        if text == 'full':
+            text = story.title+'<break time="1s"/>'+story.body
+            
+        ssml_text = f"""<speak>{text}</speak>"""
+
+        return generate_tts(request, ssml_text)
+    
+    return render(request, 'reader/genstory_detail.html', {'story': sentences, 'id' : story_id, 'keyword': keyword, 'title' : story.title, 'profile' : profile})
+
 import json
+
 def update_image_session(request):
     if request.method == "POST":
         image_urls = json.loads(request.POST.get('image_urls', '[]'))
