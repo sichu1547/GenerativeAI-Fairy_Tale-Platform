@@ -32,118 +32,21 @@
 <link rel="alternate" type="text/xml+oembed" href="https://colorlibhub.com/shapely/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fcolorlibhub.com%2Fshapely%2F&amp;format=xml" />
 
 <!-- Custom CSS -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 <style type="text/css" id="wp-custom-css">
-span.dropdown-toggle.shapely-dropdown {
-    display: none;
-}
-ul.slides img {
-    width: auto;
-}
-.vs1-container {
-    position: fixed;
-    bottom: 50px;
-    right: 50px;
-    z-index: 1000;
-  }
-  
-  .vs1-container img {
-    width: 70px;
-    height: 70px;
-    cursor: pointer;
-    border: transparent;
-  }
-  
-  .vs1-container img:hover {
-    transform: scale(1.4);
-  }
-  #openModalBtn {
-    position: fixed;
-    bottom: 60px;
-    right: 60px;
-    z-index: 1000;
-    background-color: transparent; 
-    border-color: transparent;
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    width: 500px;
-    height: 700px;
-    /* 추가된 속성 */
-    top: auto;
-    left: auto;
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 70%;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-.chat-header {
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-}
-
-.chat-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-.chat-footer {
-    display: flex;
-}
-
-#chatInput {
-    flex: 1;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
     
-    background-color: gray;
-}
-
-#sendBtn {
-    padding: 10px;
-    margin-left: 10px;
-    font-size: 16px;
-}
 </style>
+
 </head>
 <body class="home page-template page-template-page-templates page-template-template-home page-template-page-templatestemplate-home-php page page-id-1863 has-sidebar-right elementor-default elementor-kit-2257">
 <div id="page" class="site">
 <a class="skip-link screen-reader-text" href="#content">Skip to content</a>
 
 <header id="masthead" class="site-header" role="banner">
+    
     <div class="nav-container">
-        <nav id="site-navigation" class="main-navigation" role="navigation">
+        
+        <nav id="site-navigation" class="main-navigation" role="navigation"><div class="cursor"><img class='pen' alt="Portfolio Section" src="{% static 'images/연필.png' %}"></div>
             <div class="container nav-bar">
                 <div class="flex-row">
                     <div class="module left site-title-container">
@@ -166,11 +69,11 @@ ul.slides img {
                                                 </a>
                                             </li>
                                             {% endif %}
-                                            <li><a href="{% url 'reader:list' %}">읽기</a></li>
-                                            <li><a href="{% url 'generator:index' %}">만들기</a></li>
-                                            <li><a href="{% url 'reader:search' %}?keyword=Generative">생성 동화</a></li>
+                                            <li id='readerbutton'><a href="{% url 'reader:list' %}" >읽기</a></li>
+                                            <li id='genbutton'><a href="{% url 'generator:index' %}">만들기</a></li>
+                                            <li id='creatbutton'><a href="{% url 'reader:search' %}?keyword=Generative">생성 동화</a></li>
                                         {% endif %}
-                                        <li><a href="{% url 'mine:index' %}">서비스 소개</a></li> 
+                                        <li id='servicebutton'><a href="{% url 'mine:index' %}">서비스 소개</a></li> 
                                         <li>
                                             <a href="/" id="logout-link">로그아웃</a>
                                             <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
@@ -178,18 +81,18 @@ ul.slides img {
                                             </form>
                                         </li>
                                         {% if request.session.selected_profile_id %}
-                                        <li><a href="{% url 'profile_detail' request.session.selected_profile_id %}">내 정보</a></li>
+                                        <li id='userbutton'><a href="{% url 'profile_detail' request.session.selected_profile_id %}">내 정보</a></li>
                                         {% else %}
-                                            <li><a href="{% url 'profile' %}">내 정보</a></li>
+                                            <li id='userbutton'><a href="{% url 'profile' %}">내 정보</a></li>
                                         {% endif %}
 
                                     {% else %}
-                                        <li><a href="{% url 'mine:index' %}">서비스 소개</a></li> 
+                                        <li id='servicebutton'><a href="{% url 'mine:index' %}">서비스 소개</a></li> 
 
                                         {% if request.path != '/myaccount/login/'%}
-                                            <li><a href="{% url 'reader:list' %}">읽기</a></li>
-                                            <li><a href="{% url 'generator:index' %}">만들기</a></li>
-                                            <li><a href="{% url 'reader:search' %}?keyword=Generative">생성 동화</a></li>
+                                            <li id='readerbutton'><a href="{% url 'reader:list' %}">읽기</a></li>
+                                            <li id='genbutton'><a href="{% url 'generator:index' %}">만들기</a></li>
+                                            <li id='creatbutton'><a href="{% url 'reader:search' %}?keyword=Generative">생성 동화</a></li>
                                             <li><a href="{% url 'login' %}">로그인</a></li>
                                         {% endif %}
                                         <li><a href="{% url 'signup' %}">회원가입</a></li>
@@ -239,6 +142,7 @@ ul.slides img {
 
 
 <script type="text/javascript">
+    
     jQuery(document).ready(function($) {
         if ($(window).width() >= 767) {
             $('.navbar-nav > li.menu-item > a').click(function() {
@@ -271,6 +175,60 @@ ul.slides img {
 </script>
 
 <script>
+    let mouseCursor = document.querySelector(".cursor");
+  window.addEventListener("scroll", cursor);
+  window.addEventListener("mousemove", cursor);
+  //커스텀 커서의 left값과 top값을 커서의 XY좌표값과 일치시킴
+  function cursor(e) {
+    mouseCursor.style.left = e.pageX + "px";
+    mouseCursor.style.top = e.pageY - scrollY + "px";
+}
+// 현재 페이지의 URL에서 경로를 추출하는 함수
+function getPathPrefix(url) {
+    // URL 객체를 생성하여 pathname을 얻습니다.
+    const parser = new URL(url);
+    return parser.pathname.split('/')[1]; // URL 경로의 첫 번째 부분을 반환합니다.
+}
+
+// 현재 페이지의 경로의 첫 번째 부분을 얻습니다.
+var pathPrefix = getPathPrefix(window.location.href);
+console.log("현재 경로의 첫 부분:", pathPrefix);
+const readerIcon = document.getElementById("readerbutton");
+            const genIcon = document.getElementById("genbutton");
+            const creatIcon = document.getElementById("creatbutton");
+            const serviceIcon = document.getElementById("servicebutton");
+            const userIcon = document.getElementById("userbutton");
+// 경로의 첫 번째 부분이 목표와 일치하는지 확인
+switch (pathPrefix) {
+    case "reader":
+    readerIcon.classList.add("label-background");
+    break;
+    case "review":
+    readerIcon.classList.add("label-background");
+    break;
+    case "quiz":
+    readerIcon.classList.add("label-background");
+    break;
+
+    case "generator":
+    genIcon.classList.add("label-background");
+    break;
+
+    case "creat":
+        creatIcon.classList.add("label-background");
+        break;
+
+    case "mine":
+        serviceIcon.classList.add("service-background");
+        break;
+
+    case "myaccount":
+        userIcon.classList.add("label-background");
+        break;
+}
+            function showLoading() {
+                document.getElementById('loading').style.display = 'block';
+            }
     document.getElementById('logout-link').addEventListener('click', function(event) {
         event.preventDefault();
         document.getElementById('logout-form').submit();
