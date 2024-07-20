@@ -4,7 +4,7 @@ from .models import *
 
 
 class GenStoryAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title']
+    list_display = ['id', 'datetime', 'title']
     list_display_links = ['id', 'title']
     ordering = ['id']
     search_fields = ['body']
