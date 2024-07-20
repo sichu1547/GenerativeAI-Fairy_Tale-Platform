@@ -888,6 +888,6 @@ background-size: cover;
 .pen{
   z-index:1000000;
   position: absolute; /* 부모 요소를 기준으로 절대 위치를 설정합니다. */
-      bottom: -11px; /* 부모 요소의 아래쪽에 위치합니다. */
-      right: -11px; /* 부모 요소의 오른쪽에 위치합니다. */
+      bottom: -1px; /* 부모 요소의 아래쪽에 위치합니다. */
+      right: -1px; /* 부모 요소의 오른쪽에 위치합니다. */
 }
