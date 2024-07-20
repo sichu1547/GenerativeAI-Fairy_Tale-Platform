@@ -35,7 +35,14 @@ DEBUG = env('DEBUG')
 # DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'mealkid.kro.kr']
+CSRF_TRUSTED_ORIGINS = ['https://mealkid.kro.kr',]
 
+# HTTPS 사용 시 설정
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
+# 프록시 설정(Nginx)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
