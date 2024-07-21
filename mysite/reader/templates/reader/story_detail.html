@@ -3,7 +3,7 @@
 {% load static %}
 <html lang="ko">
 <head>
-    <title>{% block title %}📖{{ title }}</title>
+    <title>{% block title %}{{ title }}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/story_detail.css' %}">
@@ -11,14 +11,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
-        body, html {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        overflow-y: auto;
-    }
     #preloader {
         position: fixed;
         top: 0;
@@ -31,7 +23,7 @@
         background-image: url("{% static 'images/리드배경.jpg' %}");
         z-index: 9999;
     }
-   
+
     .curtain {
         position: fixed;
         top: 0;
@@ -41,24 +33,24 @@
         background-size: cover;
         z-index: 10000;
     }
-   
+
     #curtain-left {
         left: 0;
         animation: curtainDown 1s forwards;
     }
-   
+
     #curtain-right {
         right: 0;
         animation: curtainDown 1s forwards;
     }
-   
+
     #loading-message {
         position: absolute;
         z-index: 10001;
         font-size: 2em;
         color: #000;
     }
-   
+
     @keyframes curtainOpen {
         0% {
             width: 50%;
@@ -74,22 +66,6 @@
         top: 50%;
         width: 200px; /* 원하는 너비로 설정 */
         height: 100%;
-    }
- 
-    .star-rating {
-        display: flex;
-        cursor: pointer;
-    }
-    .text-container {
-        width: 100%;
-        height: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-    }   
-    .star {
-        width: 50px;
-        height: 50px;
-        transition: 0.3s;
     }</style>
 </head>{% endblock %}
 {% block content %}
