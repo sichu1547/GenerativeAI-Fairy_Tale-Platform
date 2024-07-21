@@ -7,20 +7,17 @@
     <title>{% block title %}검색 결과</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search_results.css' %}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <style>
-        
-    </style>
 </head>{% endblock %}
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{% static 'css/search_results.css' %}">
 <body>
     <div id="preloader">
         <div id="curtain-left" class="curtain"></div>
         <div id="curtain-right" class="curtain"></div>
     </div>
     <div class="search-results-container">
-        <h1 class='h'>🔍검색 결과</h1>
+        <h1 class='h'>🔍 검색 결과</h1>
         <div class="books">
             <ul class="gallery">
                 {% for story in stories %}

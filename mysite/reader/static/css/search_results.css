@@ -40,10 +40,6 @@
     font-family: 'Pretendard-Regular';
 }
 
-.book-title {
-    color: black;
-}
-
 .h {
     font-family: 'Ownglyph_noocar-Rg', cursive;
     font-size: 60px;
@@ -108,6 +104,8 @@
 }
 
 .book-title {
+    font-family: 'Pretendard-Regular';
+    color: black;
     position: absolute;
     bottom: 10px;
     left: 10px;
@@ -119,57 +117,6 @@
     font-weight: bold;
     pointer-events: none; /* 링크를 클릭할 수 없도록 설정 */
 }
-.gallery {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    padding: 10px; /* 각 요소 사이에 여백을 주기 위해 추가 */
-    list-style: none; /* 리스트 스타일 제거 */
-}
-
-.container1 {
-    width: 260px;
-    height: 320px;
-    position: relative;
-    overflow: hidden; /* 요소 내부의 콘텐츠가 넘치는 경우를 방지하기 위해 추가 */
-}
-.overlay {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(105deg,
-        transparent 40%,
-        rgba(255, 219, 112, 0.8) 45%,
-        rgba(132, 50, 255 ,0.6) 50%,
-        transparent 54%);
-    filter: brightness(1.1) opacity(0.8);
-    mix-blend-mode: color-dodge;
-    background-size: 150% 150%;
-    background-position: 100%;
-    transition: all 0.3s;
-}
-.card {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    position: relative;
-}
-
-.book-title {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    right: 10px;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 5px;
-    text-align: center;
-    font-size: 16px;
-    font-weight: bold;
-    pointer-events: none; /* 링크를 클릭할 수 없도록 설정 */
-}
-.star-rating {         display: flex;         font-size: 1.5em;         direction: ltr;     }     
-.star-rating .star {         color: #ddd;         font-size: 2em;         padding: 0 0.1em;     }     
-.star-rating .star.filled { color: #f2b600; }
 
 #preloader {
     position: fixed;
@@ -180,7 +127,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-image: url("{% static 'images/리드배경.jpg' %}");
+    background-image: url("../images/리드배경.jpg");
     z-index: 9999;
     display: none;
 }
@@ -190,7 +137,7 @@
     top: 0;
     width: 50%;
     height: 100%;
-    background-image: url("{% static 'images/커튼.jpg' %}");
+    background-image: url("../images/커튼.jpg");
     background-size: cover;
     z-index: 10000;
 }
@@ -242,16 +189,18 @@
     display: flex;
     justify-content: center;
     margin-top: 10px;
+    font-size: 1.5em;
+    direction: ltr; 
 }
 
 .star {
     width: 20px;
     height: 20px;
     margin-right: 2px;
-    background-image: url("{% static 'images/realstar.png' %}");
+    background-image: url("../images/realstar.png");
     background-size: cover;
 }
 
 .star.full {
-    background-image: url("{% static 'images/full-star.png' %}");
+    background-image: url("../images/full-star.png");
 }
