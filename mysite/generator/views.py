@@ -29,9 +29,9 @@ def index(request):
 # GPT 시스템 역할 정의
 system_roles = [
     "입력된 이야기를 동화의 시작으로 만들고, 입력된 내용에 따라 한국어 문장을 만들어 이야기를 연결한 문장을 만들어 보세요.",
-    "입력한 정보를 이용하여 연결된 동화의 중간 부분을 한국어로 만들어주세요",
-    "입력한 정보를 이용하여 앞 내용과 다른 연결된 동화의 중간 부분을 한국어로 만들어주세요",
-    "입력한 정보를 연결하여 한국어로 세 줄로 연결된 동화의 결말을 만들어 보세요."
+    "입력한 정보를 시작으로 만들고 동화의 중간 부분을 한국어로 만들어주세요",
+    "입력한 정보를 시작으로 자연스럽게 만들고 동화의 중간 부분을 앞 내용과 다르게 한국어로 만들어주세요",
+    "입력한 정보를 넣어서 한국어로 세 줄로 연결된 동화의 결말을 만들어 보세요."
 ]
 
 # 전체 이야기를 기반으로 질문 프롬프트 생성 함수
@@ -41,7 +41,7 @@ def generate_question_prompt(story, stage):
     question = f"{stage}/3\n{question_response}"
     return question
 
-# GPT-4 API를 사용하여 응답 생성 함수
+# GPT-4o API를 사용하여 응답 생성 함수
 def generate_response(prompt, role, max_tokens=110):
     response = client.chat.completions.create(
         model="gpt-4o",
@@ -55,7 +55,7 @@ def generate_response(prompt, role, max_tokens=110):
     )
     content = response.choices[0].message.content.strip()
     
-    # role이 system_roles[2]가 아닌 경우에만 문장이 끊기지 않도록 처리
+    # role이 system_roles[3가 아닌 경우에만 문장이 끊기지 않도록 처리
     if role != system_roles[3]:
         sentences = content.split('. ')
         complete_content = '. '.join(sentences[:-1]) + '.' if len(sentences) > 1 else content
@@ -72,7 +72,10 @@ def create_story(request):
         initial_story = request.POST.get('initial_story', '')
         generated_stories = request.POST.getlist('generated_stories', [])
         generated_story_parts_json = request.POST.get('generated_story_parts', '[]')
-        generated_story_parts = json.loads(generated_story_parts_json)
+        try:
+            generated_story_parts = json.loads(generated_story_parts_json)
+        except json.JSONDecodeError:
+            generated_story_parts = []
 
         generated_images = request.POST.getlist('generated_images', [])
         stage = int(request.POST.get('stage', 0))
@@ -83,6 +86,7 @@ def create_story(request):
             profile = get_object_or_404(Profile, id=profile_id, user=request.user)
         else:
             profile = Profile.objects.get(id=settings.DEFAULT_PROFILE_ID)
+
         # 스테이지가 0보다 크면 사용자 입력을 이야기 뒤에 추가
         if stage > 0:
             story = " ".join(generated_stories) + " " + user_input
@@ -94,7 +98,7 @@ def create_story(request):
             role = system_roles[stage]
             response = generate_response(story, role)
 
-            generated_story = user_input + " " + response.strip()
+            generated_story = response.strip()
 
             # generated_stories에 생성된 이야기 추가
             generated_stories.append(generated_story.strip())
@@ -125,10 +129,10 @@ def create_story(request):
         else:
             # 스테이지가 3인 경우, 최종 이야기 결말을 생성
             role = system_roles[3]
-            final_prompt = f"{story}\n이 이야기를 어떻게 마무리할까요?"
+            final_prompt = f"{story}\n이 동화를 어떻게 마무리할까요?"
             final_response = generate_response(final_prompt, role, max_tokens=300)
             
-            final_generated_story = user_input + " " + final_response.strip()
+            final_generated_story = final_response.strip()
             
             # generated_stories에 생성된 이야기 추가
             generated_stories.append(final_generated_story.strip())
@@ -163,8 +167,6 @@ def create_story(request):
     else:
         # GET 요청인 경우 이야기 생성 페이지를 렌더링
         return render(request, 'generator/create_story.html')
-
-
 
 def generate_image(sentence):
     # print('이미지 생성 중')
