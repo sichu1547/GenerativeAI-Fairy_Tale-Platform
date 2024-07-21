@@ -29,8 +29,8 @@ def index(request):
 # GPT 시스템 역할 정의
 system_roles = [
     "입력된 이야기를 동화의 시작으로 만들고, 입력된 내용에 따라 한국어 문장을 만들어 이야기를 연결한 문장을 만들어 보세요.",
-    "입력한 정보를 시작으로 만들고 동화의 중간 부분을 한국어로 만들어주세요",
-    "입력한 정보를 시작으로 자연스럽게 만들고 동화의 중간 부분을 앞 내용과 다르게 한국어로 만들어주세요",
+    "입력된 단어를 주제로 동화의 중간 부분을 한국어로 만들어주세요",
+    "입력된 단어를 주제로 동화의 중간 부분을 앞 내용과 다르게 한국어로 만들어주세요",
     "입력한 정보를 넣어서 한국어로 세 줄로 연결된 동화의 결말을 만들어 보세요."
 ]
 
@@ -55,7 +55,7 @@ def generate_response(prompt, role, max_tokens=110):
     )
     content = response.choices[0].message.content.strip()
     
-    # role이 system_roles[3가 아닌 경우에만 문장이 끊기지 않도록 처리
+    # role이 system_roles[3]가 아닌 경우에만 문장이 끊기지 않도록 처리
     if role != system_roles[3]:
         sentences = content.split('. ')
         complete_content = '. '.join(sentences[:-1]) + '.' if len(sentences) > 1 else content
@@ -87,11 +87,11 @@ def create_story(request):
         else:
             profile = Profile.objects.get(id=settings.DEFAULT_PROFILE_ID)
 
-        # 스테이지가 0보다 크면 사용자 입력을 이야기 뒤에 추가
+        # 사용자 입력값을 이야기의 주요 키워드로 사용
         if stage > 0:
-            story = " ".join(generated_stories) + " " + user_input
+            story = " ".join(generated_stories) + f" 주요 키워드: {user_input}"
         else:
-            story = initial_story + " " + user_input
+            story = initial_story + f" 주요 키워드: {user_input}"
 
         # 스테이지가 3보다 작은 경우, 이야기를 생성하는 단계를 진행
         if stage < 3:
