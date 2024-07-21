@@ -779,13 +779,29 @@ li {
   color: dimgray;
 }
 
+#privacy-title2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 .privacy-content {
   margin-bottom: 20px;
-  font-size: 8px;
 }
 
 .signup-container {
   width: initial;
+}
+
+.privacy-text {
+  margin-bottom: 0;
+  font-size: 13px;
+}
+
+.privacy-label {
+  margin-left: 5px;
+  margin-top: 3px;
 }
 
 

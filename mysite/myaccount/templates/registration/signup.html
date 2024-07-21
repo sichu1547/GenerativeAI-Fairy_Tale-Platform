@@ -3,20 +3,10 @@
 {% load socialaccount %}
 <html lang="ko">
 <head>
-    <title>{% block title %}🔐회원가입</title>
+    <title>{% block title %}회원가입</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% load static %}
-
-    <link rel="icon" type="image/png" href="{% static 'images/icons/favicon.ico' %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'fonts/Linearicons-Free-v1.0.0/icon-font.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/animate/animate.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/css-hamburgers/hamburgers.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/animsition/css/animsition.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/select2/select2.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'vendor/daterangepicker/daterangepicker.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 </head>
@@ -35,26 +25,29 @@
 
                     <!-- 개인정보 동의 섹션 -->
                     <div id="privacy-section" class="privacy-section">
-                        <div class="privacy-title">
+                        <div class="privacy-title" id="privacy-title2">
                             <input type="checkbox" id="agree_all" name="agree_all">
-                            <label for="agree_all"><strong>전체 동의하기</strong></label>
+                            <label class="privacy-label" for="agree_all"><strong>전체 동의하기</strong></label>
                         </div>
                         <hr>
                         <div class="privacy-item">
-                            <input type="checkbox" id="agree_terms" name="agree_terms">
-                            <label for="agree_terms"><strong>MealKid 이용약관</strong> (필수)</label>
+                            <div id="privacy-title2">
+                                <input type="checkbox" id="agree_terms" name="agree_terms">
+                                <label class="privacy-label" for="agree_terms"><strong>MealKid 이용약관</strong> (필수)</label>
+                            </div>
                             <div class="privacy-content scrollable-p">
-                                <p>MealKid 서비스 및 제품(이하 '서비스')을 이용해 주셔서 감사합니다. 본 약관은 다양한 MealKid 서비스의 이용과 관련하여 MealKid 서비스를 제공하는 MealKid 주식회사(이하 'MealKid')와 이를 이용하는 MealKid 서비스 회원(이하 '회원') 또는 비회원과의 관계를 설명하며, 아울러 여러분의 MealKid 서비스 이용에 도움이 될 수 있는 유익한 정보를 포함하고 있습니다.</p>
+                                <p class="privacy-text">MealKid 서비스 및 제품(이하 '서비스')을 이용해 주셔서 감사합니다. 본 약관은 다양한 MealKid 서비스의 이용과 관련하여 MealKid 서비스를 제공하는 MealKid 주식회사(이하 'MealKid')와 이를 이용하는 MealKid 서비스 회원(이하 '회원') 또는 비회원과의 관계를 설명하며, 아울러 여러분의 MealKid 서비스 이용에 도움이 될 수 있는 유익한 정보를 포함하고 있습니다.</p>
                             </div>
                         </div>
                         <div class="privacy-item">
-                            <input type="checkbox" id="agree_privacy" name="agree_privacy">
-                            <label for="agree_privacy"><strong>개인정보 수집 및 이용</strong> (필수)</label>
+                            <div id="privacy-title2">
+                                <input type="checkbox" id="agree_privacy" name="agree_privacy">
+                                <label class="privacy-label" for="agree_privacy"><strong>개인정보 수집 및 이용</strong> (필수)</label>
+                            </div>
                             <div class="privacy-content scrollable-p">
-                                <p style="white-space: pre-wrap;">개인정보보호법에 따라 MealKid에 회원가입 신청하시는 분께 수집하는 개인정보의 항목, 개인정보의 수집 및 이용목적, 개인정보의 보유 및 이용기간, 동의 거부권 및 동의 거부 시 불이익에 관한 사항을 안내 드리오니 자세히 읽은 후 동의하여 주시기 바랍니다.
+                                <p class="privacy-text" style="white-space: pre-wrap;">개인정보보호법에 따라 MealKid에 회원가입 신청하시는 분께 수집하는 개인정보의 항목, 개인정보의 수집 및 이용목적, 개인정보의 보유 및 이용기간, 동의 거부권 및 동의 거부 시 불이익에 관한 사항을 안내 드리오니 자세히 읽은 후 동의하여 주시기 바랍니다.
 
-수집하는 개인정보: 아이디, 비밀번호, 이메일
-                                </p>
+수집하는 개인정보: 아이디, 비밀번호, 이메일</p>
                             </div>
                         </div>
 
