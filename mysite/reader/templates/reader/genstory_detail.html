@@ -690,7 +690,7 @@
     // 이전 생성 동화로 이동하기 (이전 동화가 있어야만 이동 가능)
     function prevPage(id) {
         id = id - 1;
-        var url = `/reader/story/${id}/?keyword=Generative`;
+        var url = `/reader/genstory/${id}/?keyword=Generative`;
         checkUrl(url, function(isValid) {
             if (isValid) {
                 window.location.href = url;
@@ -701,7 +701,7 @@
     // 다음 생성 동화로 이동하기 (다음 동화가 있어야만 이동 가능)
     function nextPage(id) {
         id = id + 1;
-        var url = `/reader/story/${id}/?keyword=Generative`;
+        var url = `/reader/genstory/${id}/?keyword=Generative`;
         checkUrl(url, function(isValid) {
             if (isValid) {
                 window.location.href = url;

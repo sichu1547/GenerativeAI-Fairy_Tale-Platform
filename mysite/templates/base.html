@@ -124,19 +124,8 @@
                 © 2024 MealKid. All rights reserved.
             </div>
             <div class="footer-credits">
-                <li><a href="{% url 'privacy_policy' %}">개인정보처리방침</a></li>
+                <li><a class="footer-credit" href="{% url 'privacy_policy' %}">개인정보처리방침</a></li>
             </div>
-        </div>
-        <div class="col-sm-6 text-right">
-            <nav id="social" class="social-icons">
-                <ul id="menu-social-items" class="list-inline social-list">
-                    <li id="menu-item-1893" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1893"><a href="https://facebook.com/colorlib"><i class="social_icon fa"><span>Colorlib</span></i></a></li>
-                    <li id="menu-item-1894" class="twitter"><a href="https://twitter.com/colorlib"><i class="social_icon fa"><span>Twitter</span></i></a></li>
-                    <li id="menu-item-1895" class="linkedin"><a href="https://www.linkedin.com/company-beta/18049034/"><i class="social_icon fa"><span>Linkedin</span></i></a></li>
-                    <li id="menu-item-1923" class="youtube"><a href="https://youtube.com/c/Colorlib"><i class="social_icon fa"><span>Youtube</span></i></a></li>
-                    <li id="menu-item-1924" class="insta"><a href="https://www.instagram.com/colorlib/"><i class="social_icon fa"><span>Instagram</span></i></a></li>
-                </ul>
-            </nav>
         </div>
     </div>
 </footer>
@@ -200,32 +189,22 @@ const readerIcon = document.getElementById("readerbutton");
             const serviceIcon = document.getElementById("servicebutton");
             const userIcon = document.getElementById("userbutton");
 // 경로의 첫 번째 부분이 목표와 일치하는지 확인
-switch (pathPrefix) {
-    case "reader":
+if (pathPrefix === "reader") {
+    {% if keyword == 'Generative' %}
+        creatIcon.classList.add("label-background"); // 생성 동화
+    {% else %}
+        readerIcon.classList.add("label-background"); // 읽기
+    {% endif %}
+} else if (pathPrefix === "review") {
     readerIcon.classList.add("label-background");
-    break;
-    case "review":
+} else if (pathPrefix === "quiz") {
     readerIcon.classList.add("label-background");
-    break;
-    case "quiz":
-    readerIcon.classList.add("label-background");
-    break;
-
-    case "generator":
-    genIcon.classList.add("label-background");
-    break;
-
-    case "creat":
-        creatIcon.classList.add("label-background");
-        break;
-
-    case "mine":
-        serviceIcon.classList.add("service-background");
-        break;
-
-    case "myaccount":
-        userIcon.classList.add("label-background");
-        break;
+} else if (pathPrefix === "generator") {
+    genIcon.classList.add("label-background"); // 만들기
+} else if (pathPrefix === "mine") {
+    serviceIcon.classList.add("service-background"); // 서비스 소개
+} else if (pathPrefix === "myaccount") {
+    userIcon.classList.add("label-background"); // 내 정보
 }
             function showLoading() {
                 document.getElementById('loading').style.display = 'block';

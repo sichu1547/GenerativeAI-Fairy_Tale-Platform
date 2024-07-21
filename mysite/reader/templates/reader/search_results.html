@@ -4,7 +4,22 @@
 {% load custom_filters %}
 <html lang="ko">
 <head>
-    <title>{% block title %}검색 결과</title>
+    <title>
+        {% block title %}
+            {% if keyword == 'Generative' %}
+                생성 동화
+            {% elif keyword == '그림형제' %}
+                그림형제
+            {% elif keyword == '이솝우화' %}
+                이솝우화
+            {% elif keyword == '전래동화' %}
+                전래동화
+            {% elif keyword == '샤를페로' %}
+                샤를페로
+            {% else %}
+                검색 결과
+            {% endif %}
+    </title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'css/search_results.css' %}">
@@ -17,7 +32,21 @@
         <div id="curtain-right" class="curtain"></div>
     </div>
     <div class="search-results-container">
-        <h1 class='h'>🔍 검색 결과</h1>
+        <h1 class='h'>
+            {% if keyword == 'Generative' %}
+                📚 생성 동화
+            {% elif keyword == '그림형제' %}
+                📘 그림형제
+            {% elif keyword == '이솝우화' %}
+                📕 이솝우화
+            {% elif keyword == '전래동화' %}
+                📗 전래동화
+            {% elif keyword == '샤를페로' %}
+                📙 샤를페로
+            {% else %}
+                🔍 검색 결과
+            {% endif %}
+        </h1>
         <div class="books">
             <ul class="gallery">
                 {% for story in stories %}

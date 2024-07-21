@@ -40,6 +40,13 @@
   src: url('../fonts/montserrat/Montserrat-Regular.ttf'); 
 }
 
+@font-face {
+  font-family: 'Pretendard-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
 
 /*//////////////////////////////////////////////////////////////////
 [ RESTYLE TAG ]*/
@@ -767,7 +774,7 @@ li {
   margin-bottom: 20px;
 }
 .sub-title {
-  font: 14px/1 'arial';
+  font: 14px/1 'Pretendard-Regular';
   color: gray;
 }
 .nums {
@@ -886,4 +893,19 @@ background-size: cover;
   position: absolute; /* 부모 요소를 기준으로 절대 위치를 설정합니다. */
       bottom: -1px; /* 부모 요소의 아래쪽에 위치합니다. */
       right: -1px; /* 부모 요소의 오른쪽에 위치합니다. */
+}
+
+
+.footer-credit {
+  font-family: 'Montserrat-Regular';
+  font-size: 11px;
+  font-weight: normal;
+}
+
+.copyright-text {
+  font-family: 'Montserrat-Regular';
+}
+
+.site-info {
+  margin-left: 50px;
 }
