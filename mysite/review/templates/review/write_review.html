@@ -4,20 +4,30 @@
 {% block content %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&display=swap" rel="stylesheet"><style>
+<link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&display=swap" rel="stylesheet">
+<style>
+    html, body {
+        height: 100%; /* 전체 높이 차지 */
+        margin: 0;
+        padding: 0;
+    }
     .gamja-flower-regular {
         font-family: "Gamja Flower", sans-serif;
         font-weight: 400;
         font-style: normal;
-      }
+    }
     .review-container {
         background: url("{% static 'images/배경.png' %}") no-repeat center center;
         background-size: cover;
         padding: 20px;
         border-radius: 10px;
-        width: 80%;
-        margin: 0 auto;
+        width: 100%;
+        height: 100%; /* 전체 높이 차지 */
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center; /* 수직 가운데 정렬 */
     }
     .review-container h1 {
         text-align: center;
@@ -39,6 +49,7 @@
         margin-bottom: 5px;
         font-size: 25px; /* 절대 크기 */
     }
+    
     .review-question textarea {
         width: 100%;
         height: 100px;
@@ -50,7 +61,10 @@
     }
 
     .submit-button-container {
-        text-align: right;
+        display: flex;
+        justify-content: center; /* 수평 가운데 정렬 */
+        width: 100%;
+        margin-top: 20px;
     }
     .submit-button {
         padding: 10px 20px;
@@ -62,7 +76,7 @@
         font-size: 1.2em;
     }
     .submit-button:hover {
-        background-color: #45a049;
+        background-color: #333333;
     }
     .review-middle {
         display: flex; /* 부모 요소를 flex container로 설정 */
@@ -84,82 +98,29 @@
         1px 1px 0 #fff;     /* 오른쪽 아래 */
     }
 
-    
-
-    html, body, div, span, applet, object, iframe,
-    h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-    a, abbr, acronym, address, big, cite, code,
-    del, dfn, em, img, ins, kbd, q, s, samp,
-    small, strike, strong, sub, sup, tt, var,
-    b, u, i, center,
-    dl, dt, dd, ol, ul, li,
-    fieldset, form, label, legend,
-    table, caption, tbody, tfoot, thead, tr, th, td,
-    article, aside, canvas, details, embed, 
-    figure, figcaption, footer, header, hgroup, 
-    menu, nav, output, ruby, section, summary,
-    time, mark, audio, video {
-        margin: 0;
-        padding: 0;
-        border: 0;
-        font-size: 100%;
-        font: inherit;
-        vertical-align: baseline;
-    }
-    /* HTML5 display-role reset for older browsers */
-    article, aside, details, figcaption, figure, 
-    footer, header, hgroup, menu, nav, section {
-        display: block;
-    }
-    body {
-        line-height: 1;
-    }
-    ol, ul {
-        list-style: none;
-    }
-    blockquote, q {
-        quotes: none;
-    }
-    blockquote:before, blockquote:after,
-    q:before, q:after {
-        content: '';
-        content: none;
-    }
-    table {
-        border-collapse: collapse;
-        border-spacing: 0;
-    }
-
-    body {
-        background-color: #f1f4f8;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 
-        Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 50px 0px;
-    }
-
     .canvas {
-        width: 700px ;
-        height: 700px ;
+        width: 100%; /* 화면 크기에 맞게 조정 */
+        height: 500px; /* 화면 크기에 맞게 조정 */
         background-color: white;
         border-radius: 15px;
         box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
     }
 
     .controls {
-        margin-top: 80px;
+        margin-top: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
     }
 
-    .controls .controls__btns {
-        margin-bottom: 30px;
+    .controls_btns {
+        display: flex;
+        justify-content: center; /* 가운데 정렬 */
+        gap: 10px; /* 버튼 사이에 10px 간격 추가 */
+        margin: 20px;
     }
 
-    .controls__btns button{
+    .controls__btns button {
         all: unset;
         cursor: pointer;
         background-color: white;
@@ -169,7 +130,7 @@
         border-radius: 5px;
         box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
         border: 2px solid rgba(0, 0, 0, 0.2);
-        color:rgba(0, 0, 0, 0.8);
+        color: rgba(0, 0, 0, 0.8);
         text-transform: uppercase;
         font-weight: 800;
         font-size: 12px;
@@ -181,6 +142,7 @@
 
     .controls .controls__colors {
         display: flex;
+        margin-top: 20px;
     }
 
     .controls__colors .controls__color {
@@ -191,38 +153,18 @@
         box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
     }
 
-
-    .controls .controls__range{
+    .controls .controls__range {
         margin-bottom: 30px;
     }
 </style>
 <div class="review-container gamja-flower-regular">
     <h1>{{ story.title }} 독후감 쓰기</h1>
-    <form method="post">
+    <form id="jsForm" method="post">
         {% csrf_token %}
         <div class="review-question">
             <label for="title">💁🏽 독후감의 이름을 정해주세요!</label>
             {{ form.title }}
         </div>
-        {% comment %} <div class="review-middle">
-            <div class="review-question">
-                <label for="main_character">💁🏽 누구의 이야기인가요?</label>
-                {{ form.main_character }}
-            </div>
-            <div class="review-question">
-                <label for="content">💁🏽 무슨 일이 일어났나요?</label>
-                {{ form.content }}
-            </div>
-            <div class="review-question">
-                <label for="ending">💁🏽 어떻게 되었나요?</label>
-                {{ form.ending }}
-            </div>
-        </div>
-        
-        <div class="review-question n">
-            <label for="author_thoughts">💁🏽 나의 생각</label>
-            {{ form.author_thoughts }}
-        </div> {% endcomment %}
 
         <canvas id="jsCanvas" class="canvas"></canvas>
         <div class="controls">
@@ -231,8 +173,10 @@
                 min="0.1" max="5.0" value="2.5" step="0.1"/>
             </div>
             <div class="controls__btns">
-                <button id="jsMode">Fill</button>
-                <button id="jsSave">Save</button></div>
+                <button type="button" id="jsMode">Fill</button>
+                <button type="button" id="jsEraser">Eraser</button> <!-- 지우개 버튼 추가 -->
+                <button type="button" id="jsClear">Clear</button> <!-- Clear 버튼 추가 -->
+            </div>
             <div class="controls__colors" id="jsColors">
                 <div class="controls__color jsColor" 
                     style="background-color: black;"></div>
@@ -263,127 +207,143 @@
 </div>
 
 <script>
-    const canvas = document.getElementById("jsCanvas");
-    const ctx = canvas.getContext("2d");
-    const colors = document.getElementsByClassName("jsColor");
-    const range = document.getElementById("jsRange");
-    const mode = document.getElementById("jsMode");
-    const saveBtn = document.getElementById("jsSave");
+    document.addEventListener("DOMContentLoaded", () => {
+        const canvas = document.getElementById("jsCanvas");
+        const ctx = canvas.getContext("2d");
+        const colors = document.getElementsByClassName("jsColor");
+        const range = document.getElementById("jsRange");
+        const mode = document.getElementById("jsMode");
+        const eraser = document.getElementById("jsEraser");
+        const clearButton = document.getElementById("jsClear"); // Clear 버튼 가져오기
+        const submitBtn = document.querySelector(".submit-button"); // 저장 수정된 부분
 
-    const form = document.getElementById("jsForm");
-    const imageInput = document.getElementById("jsImageInput");
+        const form = document.getElementById("jsForm");
+        const imageInput = document.getElementById("jsImageInput");
 
-    const INITIAL_COLOR = "#000000";
-    const CANVAS_SIZE = 700;
+        const INITIAL_COLOR = "#000000";
+        const BACKGROUND_COLOR = "white"; // 배경색 정의
+        const ERASER_SIZE = 30; // 지우개 크기
 
-    ctx.strokeStyle = "#2c2c2c";
+        // 캔버스의 스타일 크기를 설정
+        canvas.style.width = "100%";
+        canvas.style.height = "500px";
 
-    canvas.width = CANVAS_SIZE;
-    canvas.height = CANVAS_SIZE;
+        // 캔버스의 실제 크기 설정
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
 
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.strokeStyle = INITIAL_COLOR;
-    ctx.fillStyle = INITIAL_COLOR;
-    ctx.lineWidth = 2.5; /* 라인 굵기 */
+        ctx.strokeStyle = INITIAL_COLOR;
+        ctx.fillStyle = INITIAL_COLOR;
+        ctx.lineWidth = 2.5; // 기본 선 두께
 
-    let painting = false;
-    let filling = false;
+        let painting = false;
+        let filling = false;
+        let erasing = false; // 지우개 모드 변수
 
-    function stopPainting() {
-        painting = false;
-    }
-
-    function startPainting() {
-        painting = true;
-    }
-
-    function onMouseMove(event) {
-        const x = event.offsetX;
-        const y = event.offsetY;
-        if (!painting) {
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-        } else{
-            ctx.lineTo(x, y);
-            ctx.stroke();
+        function stopPainting() {
+            painting = false;
         }
-    }
 
-    function handleColorClick(event) {
-    const color = event.target.style.backgroundColor;
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
-    }
-
-    function handleRangeChange(event) {
-        const size = event.target.value;
-        ctx.lineWidth = size;
-    }
-
-    function handleModeClick() {
-    if (filling === true) {
-    filling = false;
-    mode.innerText = "Fill";
-    } else {
-    filling = true;
-    mode.innerText = "Paint";  
-    }
-    }
-
-    function handleCanvasClick() {
-        if (filling) {
-        ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        function startPainting() {
+            painting = true;
         }
-    }
 
-    // 우클릭 방지
-    /*
-    function handleCM(event) {
-    event.preventDefault();
-    }
-    */
-
-    /*
-    function handleSaveClick() {
-    const image = canvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.href = image;
-    link.download = "PaintJS[EXPORT]";
-    link.click();
-    }
-    */
-    function handleSaveClick() {
-        const image = canvas.toDataURL("image/png");
-        imageInput.value = image;
-        form.submit();
-    }
-
-    if (canvas) {
-        canvas.addEventListener("mousemove", onMouseMove);
-        canvas.addEventListener("mousedown", startPainting);
-        canvas.addEventListener("mouseup", stopPainting);
-        canvas.addEventListener("mouseleave", stopPainting);
-        canvas.addEventListener("click", handleCanvasClick);
-        // canvas.addEventListener("contextmenu", handleCM);
-
-    }
-
-    Array.from(colors).forEach(color => 
-        color.addEventListener("click", handleColorClick));
-
-        
-    if (range) {
-        range.addEventListener("input", handleRangeChange);
-    }
+        function onMouseMove(event) {
+            const rect = canvas.getBoundingClientRect(); // 캔버스의 위치와 크기를 가져옴
+            const x = event.clientX - rect.left; // 캔버스 내의 X 좌표
+            const y = event.clientY - rect.top; // 캔버스 내의 Y 좌표
+            if (painting) {
+                if (erasing) {
+                    ctx.fillStyle = BACKGROUND_COLOR; // 지우개 색상은 항상 배경색
+                    ctx.fillRect(x - ERASER_SIZE / 2, y - ERASER_SIZE / 2, ERASER_SIZE, ERASER_SIZE);
+                } else {
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                }
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+            }
+        }
     
-    if (mode) {
-        mode.addEventListener("click", handleModeClick);
-    }
 
-    if (saveBtn){
-    saveBtn.addEventListener("click", handleSaveClick);
-    }
+        function handleColorClick(event) {
+            const color = event.target.style.backgroundColor;
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+            erasing = false; // 색상 변경 시 지우개 모드 해제
+        }
+
+        function handleRangeChange(event) {
+            const size = event.target.value;
+            ctx.lineWidth = size;
+        }
+
+        function handleModeClick() {
+            filling = !filling;
+            mode.innerText = filling ? "Paint" : "Fill";
+            erasing = false; // 모드 변경 시 지우개 모드 해제
+        }
+
+        function handleEraserClick() {
+            erasing = !erasing;
+            eraser.innerText = erasing ? "Draw" : "Eraser"; // 지우개 모드 텍스트 변경
+            filling = false; // 지우개 모드 활성화 시 채우기 모드 해제
+            mode.innerText = "Fill";
+        }
+    
+        function handleCanvasClick() {
+            if (filling && !erasing) {
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        function handleClearClick() {
+            ctx.fillStyle = BACKGROUND_COLOR;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function handleSaveClick() {
+            const image = canvas.toDataURL("image/png");
+            imageInput.value = image;
+            form.submit();
+        }
+
+        if (canvas) {
+            canvas.addEventListener("mousemove", onMouseMove);
+            canvas.addEventListener("mousedown", startPainting);
+            canvas.addEventListener("mouseup", stopPainting);
+            canvas.addEventListener("mouseleave", stopPainting);
+            canvas.addEventListener("click", handleCanvasClick);
+        }
+
+        Array.from(colors).forEach(color =>
+            color.addEventListener("click", handleColorClick));
+
+        if (range) {
+            range.addEventListener("input", handleRangeChange);
+        }
+
+        if (mode) {
+            mode.addEventListener("click", handleModeClick);
+        }
+
+        if (eraser) {
+            eraser.addEventListener("click", handleEraserClick);
+        }
+
+        if (clearButton) {
+            clearButton.addEventListener("click", handleClearClick);
+        }
+
+        if (submitBtn) {
+            submitBtn.addEventListener("click", handleSaveClick); // 수정된 부분
+        }
+
+    });
 </script>
+
 {% endblock %}
