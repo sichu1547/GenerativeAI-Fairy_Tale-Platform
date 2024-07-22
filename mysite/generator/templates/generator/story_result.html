@@ -18,48 +18,31 @@
         <div class="header">
             <!-- <h1 class="story-title">📖 {{ title }}</h1> -->
             <div class="audio-buttons">
- 
                 <div class="inner-audio-buttons">
                     <label class="audio-button-label">
-                        <span>A1</span>
-                        <input type="radio" name="voice" value="ko-KR-Standard-A" onclick="selectVoice('ko-KR-Standard-A')">
-                    </label>
-                    <label class="audio-button-label">
-                        <span>B1</span>
-                        <input type="radio" name="voice" value="ko-KR-Standard-B" onclick="selectVoice('ko-KR-Standard-B')">
-                    </label>
-                    <label class="audio-button-label">
-                        <span>C1</span>
-                        <input type="radio" name="voice" value="ko-KR-Standard-C" onclick="selectVoice('ko-KR-Standard-C')">
-                    </label>
-                    <label class="audio-button-label">
-                        <span>D1</span>
-                        <input type="radio" name="voice" value="ko-KR-Standard-D" onclick="selectVoice('ko-KR-Standard-D')">
-                    </label>
-                    <label class="audio-button-label">
-                        <span>A2</span>
                         <input type="radio" name="voice" value="ko-KR-Wavenet-A" onclick="selectVoice('ko-KR-Wavenet-A')">
+                        <span>밀키</span>
                     </label>
                     <label class="audio-button-label">
-                        <span>B2</span>
                         <input type="radio" name="voice" value="ko-KR-Wavenet-B" onclick="selectVoice('ko-KR-Wavenet-B')">
+                        <span>밀순</span>
                     </label>
                     <label class="audio-button-label">
-                        <span>C2</span>
                         <input type="radio" name="voice" value="ko-KR-Wavenet-C" onclick="selectVoice('ko-KR-Wavenet-C')">
+                        <span>밀동</span>
                     </label>
                     <label class="audio-button-label">
-                        <span>D2</span>
                         <input type="radio" name="voice" value="ko-KR-Wavenet-D" onclick="selectVoice('ko-KR-Wavenet-D')">
+                        <span>밀찬</span>
                     </label>
                 </div>
-                <button class="audio-button" onclick="readFullStory()">전체 읽기</button>
+                <button class="audio-button" onclick="readFullStory()">▶️ 전체 읽기</button>
             </div>
             <audio id="ttsAudio" controls>
                 <source id="audioSource" src="" type="audio/mpeg">
                 브라우저가 오디오 기능을 제공하지 않습니다
             </audio>
-            <a href="?tts=true&voice=ko-KR-Standard-A&text=full" download="audio.mp3" id="downloadLink">⬇️</a>
+            <a href="?tts=true&voice=ko-KR-Wavenet-A&text=full" download="audio.mp3" id="downloadLink">⬇️</a>
         </div>
             <div class="book" id="final-book">
             <div class="story-page" id="left-page">
@@ -142,7 +125,7 @@
 
 
         ///////////////////////// TTS /////////////////////////
-        let selectedVoice = 'ko-KR-Standard-A'; // 기본 목소리 설정
+        let selectedVoice = 'ko-KR-Wavenet-A'; // 기본 목소리 설정
         let audio;
 
         // 목소리 선택

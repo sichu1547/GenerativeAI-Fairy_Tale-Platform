@@ -51,6 +51,7 @@
     flex-direction: row;
     margin-left: auto;
     margin-right: 12px;
+    min-width: 155px;
 }
 
 .audio-button {
@@ -71,9 +72,10 @@
 
 .audio-button-label {
     font-family: 'Ownglyph_ryuttung-Rg', Arial, sans-serif;
-    font-size: 11px;
+    font-size: 14px;
     color: white;
     margin: 0 3px;
+    word-break: keep-all;
 }
 
 /* 경고 박스 스타일 */
@@ -105,8 +107,8 @@ input[type="radio"][name="voice"] {
     -webkit-appearance: none; /* 웹킷 브라우저에서 기본 스타일 제거 */
     -moz-appearance: none; /* 모질라 브라우저에서 기본 스타일 제거 */
     appearance: none; /* 기본 브라우저에서 기본 스타일 제거 */
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
     border: 2px solid #ffffff;
     border-radius: 50%;
     outline: none; 
@@ -411,7 +413,10 @@ input[type="text"] {
     }
 }
 
-@media (max-width: 767px) {    
+@media (max-width: 767px) {
+    .inner-audio-buttons {
+        min-width: auto;
+    }    
     p {
         font-size: 22px !important;
         line-height: 120%;
