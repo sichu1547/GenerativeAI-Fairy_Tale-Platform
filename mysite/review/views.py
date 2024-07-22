@@ -9,6 +9,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import DeleteView
 from django.urls import reverse_lazy
 from myaccount.models import Profile
+import base64
+from django.core.files.base import ContentFile
 
 class ReviewView(LoginRequiredMixin, View):
     login_url = '/myaccount/login/'
@@ -31,6 +33,14 @@ class ReviewView(LoginRequiredMixin, View):
             review.story = story
             review.story_title = story.title
             review.profile = profile
+
+            # 이미지 처리
+            image_data = request.POST.get('image_data')
+            if image_data:
+                format, imgstr = image_data.split(';base64,')
+                ext = format.split('/')[-1]
+                review.painting = ContentFile(base64.b64decode(imgstr), name=f'temp.{ext}')
+            print(review.painting)
                 
             review.save()
             return redirect('review:review_success')
@@ -51,9 +61,16 @@ class ReviewListView(View):
     
     def post(self, request, review_id):
         review = get_object_or_404(Review, id=review_id, user=request.user)
-        form = ReviewForm(request.POST, instance=review)
+        form = ReviewForm(request.POST, request.FILES, instance=review)
+        print('POST', request.user, request.user.pk)
         if form.is_valid():
-            form.save()
+            review = form.save(commit=False)
+            image_data = request.POST.get('image_data')
+            if image_data:
+                format, imgstr = image_data.split(';base64,')
+                ext = format.split('/')[-1]
+                review.painting = ContentFile(base64.b64decode(imgstr), name=f'temp.{ext}')
+            review.save()
             return redirect('profile_detail', pk=request.user.pk)
         return render(request, 'review/review_list.html', {'form': form, 'review': review})
 

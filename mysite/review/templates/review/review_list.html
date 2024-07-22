@@ -82,6 +82,118 @@
         -1px 1px 0 #fff,    /* 왼쪽 아래 */
         1px 1px 0 #fff;     /* 오른쪽 아래 */
     }
+
+    
+
+    html, body, div, span, applet, object, iframe,
+    h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+    a, abbr, acronym, address, big, cite, code,
+    del, dfn, em, img, ins, kbd, q, s, samp,
+    small, strike, strong, sub, sup, tt, var,
+    b, u, i, center,
+    dl, dt, dd, ol, ul, li,
+    fieldset, form, label, legend,
+    table, caption, tbody, tfoot, thead, tr, th, td,
+    article, aside, canvas, details, embed, 
+    figure, figcaption, footer, header, hgroup, 
+    menu, nav, output, ruby, section, summary,
+    time, mark, audio, video {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+    }
+    /* HTML5 display-role reset for older browsers */
+    article, aside, details, figcaption, figure, 
+    footer, header, hgroup, menu, nav, section {
+        display: block;
+    }
+    body {
+        line-height: 1;
+    }
+    ol, ul {
+        list-style: none;
+    }
+    blockquote, q {
+        quotes: none;
+    }
+    blockquote:before, blockquote:after,
+    q:before, q:after {
+        content: '';
+        content: none;
+    }
+    table {
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    body {
+        background-color: #f1f4f8;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 
+        Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 50px 0px;
+    }
+
+    .canvas {
+        width: 700px ;
+        height: 700px ;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
+    }
+
+    .controls {
+        margin-top: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .controls .controls__btns {
+        margin-bottom: 30px;
+    }
+
+    .controls__btns button{
+        all: unset;
+        cursor: pointer;
+        background-color: white;
+        padding: 5px 0px;
+        width: 80px;
+        text-align: center;
+        border-radius: 5px;
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
+        border: 2px solid rgba(0, 0, 0, 0.2);
+        color:rgba(0, 0, 0, 0.8);
+        text-transform: uppercase;
+        font-weight: 800;
+        font-size: 12px;
+    }
+
+    .controls__btns button:active {
+        transform: scale(0.98);
+    }
+
+    .controls .controls__colors {
+        display: flex;
+    }
+
+    .controls__colors .controls__color {
+        width: 50px;
+        height: 50px;
+        border-radius: 25px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
+    }
+
+
+    .controls .controls__range{
+        margin-bottom: 30px;
+    }
 </style>
 <div class="review-container gamja-flower-regular">
     <h1>{{ review.story_title }} 독후감 수정하기</h1>
@@ -91,7 +203,7 @@
             <label for="title">💁🏽 독후감의 이름을 수정해주세요!</label>
             {{ form.title }}
         </div>
-        <div class="review-middle">
+        {% comment %} <div class="review-middle">
             <div class="review-question">
                 <label for="main_character">💁🏽 누구의 이야기인가요?</label>
                 {{ form.main_character }}
@@ -109,10 +221,158 @@
         <div class="review-question n">
             <label for="author_thoughts">💁🏽 나의 생각</label>
             {{ form.author_thoughts }}
+        </div> {% endcomment %}
+
+        <canvas id="jsCanvas" class="canvas"></canvas>
+        <div class="controls">
+            <div class="controls__range">
+                <input type="range" id="jsRange"
+                min="0.1" max="5.0" value="2.5" step="0.1"/>
+            </div>
+            <div class="controls__btns">
+                <button id="jsMode" type="button">Fill</button>
+                <button id="jsSave" type="button">Save</button></div>
+            <div class="controls__colors" id="jsColors">
+                <div class="controls__color jsColor" 
+                    style="background-color: black;"></div>
+                <div class="controls__color jsColor" 
+                    style="background-color: white;"></div>
+                <div class="controls__color jsColor" 
+                    style="background-color: red;"></div>
+                <div class="controls__color jsColor" 
+                    style="background-color: orange;"></div>
+                <div class="controls__color jsColor" 
+                    style="background-color: yellow;"></div>
+                <div class="controls__color jsColor" 
+                    style="background-color: green;"></div>
+                <div class="controls__color jsColor" 
+                    style="background-color: blue;"></div>
+                <div class="controls__color jsColor" 
+                    style="background-color: navy;"></div>
+                <div class="controls__color jsColor" 
+                    style="background-color: purple;"></div>
+            </div>
         </div>
+        <input type="hidden" name="image_data" id="jsImageInput">
         <div class="submit-button-container">
             <button type="submit" class="submit-button">저장</button>
         </div>
     </form>
 </div>
+
+<script>
+    const canvas = document.getElementById("jsCanvas");
+    const ctx = canvas.getContext("2d");
+    const colors = document.getElementsByClassName("jsColor");
+    const range = document.getElementById("jsRange");
+    const mode = document.getElementById("jsMode");
+    const saveBtn = document.getElementById("jsSave");
+
+    const form = document.getElementById("jsForm");
+    const imageInput = document.getElementById("jsImageInput");
+
+    const INITIAL_COLOR = "#000000";
+    const CANVAS_SIZE = 700;
+
+    ctx.strokeStyle = "#2c2c2c";
+
+    canvas.width = CANVAS_SIZE;
+    canvas.height = CANVAS_SIZE;
+
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+    ctx.strokeStyle = INITIAL_COLOR;
+    ctx.fillStyle = INITIAL_COLOR;
+    ctx.lineWidth = 2.5; /* 라인 굵기 */
+
+    let painting = false;
+    let filling = false;
+
+    function stopPainting() {
+        painting = false;
+    }
+
+    function startPainting() {
+        painting = true;
+    }
+
+    function onMouseMove(event) {
+        const x = event.offsetX;
+        const y = event.offsetY;
+        if (!painting) {
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+        } else{
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        }
+    }
+
+    function handleColorClick(event) {
+        const color = event.target.style.backgroundColor;
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+    }
+
+    function handleRangeChange(event) {
+        const size = event.target.value;
+        ctx.lineWidth = size;
+    }
+
+    function handleModeClick() {
+        if (filling === true) {
+            filling = false;
+            mode.innerText = "Fill";
+        } else {
+            filling = true;
+            mode.innerText = "Paint";  
+        }
+    }
+
+    function handleCanvasClick() {
+        if (filling) {
+            ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        }
+    }
+
+    function handleSaveClick() {
+        const image = canvas.toDataURL("image/png");
+        imageInput.value = image;
+        form.submit();
+    }
+
+    if (canvas) {
+        canvas.addEventListener("mousemove", onMouseMove);
+        canvas.addEventListener("mousedown", startPainting);
+        canvas.addEventListener("mouseup", stopPainting);
+        canvas.addEventListener("mouseleave", stopPainting);
+        canvas.addEventListener("click", handleCanvasClick);
+    }
+
+    Array.from(colors).forEach(color => 
+        color.addEventListener("click", handleColorClick));
+
+    if (range) {
+        range.addEventListener("input", handleRangeChange);
+    }
+
+    if (mode) {
+        mode.addEventListener("click", handleModeClick);
+    }
+
+    if (saveBtn){
+        saveBtn.addEventListener("click", handleSaveClick);
+    }
+
+    // Load existing painting if available
+    const existingPainting = "{{ review.painting.url }}";
+    if (existingPainting) {
+        const img = new Image();
+        img.src = existingPainting;
+        img.onload = function() {
+            ctx.drawImage(img, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        }
+    }
+</script>
 {% endblock %}
