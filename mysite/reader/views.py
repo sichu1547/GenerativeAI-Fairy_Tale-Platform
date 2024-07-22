@@ -59,8 +59,8 @@ def list(request):
     return render(request, 'reader/index.html', {'story_all': story_list})
 
 def search(request):
-    keyword = request.GET.get('keyword')
-
+    keyword = request.GET.get('keyword', '')
+    
     if keyword:
         if keyword == 'Generative':
             stories = GenStory.objects.all()
