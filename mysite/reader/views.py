@@ -60,16 +60,28 @@ def list(request):
 
 def search(request):
     keyword = request.GET.get('keyword')
+
     if keyword:
         if keyword == 'Generative':
             stories = GenStory.objects.all()
         else:
             stories = Story.objects.filter(Q(title__icontains=keyword) | Q(category__icontains=keyword))
     else:
-        stories = Story.objects.all()      
-    stories = stories.order_by('-starpoint')
+        stories = Story.objects.all()
 
-    return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
+    option = request.GET.get('options', 'high-rating')
+    
+    # 옵션에 따른 정렬
+    if option == 'high-rating':
+        stories = stories.order_by('-starpoint')
+    elif option == 'low-rating':
+        stories = stories.order_by('starpoint')
+    elif option == 'name':
+        stories = stories.order_by('title')
+    elif option == 'random':
+        stories = stories.order_by('?')
+
+    return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword, 'selected_option': option})
 
 def story_detail(request, id):
     # if not request.user.is_authenticated:

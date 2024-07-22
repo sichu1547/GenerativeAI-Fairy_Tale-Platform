@@ -47,6 +47,17 @@
                 🔍 검색 결과
             {% endif %}
         </h1>
+        <form class="sorted_story" method="GET" action="{% url 'reader:search' %}">
+            <input type="hidden" id="keyword" name="keyword" value="{{ keyword }}">
+            
+            <label class="sorted_method" for="options"><정렬 방법 선택></label>
+            <select id="options" name="options" onchange="this.form.submit()">
+                <option value="high-rating" {% if selected_option == 'high-rating' %}selected{% endif %}>별점 높은 순</option>
+                <option value="low-rating" {% if selected_option == 'low-rating' %}selected{% endif %}>별점 낮은 순</option>
+                <option value="name" {% if selected_option == 'name' %}selected{% endif %}>이름 순</option>
+                <option value="random" {% if selected_option == 'random' %}selected{% endif %}>랜덤 순</option>
+            </select>
+        </form>
         <div class="books">
             <ul class="gallery">
                 {% for story in stories %}
