@@ -194,6 +194,7 @@ def generate_image(sentence):
     # except Exception as e:
     #     print('실패')
     #     return ""
+    return ""
 
 def save_final_story_to_database(final_story, profile, user, title):
     try:
