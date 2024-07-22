@@ -9,6 +9,10 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <script type="text/javascript">
+        // Django 템플릿에서 CSRF 토큰을 가져와서 JavaScript 변수에 저장
+        var csrfToken = '{{ csrf_token }}';
+    </script>
 </head>
 {% endblock %}
 {% block content %}
@@ -84,7 +88,7 @@
                         {% include 'registration/form_errors.html' %}
 
                         <div class="container-login100-form-btn">
-                            <button type="summit" class="login100-form-btn">
+                            <button type="submit" class="login100-form-btn">
                                 가입!
                             </button>
                         </div>
@@ -149,6 +153,35 @@
         if ('{% if form.errors %}true{% else %}false{% endif %}' == 'true') {
             $('#privacy-section').addClass('hidden');
             $('#signup-container').removeClass('hidden');
+        }
+
+        // CSRF 토큰을 AJAX 요청에 포함
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken);
+                }
+            }
+        });
+
+        // 예제 AJAX 요청
+        function submitData() {
+            $.ajax({
+                type: "POST",
+                url: "/your-url/",
+                data: {
+                    username: $('#id_username').val(),
+                    email: $('#id_email').val()
+                },
+                success: function(response) {
+                    // 성공 처리
+                    console.log("성공:", response);
+                },
+                error: function(xhr, status, error) {
+                    // 에러 처리
+                    console.error("에러:", error);
+                }
+            });
         }
     </script>
     {% endblock %}
