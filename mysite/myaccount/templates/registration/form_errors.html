@@ -1,17 +1,7 @@
-{% if form.errors %}
-  {% for field in form %}
+{% if field.errors %}
+  <div id="{{ field.name }}-error" class="errorlist">
     {% for error in field.errors %}
-      <!-- 필드 오류를 출력한다. -->
-      <div class="errorlist">
-        <strong>{{ field.label }}</strong>
-        {{ error }}
-      </div>
+      <strong>{{ field.label }}</strong> {{ error }}
     {% endfor %}
-  {% endfor %}
-  {% for error in form.non_field_errors %}
-    <!-- 넌필드 오류를 출력한다. -->
-    <div class="errorlist">
-      <strong>{{ error }}</strong>
-    </div>
-  {% endfor %}
+  </div>
 {% endif %}

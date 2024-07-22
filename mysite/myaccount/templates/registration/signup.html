@@ -9,6 +9,26 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <style>
+        .warning-text {
+            font-size: 0.8em;
+            color: #FF0000;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+        .errorlist {
+            font-size: 0.8em;
+            color: #FF0000;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+        .successlist {
+            color: blue;
+        }
+        .faillist {
+            color: red;
+        }        
+    </style>
 </head>
 {% endblock %}
 {% block content %}
@@ -22,8 +42,6 @@
                         회원 가입
                     </span>
 
-
-                    <!-- 개인정보 동의 섹션 -->
                     <div id="privacy-section" class="privacy-section">
                         <div class="privacy-title" id="privacy-title2">
                             <input type="checkbox" id="agree_all" name="agree_all">
@@ -64,27 +82,35 @@
                             <span class="focus-input100"></span>
                             <span class="label-input100">아이디</span>
                         </div>
+                        {% include 'registration/form_errors.html' with field=form.username %}
+                        <p class="warning-text">* 영문, 숫자 포함 6-10자까지 가능합니다.</p>
                         
                         <div class="wrap-input100 validate-input" data-validate="Password is required">
-                            <input class="input100" type="password" name="password1" required>
+                            <input class="input100" id="password1" type="password" name="password1" required>
                             <span class="focus-input100"></span>
                             <span class="label-input100">비밀번호</span>
                         </div>
+                        {% comment %} {% include 'registration/form_errors.html' with field=form.password1 %} {% endcomment %}
+                        <p class="warning-text">* 영문, 숫자, 특수문자 포함 10-20자 이내로 입력 가능합니다.</p>
+                        
                         <div class="wrap-input100 validate-input" data-validate="Confirm Password is required">
-                            <input class="input100" type="password" name="password2" required>
+                            <input class="input100" id="password2" type="password" name="password2" required>
                             <span class="focus-input100"></span>
                             <span class="label-input100">비밀번호 확인</span>
                         </div>
+                        <div id="password2-error" class="faillist" style="display: none;"></div>
+                        <div id="password2-error" class="errorlist" style="display: none;"></div>
+                        {% include 'registration/form_errors.html' with field=form.password2 %}
+                        
                         <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
                             <input class="input100" type="email" name="email" required>
                             <span class="focus-input100"></span>
                             <span class="label-input100">이메일</span>
                         </div>
+                        {% include 'registration/form_errors.html' with field=form.email %}
                         
-                        {% include 'registration/form_errors.html' %}
-
                         <div class="container-login100-form-btn">
-                            <button type="summit" class="login100-form-btn">
+                            <button type="submit" class="login100-form-btn">
                                 가입!
                             </button>
                         </div>
@@ -130,12 +156,10 @@
     <script src="{% static 'js/main.js' %}"></script>
 
     <script>
-        // 모든 체크박스 선택/해제
         $('#agree_all').click(function() {
             $('input[type="checkbox"]').prop('checked', this.checked);
         });
 
-        // 다음 버튼 클릭 시 애니메이션 효과로 회원가입 폼 보이기
         $('#next-button').click(function(event) {
             if (!$('#agree_terms').prop('checked') || !$('#agree_privacy').prop('checked')) {
                 alert('필수 항목에 동의해 주세요.');
@@ -145,12 +169,43 @@
             $('#privacy-section').hide();
             $('#signup-container').removeClass('hidden').addClass('slide-left');
         });
-        // 폼 제출 시 에러가 발생하면 가입 폼을 보여줌
+
         if ('{% if form.errors %}true{% else %}false{% endif %}' == 'true') {
             $('#privacy-section').addClass('hidden');
             $('#signup-container').removeClass('hidden');
         }
+
+        // 실시간 비밀번호 일치 여부 확인
+        function checkPasswordMatch() {
+            var password1 = $('#password1').val();
+            var password2 = $('#password2').val();
+            if (password1 !== ''){
+                if (password1 === password2) {
+                    $('#password2-error.errorlist').hide();
+                    $('#password2-error').text('비밀번호가 일치합니다.').removeClass('faillist').addClass('successlist').show();              
+                } else {
+                    $('#password2-error').text('비밀번호가 일치하지 않습니다.').removeClass('successlist').addClass('faillist').show();
+                }
+            } else {
+                $('#password2-error').hide();
+            }
+        }
+        $(document).ready(function() {
+        // 처음 제출 시 에러 메시지 활성화
+        $('form').on('submit', function(event) {
+            var password1 = $('#password1').val();
+            var password2 = $('#password2').val();
+            if (password1 !== password2) {
+                $('#password2-error').text('비밀번호가 일치하지 않습니다.').removeClass('successlist').addClass('faillist').show();
+            }
+        });
+
+    // 실시간 비밀번호 일치 여부 확인
+    $('#password1, #password2').on('input', checkPasswordMatch);
+});
+
+        $('#password1, #password2').on('input', checkPasswordMatch);
     </script>
-    {% endblock %}
 </body>
+{% endblock %}
 </html>

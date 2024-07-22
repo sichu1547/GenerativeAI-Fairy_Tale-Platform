@@ -249,4 +249,7 @@ def profile_delete(request, pk):
     return redirect('profile')
 
 def privacy_policy_view(request):
-    return render(request, 'registration/privacy_policy.html') 
+    return render(request, 'privacy_policy.html') 
+
+def terms(request):
+    return render(request, 'terms.html') 

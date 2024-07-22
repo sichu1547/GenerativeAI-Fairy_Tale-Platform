@@ -37,7 +37,22 @@
 <style type="text/css" id="wp-custom-css">
     
 </style>
-
+<style>
+    .footer {
+        background-color: #000; 
+        padding: 20px 0;
+    }
+    .footer .site-info, .footer .footer-credit {
+        color: #fff; 
+    }
+    .footer .footer-credit {
+        text-decoration: none; /* 밑줄 제거 */
+        color: #fff; /* 흰색 링크 */
+    }
+    .footer .footer-credit:hover {
+        color: #ddd; /* 링크에 마우스를 올렸을 때 밝은 회색 */
+    }
+</style>
 </head>
 <body class="home page-template page-template-page-templates page-template-template-home page-template-page-templatestemplate-home-php page page-id-1863 has-sidebar-right elementor-default elementor-kit-2257">
 <div id="page" class="site">
@@ -125,6 +140,7 @@
             </div>
             <div class="footer-credits">
                 <li><a class="footer-credit" href="{% url 'privacy_policy' %}">개인정보처리방침</a></li>
+                <li><a class="footer-credit" href="{% url 'terms' %}">이용약관</a></li>
             </div>
         </div>
     </div>
