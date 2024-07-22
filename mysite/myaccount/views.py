@@ -224,7 +224,7 @@ def attendance_check(request):
     
 from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt
+# @csrf_exempt
 @login_required
 def reset_show_attendance_modal(request):
     request.session['show_attendance_modal'] = False

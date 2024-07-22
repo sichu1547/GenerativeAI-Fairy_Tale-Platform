@@ -207,7 +207,7 @@ memory = ConversationBufferMemory(memory_key="history", input_key="input", outpu
 # Create the conversation chain
 qa = ConversationChain(llm=chat, memory=memory)
 
-@csrf_exempt
+# @csrf_exempt
 def answer_question(request, story_id):
     if request.method == 'POST':
         profile_id = request.POST.get('profile_id')
