@@ -62,7 +62,7 @@
     
     <div class="nav-container">
         
-        <nav id="site-navigation" class="main-navigation" role="navigation"><div class="cursor"><img class='pen' alt="Portfolio Section" src="{% static 'images/연필.png' %}"></div>
+        <nav id="site-navigation" class="main-navigation" role="navigation">
             <div class="container nav-bar">
                 <div class="flex-row">
                     <div class="module left site-title-container">
@@ -181,14 +181,8 @@
 </script>
 
 <script>
-    let mouseCursor = document.querySelector(".cursor");
-  window.addEventListener("scroll", cursor);
-  window.addEventListener("mousemove", cursor);
-  //커스텀 커서의 left값과 top값을 커서의 XY좌표값과 일치시킴
-  function cursor(e) {
-    mouseCursor.style.left = e.pageX + "px";
-    mouseCursor.style.top = e.pageY - scrollY + "px";
-}
+
+
 // 현재 페이지의 URL에서 경로를 추출하는 함수
 function getPathPrefix(url) {
     // URL 객체를 생성하여 pathname을 얻습니다.
