@@ -108,15 +108,8 @@
             rightImage.innerHTML =''
 
             leftImage.innerHTML = isValidUrl(generatedImages[leftIndex]) ? `<img class="final-story-image" src="${generatedImages[leftIndex]}" alt="Generated Story Image">` : `<img class="final-story-image" src="${defaultImage}" alt="Generated Story Image">`;
-            if (rightIndex < totalParts - 1) {
+            if (rightIndex < totalParts) {
                 rightImage.innerHTML = isValidUrl(generatedImages[rightIndex]) ? `<img class="final-story-image" src="${generatedImages[rightIndex]}" alt="Generated Story Image">` : `<img class="final-story-image" src="${defaultImage}" alt="Generated Story Image">`
-            }
-
-            if (rightIndex == totalParts - 1) {
-                rightImage.style.display='none';
-            }
-            else {
-                rightImage.style.display='flex';
             }
 
             const prevButton = document.getElementById('prev-btn');

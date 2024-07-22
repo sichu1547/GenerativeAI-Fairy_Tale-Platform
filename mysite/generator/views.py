@@ -93,7 +93,7 @@ def create_story(request):
         else:
             story = initial_story + f" 주요 키워드: {user_input}"
 
-        # 스테이지가 3보다 작은 경우, 이야기를 생성하는 단계를 진행
+        # 스테이지가 3보다 작은 경우 이야기를 생성하는 단계를 진행
         if stage < 3:
             role = system_roles[stage]
             response = generate_response(story, role)
@@ -127,7 +127,7 @@ def create_story(request):
             }
             return render(request, 'generator/create_story.html', context)
         else:
-            # 스테이지가 3인 경우, 최종 이야기 결말을 생성
+            # 스테이지가 3인 경우, 최종 이야기 결말을 생성 (+마지막 이미지 생성 추가)
             role = system_roles[3]
             final_prompt = f"{story}\n이 동화를 어떻게 마무리할까요?"
             final_response = generate_response(final_prompt, role, max_tokens=300)
@@ -141,6 +141,11 @@ def create_story(request):
             if final_generated_story.strip() not in generated_story_parts:
                 generated_story_parts.append(final_generated_story.strip())
            
+            # 생성된 이야기를 바탕으로 이미지를 생성하고 리스트에 추가
+            image_url = generate_image(generated_story_parts[-1])
+            if not image_url:
+                image_url = ""
+            generated_images.append(image_url)
             
             # 최종 이야기 전체를 하나의 문자열로 결합하여 분할
             final_story = " ".join(generated_stories)
@@ -183,11 +188,12 @@ def generate_image(sentence):
     #         style="natural"
     #     )
     #     image_url = response.data[0].url
+    #     print('성공')
     #     return image_url
 
     # except Exception as e:
+    #     print('실패')
     #     return ""
-    return ""
 
 def save_final_story_to_database(final_story, profile, user, title):
     try:
