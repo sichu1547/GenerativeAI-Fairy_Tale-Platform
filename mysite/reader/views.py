@@ -80,8 +80,11 @@ def search(request):
         stories = stories.order_by('title')
     elif option == 'random':
         stories = stories.order_by('?')
+        
+    # 검색 결과가 없는 경우를 확인
+    no_results = len(stories) == 0
 
-    return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword, 'selected_option': option})
+    return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword, 'selected_option': option, 'no_results': no_results})
 
 def story_detail(request, id):
     # if not request.user.is_authenticated:

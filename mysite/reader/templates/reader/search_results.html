@@ -44,9 +44,14 @@
             {% elif keyword == '샤를페로' %}
                 📙 샤를페로
             {% else %}
-                🔍 검색 결과
+                {% if not no_results %}
+                    🔍 검색 결과
+                {% else %}
+                    😢 검색 결과가 없습니다
+                {% endif %}
             {% endif %}
         </h1>
+        {% if not no_results %}
         <form class="sorted_story" method="GET" action="{% url 'reader:search' %}">
             <input type="hidden" id="keyword" name="keyword" value="{{ keyword }}">
             
@@ -58,6 +63,7 @@
                 <option value="random" {% if selected_option == 'random' %}selected{% endif %}>랜덤 순</option>
             </select>
         </form>
+        {% endif %}
         <div class="books">
             <ul class="gallery">
                 {% for story in stories %}
