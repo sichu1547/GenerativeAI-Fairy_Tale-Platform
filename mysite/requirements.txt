@@ -21,3 +21,4 @@ gunicorn
 langchain_community
 mysqlclient
 mysql-connector-python
+django-axes
