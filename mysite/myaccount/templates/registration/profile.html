@@ -33,6 +33,7 @@
                     <p class="id-avatar-p">
                         <label class="id-avatar-label" for="id_avatar">프로필 사진 :</label>
                         <input type="file" name="avatar" accept="image/*" id="id_avatar">
+                        <label class="id-avatar-label" for="id_avatar">※ 5MB이하의 이미지 파일만 등록 가능합니다.</label>
                     </p>
                     <button type="submit" id="save-button">저장하기</button>
                 </div>
@@ -71,6 +72,23 @@
             document.getElementById('save-button').textContent = "저장하기";
             document.getElementById('profile-form').action = "/myaccount/profile/";
         };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            {% if form.errors %}
+                let errors = [];
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        errors.push("{{ error|escapejs }}");
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    errors.push("{{ error|escapejs }}");
+                {% endfor %}
+                if (errors.length > 0) {
+                    alert(errors.join("\\n"));
+                }
+            {% endif %}
+        });
     </script>
 </body>
 

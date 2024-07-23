@@ -36,21 +36,6 @@ import random
 from generator.models import GenStory
 import mysql.connector
 
-# def search(request):
-#     keyword = request.GET.get('keyword')
-#     search_type = request.GET.get('search_type', 'title')
-#     if keyword:
-#         if search_type == 'title':
-#             stories = Story.objects.filter(title__icontains=keyword)
-#         else:
-#             stories = Story.objects.filter(category__icontains=keyword)
-#     else:
-#         stories = Story.objects.all() 
-#    # 정수형 필드에 대해 정렬 적용
-#     stories = stories.order_by('starpoint')
-        
-#     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
-
 def list(request):
     story_list = Story.objects.all()
     search_key = request.GET.get('keyword')
@@ -207,7 +192,7 @@ memory = ConversationBufferMemory(memory_key="history", input_key="input", outpu
 # Create the conversation chain
 qa = ConversationChain(llm=chat, memory=memory)
 
-@csrf_exempt
+# @csrf_exempt
 def answer_question(request, story_id):
     if request.method == 'POST':
         profile_id = request.POST.get('profile_id')
@@ -294,19 +279,13 @@ def rate_story(request, id):
                     story.starsum += starpoint
                     story.starpoint = story.starsum / story.starcount
                     story.save()
-                #return HttpResponse(status=200)
             except ValueError:
-                pass
+                print('wrong value of point')
     if keyword:
         return HttpResponseRedirect(reverse('reader:search') + f'?keyword={keyword}')
     else:
         return HttpResponseRedirect(reverse('reader:search'))
     
-    # return JsonResponse({'message': '별점이 저장되었습니다!'}, status=200)
-    # if keyword:
-    #     return HttpResponseRedirect(reverse('reader:search') + f'?keyword={keyword}')
-    # else:
-    #     return HttpResponseRedirect(reverse('reader:search'))
         
 def genstory_detail(request, story_id):
     story = get_object_or_404(GenStory, id=story_id)   

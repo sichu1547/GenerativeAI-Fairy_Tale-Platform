@@ -23,7 +23,7 @@ def generate_image(sentence):
     #     return image_url
 
     # except Exception as e:
-    #     print('실패', e)
+    #     print('이미지 생성 실패', e)
     return ""
 
 def generate_tts(request, ssml_text):
@@ -49,4 +49,4 @@ def generate_tts(request, ssml_text):
         return HttpResponse(audio_stream.getvalue(), content_type='audio/mpeg')
     
     except Exception as e:
-        return HttpResponse(f"Error: {e}", status=500)
+        return HttpResponse(f"TTS Error: {e}", status=500)

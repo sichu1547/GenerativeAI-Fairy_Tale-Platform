@@ -58,7 +58,7 @@ class QuizView(View):
 
             return HttpResponse(audio_stream.getvalue(), content_type='audio/mpeg')
         except Exception as e:
-            return HttpResponse(f"Error: {e}", status=500)    
+            return HttpResponse(f"TTS Error: {e}", status=500)    
 
     def post(self, request, id):
         answer = request.POST.get('answer')

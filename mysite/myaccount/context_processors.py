@@ -10,5 +10,5 @@ def profile_name(request):
                 context['profile_name'] = profile.name
                 context['attendance_dates'] = profile.attendance_dates
             except Profile.DoesNotExist:
-                pass
+                print('Profie does not exist')
     return context

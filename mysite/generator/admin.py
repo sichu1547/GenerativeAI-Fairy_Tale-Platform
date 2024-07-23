@@ -8,6 +8,5 @@ class GenStoryAdmin(admin.ModelAdmin):
     list_display_links = ['id', 'title']
     ordering = ['id']
     search_fields = ['body']
-    #list_per_page = 3
 
 admin.site.register(GenStory, GenStoryAdmin)

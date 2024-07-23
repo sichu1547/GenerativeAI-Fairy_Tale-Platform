@@ -41,7 +41,6 @@ class Profile(models.Model):
 class ReadingHistory(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reading_histories')
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='reading_histories')
-    #story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='reading_histories')
     story_title = models.CharField(max_length=200, default='')
     story_id = models.IntegerField(default=4962)
     read_at = models.DateTimeField(auto_now_add=True)
