@@ -24,7 +24,7 @@
                             <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 text-center">
                                 <h1><img src="{% static 'images/메인로고.png' %}"></h1>
                                 <form action="{% url 'reader:search' %}" method="GET" style="display: inline;">
-                                    <input type='text' name='keyword' value="{{ keyword }}">
+                                    <input type='text' class="search" name='keyword' value="{{ keyword }}" placeholder="동화 제목을 입력하세요...">
                                     <button type="submit" style="border: none; background: none;">
                                         <img src="{% static 'images/검색바.png' %}" alt="검색">
                                     </button>

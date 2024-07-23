@@ -318,6 +318,18 @@ input.input100 {
   padding: 28px 3px 3px 26px !important;
 }
 
+.search {
+  font-family: 'Pretendard-Regular';
+  background: #f5f5f5;
+  border: 1px solid #eee;
+  padding-left: 20px;
+  font-weight: 500;
+  border-radius: 5px !important;
+  margin-top: auto;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
 /*---------------------------------------------*/
 
 .focus-input100 {
@@ -867,8 +879,8 @@ ul.slides img {
 
 
 .footer-credit {
-  font-family: 'Montserrat-Regular';
-  font-size: 11px;
+  font-family: 'Pretendard-Regular';
+  font-size: 14px;
   font-weight: normal;
 }
 

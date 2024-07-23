@@ -15,6 +15,7 @@ class Review(models.Model):
     main_character = models.TextField(default='')  # 주인공에 대한 내용
     ending = models.TextField(default='')          # 결말에 대한 내용
     author_thoughts = models.TextField(default='') # 필자의 생각
+    painting = models.ImageField(upload_to='review_paintings/', null=True, blank=True)
 
     def __str__(self):
         return self.title
