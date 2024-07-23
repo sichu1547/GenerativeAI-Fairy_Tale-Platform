@@ -23,6 +23,7 @@ from reader.models import Story
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', account_views.index, name='index'),
+    path('myaccount/', include('myaccount.urls')),
     path('myaccount/', include('allauth.urls')),  
     path('signup/', account_views.signup, name='signup'),  # 회원가입 URL
     path('reader/', include('reader.urls')),
