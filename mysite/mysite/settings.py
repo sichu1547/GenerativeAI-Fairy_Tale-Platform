@@ -294,7 +294,7 @@ GOOGLE_APPLICATION_CREDENTIALS = env('GOOGLE_APPLICATION_CREDENTIALS')
 # Axes 설정
 AXES_FAILURE_LIMIT = 5  # 최대 실패 시도 횟수
 AXES_COOLOFF_TIME = timedelta(minutes=30)  # 차단 기간
-AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = True
 AXES_LOCKOUT_TEMPLATE = 'lockout.html'  # 차단 시 보여줄 템플릿
 AXES_LOCKOUT_URL = '/locked-out/'  # 차단 시 리디렉션할 URL
-AXES_RESET_ON_SUCCESS = False
+AXES_RESET_ON_SUCCESS = True # 로그인 성공하면 차단 해제
+AXES_LOCKOUT_PARAMETERS = [['ip_address', 'username']]
