@@ -60,7 +60,6 @@ INSTALLED_APPS = [
     "generator",
     'quiz',
     #'debug_toolbar',
-    # all auth
     #"django.contrib.sites",
     'allauth',
     'allauth.account',
