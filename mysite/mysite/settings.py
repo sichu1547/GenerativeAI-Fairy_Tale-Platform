@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import environ
 import os
+from datetime import timedelta
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -69,11 +70,13 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.kakao',
     "mine",
     'review',
+    'axes',
 ]
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
+    'axes.backends.AxesBackend',
 ]
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
@@ -89,6 +92,7 @@ MIDDLEWARE = [
     "myaccount.custom_middleware.UserSessionMiddleware",  # 사용자 정의 미들웨어 추가
     "allauth.account.middleware.AccountMiddleware",
     'myaccount.profile_middleware.ProfileMiddleware',
+    'axes.middleware.AxesMiddleware',
     #"debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
@@ -278,3 +282,11 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 GOOGLE_APPLICATION_CREDENTIALS = env('GOOGLE_APPLICATION_CREDENTIALS')
+
+# Axes 설정
+AXES_FAILURE_LIMIT = 5  # 최대 실패 시도 횟수
+AXES_COOLOFF_TIME = timedelta(minutes=30)  # 차단 기간
+AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = True
+AXES_LOCKOUT_TEMPLATE = 'lockout.html'  # 차단 시 보여줄 템플릿
+AXES_LOCKOUT_URL = '/locked-out/'  # 차단 시 리디렉션할 URL
+AXES_RESET_ON_SUCCESS = False

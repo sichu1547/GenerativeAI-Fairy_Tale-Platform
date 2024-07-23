@@ -20,6 +20,9 @@ from django.shortcuts import render
 from myaccount import views as account_views
 from reader.models import Story
 
+def lockout(request):
+    return render(request, 'lockout.html')
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', account_views.index, name='index'),
@@ -31,6 +34,7 @@ urlpatterns = [
     path('quiz/', include('quiz.urls')),
     path('mine/', include('mine.urls')),
     path('review/', include('review.urls')),
+    path('locked-out/', lockout, name='lockout'),
 ]
 
 from django.conf import settings
