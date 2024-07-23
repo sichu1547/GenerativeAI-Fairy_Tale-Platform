@@ -11,6 +11,12 @@
     font-weight: 400;
     font-style: normal;
 }
+@font-face {
+    font-family: 'Ownglyph_ryuttung-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_ryuttung-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
 
 
 .search-results-container {
@@ -210,4 +216,21 @@
     right: 0;
     top: 200px; /* 필요에 따라 조정 가능 */
     width: 200px; /* 필요에 따라 조정 가능 */
+}
+
+.sorted_method, #options {
+    font-family: 'Pretendard-Regular';
+    font-size: 16px;
+    font-weight: normal;
+    color: #686868;
+}
+
+#options {
+    background: rgba(255, 255, 255);
+}
+
+.sorted_story {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

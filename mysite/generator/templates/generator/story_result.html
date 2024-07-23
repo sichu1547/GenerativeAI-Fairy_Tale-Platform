@@ -17,26 +17,17 @@
     <div class="story-container">
         <div class="header">
             <!-- <h1 class="story-title">📖 {{ title }}</h1> -->
-            <div class="audio-buttons">
-                <div class="inner-audio-buttons">
-                    <label class="audio-button-label">
-                        <input type="radio" name="voice" value="ko-KR-Wavenet-A" onclick="selectVoice('ko-KR-Wavenet-A')">
-                        <span>밀키</span>
-                    </label>
-                    <label class="audio-button-label">
-                        <input type="radio" name="voice" value="ko-KR-Wavenet-B" onclick="selectVoice('ko-KR-Wavenet-B')">
-                        <span>밀순</span>
-                    </label>
-                    <label class="audio-button-label">
-                        <input type="radio" name="voice" value="ko-KR-Wavenet-C" onclick="selectVoice('ko-KR-Wavenet-C')">
-                        <span>밀동</span>
-                    </label>
-                    <label class="audio-button-label">
-                        <input type="radio" name="voice" value="ko-KR-Wavenet-D" onclick="selectVoice('ko-KR-Wavenet-D')">
-                        <span>밀찬</span>
-                    </label>
+            <div class="tts-buttons">
+                <div class="inner-tts-buttons">
+                    <label for="options" class="voice-label">목소리 선택:  </label>
+                    <select id="options" name="voice" onchange="selectVoice(this.value)">
+                        <option value="ko-KR-Wavenet-A">밀키</option>
+                        <option value="ko-KR-Wavenet-B">밀순</option>
+                        <option value="ko-KR-Wavenet-C">밀동</option>
+                        <option value="ko-KR-Wavenet-D">밀찬</option>
+                    </select>
                 </div>
-                <button class="audio-button" onclick="readFullStory()">▶️ 전체 읽기</button>
+                <button class="tts-button" onclick="readFullStory()">▶️ 전체 읽기</button>
             </div>
             <audio id="ttsAudio" controls>
                 <source id="audioSource" src="" type="audio/mpeg">

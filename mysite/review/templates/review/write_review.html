@@ -1,161 +1,20 @@
 {% extends "base.html" %}
 {% load static %}
 
+<head>
+    <title>{% block title %}{{ story.title }} 독후감 쓰기</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/review.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+{% endblock %}
+
 {% block content %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&display=swap" rel="stylesheet">
-<style>
-    html, body {
-        height: 100%; /* 전체 높이 차지 */
-        margin: 0;
-        padding: 0;
-    }
-    .gamja-flower-regular {
-        font-family: "Gamja Flower", sans-serif;
-        font-weight: 400;
-        font-style: normal;
-    }
-    .review-container {
-        background: url("{% static 'images/배경.png' %}") no-repeat center center;
-        background-size: cover;
-        padding: 20px;
-        border-radius: 10px;
-        width: 100%;
-        height: 100%; /* 전체 높이 차지 */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center; /* 수직 가운데 정렬 */
-    }
-    .review-container h1 {
-        text-align: center;
-        margin-bottom: 20px;
-        font-weight: bold;
-        color: black; /* 텍스트 색상 */
-        margin-bottom: 5px;
-        font-size: 40px; /* 절대 크기 */
-    }
-    .review-question {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-    }
-    .review-question label {
-        font-weight: bold;
-        color: black; /* 텍스트 색상 */
-        margin-bottom: 5px;
-        font-size: 25px; /* 절대 크기 */
-    }
-    
-    .review-question textarea {
-        width: 100%;
-        height: 100px;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        resize: none;
-        font-size: 25px; /* 절대 크기 */
-    }
-
-    .submit-button-container {
-        display: flex;
-        justify-content: center; /* 수평 가운데 정렬 */
-        width: 100%;
-        margin-top: 20px;
-    }
-    .submit-button {
-        padding: 10px 20px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 1.2em;
-    }
-    .submit-button:hover {
-        background-color: #333333;
-    }
-    .review-middle {
-        display: flex; /* 부모 요소를 flex container로 설정 */
-        justify-content: space-between; /* 자식 요소들 사이에 균등한 간격 배분 */
-        gap: 10px; /* 자식 요소들 사이에 간격 설정 */
-    }
-    .review-middle textarea {
-        height: 500px;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        resize: none;
-    }
-    .n {
-        text-shadow:
-        -1px -1px 0 #fff,   /* 왼쪽 위 */
-        1px -1px 0 #fff,    /* 오른쪽 위 */
-        -1px 1px 0 #fff,    /* 왼쪽 아래 */
-        1px 1px 0 #fff;     /* 오른쪽 아래 */
-    }
-
-    .canvas {
-        width: 100%; /* 화면 크기에 맞게 조정 */
-        height: 500px; /* 화면 크기에 맞게 조정 */
-        background-color: white;
-        border-radius: 15px;
-        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
-    }
-
-    .controls {
-        margin-top: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .controls_btns {
-        display: flex;
-        justify-content: center; /* 가운데 정렬 */
-        gap: 10px; /* 버튼 사이에 10px 간격 추가 */
-        margin: 20px;
-    }
-
-    .controls__btns button {
-        all: unset;
-        cursor: pointer;
-        background-color: white;
-        padding: 5px 0px;
-        width: 80px;
-        text-align: center;
-        border-radius: 5px;
-        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
-        border: 2px solid rgba(0, 0, 0, 0.2);
-        color: rgba(0, 0, 0, 0.8);
-        text-transform: uppercase;
-        font-weight: 800;
-        font-size: 12px;
-    }
-
-    .controls__btns button:active {
-        transform: scale(0.98);
-    }
-
-    .controls .controls__colors {
-        display: flex;
-        margin-top: 20px;
-    }
-
-    .controls__colors .controls__color {
-        width: 50px;
-        height: 50px;
-        border-radius: 25px;
-        cursor: pointer;
-        box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
-    }
-
-    .controls .controls__range {
-        margin-bottom: 30px;
-    }
-</style>
 <div class="review-container gamja-flower-regular">
     <h1>{{ story.title }} 독후감 쓰기</h1>
     <form id="jsForm" method="post">
@@ -176,9 +35,9 @@
                 min="0.1" max="5.0" value="2.5" step="0.1"/>
             </div>
             <div class="controls__btns">
-                <button type="button" id="jsMode">Fill</button>
-                <button type="button" id="jsEraser">Eraser</button> <!-- 지우개 버튼 추가 -->
-                <button type="button" id="jsClear">Clear</button> <!-- Clear 버튼 추가 -->
+                <button type="button" id="jsMode">채우기</button>
+                <button type="button" id="jsEraser">지우기</button> <!-- 지우개 버튼 추가 -->
+                <button type="button" id="jsClear">초기화</button> <!-- Clear 버튼 추가 -->
             </div>
             <div class="controls__colors" id="jsColors">
                 <div class="controls__color jsColor" 
@@ -204,7 +63,7 @@
         <input type="hidden" name="image_data" id="jsImageInput">
 
         <div class="submit-button-container">
-            <button type="submit" class="submit-button">저장</button>
+            <button type="submit" id="submit-button">저장</button>
         </div>
     </form>
 </div>
@@ -287,15 +146,15 @@
 
         function handleModeClick() {
             filling = !filling;
-            mode.innerText = filling ? "Paint" : "Fill";
+            mode.innerText = filling ? "칠하기" : "채우기";
             erasing = false; // 모드 변경 시 지우개 모드 해제
         }
 
         function handleEraserClick() {
             erasing = !erasing;
-            eraser.innerText = erasing ? "Draw" : "Eraser"; // 지우개 모드 텍스트 변경
+            eraser.innerText = erasing ? "그리기" : "지우기"; // 지우개 모드 텍스트 변경
             filling = false; // 지우개 모드 활성화 시 채우기 모드 해제
-            mode.innerText = "Fill";
+            mode.innerText = "채우기";
         }
     
         function handleCanvasClick() {

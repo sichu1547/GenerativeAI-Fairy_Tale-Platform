@@ -55,7 +55,7 @@
         <form class="sorted_story" method="GET" action="{% url 'reader:search' %}">
             <input type="hidden" id="keyword" name="keyword" value="{{ keyword }}">
             
-            <label class="sorted_method" for="options"><정렬 방법 선택></label>
+            <label class="sorted_method" for="options">[ 정렬 방법 선택 ]</label>
             <select id="options" name="options" onchange="this.form.submit()">
                 <option value="high-rating" {% if selected_option == 'high-rating' %}selected{% endif %}>별점 높은 순</option>
                 <option value="low-rating" {% if selected_option == 'low-rating' %}selected{% endif %}>별점 낮은 순</option>

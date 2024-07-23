@@ -34,62 +34,20 @@
 }
 
 
-.audio-buttons {
-    margin-left: auto;
-    display: flex;
-    flex-direction: column;
-    max-width: 170px;
-}
-
-.audio-buttons-label
-{
-    font-family: 'Pretendard-Regular', Arial, sans-serif;
-}
-
-.inner-audio-buttons {
-    display: flex;
-    flex-direction: row;
-    margin-left: auto;
-    margin-right: 12px;
-    min-width: 155px;
-}
-
-.audio-button {
-    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
-    font-size: 13px;
-    background-color: #ffa07a;  /* 보라색 배경 */
-    color: rgb(255, 255, 255);  /* 텍스트 색상 */
-    margin: 1px;
-    padding: 2px 6px;
-    width: 90%;
-    height: 25px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
-    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
-}
-
-.audio-button-label {
-    font-family: 'Ownglyph_ryuttung-Rg', Arial, sans-serif;
-    font-size: 14px;
-    color: white;
-    margin: 0 3px;
-    word-break: keep-all;
-}
-
 /* 경고 박스 스타일 */
 .warning-box {
     background-color: #ffcccc; /* 연한 빨간색 배경 */
     color: #000; /* 검정색 텍스트 */
     padding: 50px;
     border-radius: 10px;
-    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-family: 'Ownglyph_ryuttung-Rg', Arial, sans-serif;
     text-align: center;
     margin: 20px auto; /* 가운데 정렬 */
     width: 80%; /* 박스의 가로 길이 조절, 필요에 따라 퍼센트 값을 조절 */
     max-width: 600px; /* 박스의 최대 가로 길이 설정 */
     box-sizing: border-box; /* padding과 border를 포함한 총 가로 길이 조절 */
+    min-width: 245px;
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
 }
 
 .warning-title {
@@ -101,24 +59,6 @@
 .warning-message {
     font-size: 25px;
     margin-top: 30px;
-}
-
-input[type="radio"][name="voice"] {
-    -webkit-appearance: none; /* 웹킷 브라우저에서 기본 스타일 제거 */
-    -moz-appearance: none; /* 모질라 브라우저에서 기본 스타일 제거 */
-    appearance: none; /* 기본 브라우저에서 기본 스타일 제거 */
-    width: 11px;
-    height: 11px;
-    border: 2px solid #ffffff;
-    border-radius: 50%;
-    outline: none; 
-    cursor: pointer;
-    margin: 0;
-}
-
-input[type="radio"][name="voice"]:checked {
-    border-color: #ffffff;
-    background-color: #ffa07a;
 }
 
 html, body {
@@ -190,13 +130,15 @@ p {
 
 
 #story-content {
-    max-height: 150px;
+    max-height: 110px;
     overflow-y: auto;
     margin-top: 0 !important;
     margin-bottom: 10px !important;
     scrollbar-width: thin;  /* 스크롤바 얇게 설정 */
     scrollbar-color: #ffa07a transparent;  /* 스크롤바 색상 및 트랙 색상 */
     padding-right: 10px;
+    font-size: 24px !important;
+    line-height: 1.15;
 }
 
 .story-image {
@@ -246,7 +188,7 @@ p {
 
 .question {
     font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
-    font-size: 20px;
+    font-size: 24px;
     color: #d2691e;
     line-height: 120%;
     font-weight: normal !important;
@@ -269,10 +211,11 @@ p {
     font-family: 'Ownglyph_ryuttung-Rg';
     width: 100%;
     height: 50%;
+    margin-top: 10px;
     margin-bottom: 10px;
     border: 2px solid #ffa07a;
     border-radius: 5px;
-    font-size: 18px;
+    font-size: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: white;
 }
@@ -291,7 +234,7 @@ input[type="text"] {
 #story-button {
     flex-grow: 1;
     font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
-    font-size: 18px !important;
+    font-size: 20px !important;
     font-weight: normal;
     background-color: #ffa07a;
     border: none;
@@ -307,14 +250,15 @@ input[type="text"] {
 }
 
 #left-page, #right-page {
-    font-size: 22px;
+    font-size: 26px;
     padding-bottom: 0;
+    line-height: 1.25;    
 }
 
 #left-text, #right-text {
     margin: 0;
-    padding-top: 0;
-    padding-bottom: 20px;
+    padding-top: 10px;
+    padding-bottom: 15px;
 }
 
 .voice-recognition {
@@ -362,6 +306,10 @@ input[type="text"] {
     margin-bottom: 0;
 }
 
+#prev-btn, #next-btn {
+    font-size: 20px;
+}
+
 .final-story-image {
     width: 100%;
     height: auto;
@@ -373,7 +321,6 @@ input[type="text"] {
     width: 80%;
     margin-bottom: 30px;
 }
-
 
 
 .navigation button {
@@ -399,6 +346,68 @@ input[type="text"] {
     opacity: 0; 
     pointer-events: none; 
 }
+
+
+
+#options {
+    font-family: 'Ownglyph_ryuttung-Rg';
+    font-size: 17px;
+    font-weight: normal;
+    background: rgba(255, 255, 255);
+    color: #686868;
+    margin-bottom: 2px;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+
+.tts-buttons {
+    margin-left: auto;
+    display: flex;
+    flex-direction: column;
+    width: 135px;
+}
+
+.inner-tts-buttons {
+    display: flex;
+    flex-direction: row;
+    margin-left: auto;
+    margin-right: 12px;
+    min-width: 155px;
+    margin-bottom: 2px;
+    align-items: center;
+}
+
+.tts-button {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-size: 14px;
+    background-color: #ffa07a; 
+    color: rgb(255, 255, 255);  /* 텍스트 색상 */
+    margin: 1px;
+    padding: 2px 6px;
+    width: 93%;
+    height: 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+}
+
+.tts-button:hover {
+    background-color: #ff4500;
+}
+
+.voice-label {
+    font-family: 'Ownglyph_ryuttung-Rg', Arial, sans-serif;
+    font-size: 18px;
+    margin: 0 5px;
+    word-break: keep-all;
+    font-weight: normal;
+    color: #686868;
+    margin-top: 2px;
+}
+
 
 
 @media (max-width: 1000px) {
@@ -431,7 +440,7 @@ input[type="text"] {
     }
 
     .question {
-        font-size: 18px;
+        font-size: 20px;
     }
 
     #final-book {
@@ -442,10 +451,6 @@ input[type="text"] {
 
     .story-container{
         min-height: auto;
-    }
-
-    #story-content {
-        font-size: 20px !important;
     }
 }
 
@@ -467,7 +472,7 @@ input[type="text"] {
         height: 40px; /* 버튼 높이 조정 */
     }
     #prev-btn::before, #next-btn::before {
-        font-size: 16px;
+        font-size: 20px;
         position: absolute;
         top: 50%;
         left: 50%;
