@@ -123,7 +123,7 @@ def select_account(request):
     profiles = request.user.profiles.all()
     next_url = request.GET.get('next', request.POST.get('next', 'index'))
     selected_profile_id = request.POST.get('profile_id')
-    print(next_url)
+
     if request.method == "POST":
         selected_profile_id = request.POST.get('profile_id')
         print(selected_profile_id)
@@ -254,11 +254,10 @@ def edit_profile(request, pk):
 @permission_required('profile.delete', raise_exception=True)
 def profile_delete(request, pk):
     profile = get_object_or_404(Profile, pk=pk, user=request.user)
-    print(pk)
-    print(profile.id)
-    if request.method == 'POST':        
+
+    if request.method == 'POST':      
+        profile.delete()  
         if request.session.get('selected_profile_id') == pk:
-            profile.delete()
             del request.session['selected_profile_id']
             del request.session['selected_profile_avatar']
             del request.session['selected_profile_name']
