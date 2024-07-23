@@ -47,7 +47,7 @@
                         alt="Profile Image" width="50" height="50">
                     <label class="profile-name">{{ profile.name }}</label>
                     <button type="button" id="edit-button" onclick="location.href='{% url 'profile_detail' profile.id %}'">수정하기</button>
-                    <form method="post" action="{% url 'profile_delete' profile.pk %}" style="display:inline;">
+                    <form method="post" action="{% url 'profile_delete' profile.pk %}" style="display:inline;" onsubmit="return confirm('정말로 삭제하시겠습니까?');">
                         {% csrf_token %}
                         <button type="submit" id="delete-button">삭제하기</button>
                     </form>

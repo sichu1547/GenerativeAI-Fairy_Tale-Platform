@@ -12,7 +12,7 @@
     <style>
         .warning-text {
             font-size: 0.8em;
-            color: #FF0000;
+            color: black;
             margin-top: -10px;
             margin-bottom: 10px;
         }
@@ -78,12 +78,14 @@
                     
                     <div id="signup-container" class="signup-container hidden">
                         <div class="wrap-input100 validate-input" data-validate="Username is required">
-                            <input class="input100" type="text" name="username" required>
+                            <input class="input100" type="text" name="username" id="username" required>
                             <span class="focus-input100"></span>
                             <span class="label-input100">아이디</span>
                         </div>
+                        <p class="warning-text">* 영문, 숫자 포함 5 ~ 20자 까지 가능합니다.</p>
+                        <div id="username-error" class="faillist" style="display: none;"></div>
+                        <div id="username-error" class="errorlist" style="display: none;"></div>                        
                         {% include 'registration/form_errors.html' with field=form.username %}
-                        <p class="warning-text">* 영문, 숫자 포함 6-10자까지 가능합니다.</p>
                         
                         <div class="wrap-input100 validate-input" data-validate="Password is required">
                             <input class="input100" id="password1" type="password" name="password1" required>
@@ -91,7 +93,8 @@
                             <span class="label-input100">비밀번호</span>
                         </div>
                         {% comment %} {% include 'registration/form_errors.html' with field=form.password1 %} {% endcomment %}
-                        <p class="warning-text">* 영문, 숫자, 특수문자 포함 10-20자 이내로 입력 가능합니다.</p>
+                        <p class="warning-text">* 숫자로만 포함되지 않은 8자 이상 입력 가능합니다.</p>
+                        <p class="warning-text">* 이메일, 아이디와 중복되지 않게 주의하세요.</p>
                         
                         <div class="wrap-input100 validate-input" data-validate="Confirm Password is required">
                             <input class="input100" id="password2" type="password" name="password2" required>
@@ -179,10 +182,17 @@
         function checkPasswordMatch() {
             var password1 = $('#password1').val();
             var password2 = $('#password2').val();
+            var numberOnlyPattern = /^\d+$/;
             if (password1 !== ''){
-                if (password1 === password2) {
+                if (password1.length < 8) {
                     $('#password2-error.errorlist').hide();
-                    $('#password2-error').text('비밀번호가 일치합니다.').removeClass('faillist').addClass('successlist').show();              
+                    $('#password2-error').text('비밀번호는 최소 8자 이상이어야 합니다.').removeClass('successlist').addClass('faillist').show();
+                }else if (numberOnlyPattern.test(password1)) {
+                    $('#password2-error').text('비밀번호는 숫자로만 이루어질 수 없습니다.').removeClass('successlist').addClass('faillist').show();
+                }    
+                else if (password1 === password2) {
+                    $('#password2-error.errorlist').hide();
+                    $('#password2-error').text('비밀번호가 일치합니다.').removeClass('faillist').addClass('successlist').show();
                 } else {
                     $('#password2-error').text('비밀번호가 일치하지 않습니다.').removeClass('successlist').addClass('faillist').show();
                 }
@@ -190,21 +200,57 @@
                 $('#password2-error').hide();
             }
         }
-        $(document).ready(function() {
-        // 처음 제출 시 에러 메시지 활성화
-        $('form').on('submit', function(event) {
-            var password1 = $('#password1').val();
-            var password2 = $('#password2').val();
-            if (password1 !== password2) {
-                $('#password2-error').text('비밀번호가 일치하지 않습니다.').removeClass('successlist').addClass('faillist').show();
+        function checkUsernameValidity() {
+            var username = $('#username').val();
+            var usernamePattern = /^[a-zA-Z0-9]{5,20}$/;
+            if (username !== '') {
+                if (!usernamePattern.test(username)) {
+                    $('#username-error.errorlist').hide();
+                    $('#username-error').text('아이디는 영문, 숫자 포함 5 ~ 20자여야 합니다.').removeClass('successlist').addClass('faillist').show();
+                } else {
+                    $.ajax({
+                        url: '{% url "check_username" %}',
+                        data: {
+                            'username': username
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.is_taken) {
+                                $('#username-error').removeClass('successlist').addClass('faillist').text('이미 사용 중인 아이디입니다.').show();
+                            } else {
+								$('#username-error.errorlist').hide();
+                                $('#username-error').removeClass('faillist').addClass('successlist').text('사용 가능한 아이디입니다.').show();
+                            }
+                        }
+                    });
+                }
+            } else {
+                $('#username-error').hide();
             }
+        }
+        $(document).ready(function() {
+            // 처음 제출 시 에러 메시지 활성화
+            $('form').on('submit', function(event) {
+                var password1 = $('#password1').val();
+                var password2 = $('#password2').val();
+                if (password1 !== password2) {
+                    $('#password2-error').text('비밀번호가 일치하지 않습니다.').removeClass('successlist').addClass('faillist').show();
+                }
+            });
+
+            // 실시간 비밀번호 일치 여부 확인
+            $('#password1, #password2').on('input', checkPasswordMatch);
+            $('#username').on('input', checkUsernameValidity);
+            // strong 기준 줄바꿈 추가
+            $('.error-item').each(function() {
+                var html = $(this).html();
+                html = html.replace(/<\/strong>/g, '</strong><br>');
+                $(this).html(html);
+            });
         });
 
-    // 실시간 비밀번호 일치 여부 확인
-    $('#password1, #password2').on('input', checkPasswordMatch);
-});
-
         $('#password1, #password2').on('input', checkPasswordMatch);
+        $('#username').on('input', checkUsernameValidity);
     </script>
 </body>
 {% endblock %}
