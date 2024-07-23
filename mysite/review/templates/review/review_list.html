@@ -12,10 +12,9 @@
 {% block content %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&display=swap" rel="stylesheet">
 
-<div class="review-container gamja-flower-regular">
-    <h1>{{ review.story_title }} 독후감 수정하기</h1>
+<div class="review-container">
+    <h1>✏️ {{ review.story_title }} 독후감 수정하기</h1>
     <form method="post" action="{% url 'review:review_list' review.id %}" class="review-form">
         {% csrf_token %}
         <div class="review-question">
@@ -24,10 +23,9 @@
         </div>
         <div class="review-middle">
             <div class="review-question">
-                <label for="painting">💁🏽 책을 읽고 느낀점을 자유롭게 그려보세요!</label>
+                <label for="painting">💁🏽 책을 읽고 느낀 점을 자유롭게 그려보세요!</label>
             </div>
         </div>
-
         <canvas id="jsCanvas" class="canvas"></canvas>
         <div class="controls">
             <div class="controls__range">
@@ -35,9 +33,9 @@
                 min="0.1" max="5.0" value="2.5" step="0.1"/>
             </div>
             <div class="controls__btns">
-                <button type="button" id="jsMode">채우기</button>
-                <button type="button" id="jsEraser">지우기</button> <!-- 지우개 버튼 추가 -->
-                <button type="button" id="jsClear">초기화</button> <!-- Clear 버튼 추가 -->
+                <button type="button" id="jsMode">🪣 채우기</button>
+                <button type="button" id="jsEraser">🧈 지우기</button> <!-- 지우개 버튼 추가 -->
+                <button type="button" id="jsClear">🔄 초기화</button> <!-- Clear 버튼 추가 -->
             </div>
             <div class="controls__colors" id="jsColors">
                 <div class="controls__color jsColor" 
@@ -61,9 +59,8 @@
             </div>
         </div>
         <input type="hidden" name="image_data" id="jsImageInput">
-
         <div class="submit-button-container">
-            <button type="submit" id="submit-button">저장</button>
+            <button type="submit" id="submit-button">수정</button>
         </div>
     </form>
 </div>
@@ -76,7 +73,7 @@
     const mode = document.getElementById("jsMode");
     const eraser = document.getElementById("jsEraser");
     const clearButton = document.getElementById("jsClear"); // Clear 버튼 가져오기
-    const submitBtn = document.querySelector(".submit-button"); // 저장 버튼
+    const submitBtn = document.querySelector("#submit-button"); // 저장 버튼
 
     const form = document.querySelector(".review-form");
     const imageInput = document.getElementById("jsImageInput");
@@ -144,19 +141,19 @@
 
     function handleModeClick() {
         filling = !filling;
-        mode.innerText = filling ? "Paint" : "Fill";
+        mode.innerText = filling ? "🖌️ 칠하기" : "🪣 채우기";
         erasing = false; // 모드 변경 시 지우개 모드 해제
     }
 
     function handleEraserClick() {
         erasing = !erasing;
-        eraser.innerText = erasing ? "Draw" : "Eraser"; // 지우개 모드 텍스트 변경
+        eraser.innerText = erasing ? "🎨 그리기" : "🧈 지우기"; // 지우개 모드 텍스트 변경
         filling = false; // 지우개 모드 활성화 시 채우기 모드 해제
-        mode.innerText = "Fill";
+        mode.innerText = "🪣 채우기";
     }
 
     function handleCanvasClick() {
-        if (filling) {
+        if (filling && !erasing) {
             ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
     }
@@ -187,6 +184,10 @@
         range.addEventListener("input", handleRangeChange);
     }
 
+    if (mode) {
+        mode.addEventListener("click", handleModeClick);
+    }
+
     if (eraser) {
         eraser.addEventListener("click", handleEraserClick);
     }
@@ -196,7 +197,7 @@
     }
 
     if (submitBtn) {
-        submitBtn.addEventListener("click", handleSaveClick); // 저장 버튼
+        submitBtn.addEventListener("click", handleSaveClick); // 수정 버튼
     }
 
     // Load existing painting if available

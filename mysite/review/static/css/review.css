@@ -4,19 +4,20 @@
     font-weight: normal;
     font-style: normal;
 }
+
+@font-face {
+    font-family: 'Ownglyph_ryuttung-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_ryuttung-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
 html, body {
     height: 100%; /* 전체 높이 차지 */
     margin: 0;
     padding: 0;
 }
-.gamja-flower-regular {
-    font-family: "Gamja Flower", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-}
-
 #id_title {
-    font-family: "Gamja Flower", sans-serif;
+    font-family: "Ownglyph_ryuttung-Rg", sans-serif;
     font-size: 18px;
     background-color: white;
     border-radius: 15px;
@@ -36,9 +37,9 @@ html, body {
     justify-content: center; /* 수직 가운데 정렬 */
 }
 .review-container h1 {
+    font-family: 'Ownglyph_noocar-Rg';
     text-align: center;
     margin-bottom: 20px !important;
-    font-weight: bold;
     color: black; /* 텍스트 색상 */
     margin-bottom: 10px;
     font-size: 40px; /* 절대 크기 */
@@ -49,10 +50,11 @@ html, body {
     flex-direction: column;
 }
 .review-question label {
-    font-weight: bold;
+    font-family: 'Ownglyph_noocar-Rg';
     color: black; /* 텍스트 색상 */
     margin-bottom: 5px;
     font-size: 25px; /* 절대 크기 */
+    font-weight: normal;
 }
 
 .review-question textarea {
@@ -85,7 +87,7 @@ html, body {
     align-items: center;    /* 수직 정렬 */
     justify-content: center; /* 수평 정렬 */
 }
-.submit-button:hover {
+#submit-button:hover {
     background-color: #333333;
 }
 .review-middle {
@@ -131,6 +133,7 @@ html, body {
 }
 
 .controls__btns button {
+    font-family: 'Ownglyph_noocar-Rg' !important;
     all: unset;
     cursor: pointer;
     background-color: white;
@@ -142,12 +145,11 @@ html, body {
     border: 2px solid rgba(0, 0, 0, 0.2);
     color: rgba(0, 0, 0, 0.8);
     text-transform: uppercase;
-    font-weight: 800;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 .controls__btns button:active {
-    transform: scale(0.98);
+    transform: scale(0.95);
 }
 
 .controls .controls__colors {
@@ -165,4 +167,15 @@ html, body {
 
 .controls .controls__range {
     margin-bottom: 30px;
+}
+
+.controls__range {
+    display: flex;
+    flex-direction: row;
+    color: black;
+    font-size: 20px;
+}
+
+#jsRange {
+    margin: 0 10px;
 }
