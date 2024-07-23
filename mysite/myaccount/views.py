@@ -89,8 +89,18 @@ def password_reset_confirm(request, uidb64=None, token=None):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+    except (TypeError):
         user = None
+        print('Invalid Type')
+    except (ValueError):
+        user = None
+        print('Invalid Value')
+    except (OverflowError):
+        user = None
+        print('Overflow Error')
+    except (User.DoesNotExist):
+        user = None
+        print('User does not exist')
 
     if user is not None and default_token_generator.check_token(user, token):
         if request.method == "POST":

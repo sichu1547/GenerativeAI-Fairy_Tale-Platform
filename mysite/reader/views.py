@@ -280,7 +280,7 @@ def rate_story(request, id):
                     story.starpoint = story.starsum / story.starcount
                     story.save()
             except ValueError:
-                pass
+                print('wrong value of point')
     if keyword:
         return HttpResponseRedirect(reverse('reader:search') + f'?keyword={keyword}')
     else:
