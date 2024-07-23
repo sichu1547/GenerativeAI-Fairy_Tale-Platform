@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login as auth_login, logout as auth_logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.models import User
 from .models import UserSessionData, Profile, ReadingHistory
 from django.http import HttpResponse
 from .forms import CustomUserCreationForm, ProfileForm
-from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
@@ -51,7 +50,6 @@ def get_session_data(request):
     value = request.session.get('key', 'No data found')
     return HttpResponse(f"Session data for user {request.user.username}: {value}")
 
-from django.utils.crypto import get_random_string
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
@@ -68,7 +66,7 @@ def password_reset_request(request):
         form = PasswordResetForm(request.POST)
         if form.is_valid():
             user = User.objects.get(username=form.cleaned_data['username'], email=form.cleaned_data['email'])
-            subject = "비밀번호 재설정 요청"
+            subject = "MealKid 비밀번호 재설정 요청"
             email_template_name = "password/password_reset_email.txt"
             c = {
                 "email": user.email,
@@ -76,7 +74,7 @@ def password_reset_request(request):
                 'domain': request.get_host(),
                 "uid": urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': default_token_generator.make_token(user),
-                'protocol': 'http',
+                'protocol': 'https' if request.is_secure() else 'http',
             }
             email = render_to_string(email_template_name, c)
             send_mail(subject, email, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
@@ -89,8 +87,18 @@ def password_reset_confirm(request, uidb64=None, token=None):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
-    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+    except (TypeError):
         user = None
+        print('Invalid Type')
+    except (ValueError):
+        user = None
+        print('Invalid Value')
+    except (OverflowError):
+        user = None
+        print('Overflow Error')
+    except (User.DoesNotExist):
+        user = None
+        print('User does not exist')
 
     if user is not None and default_token_generator.check_token(user, token):
         if request.method == "POST":
@@ -118,6 +126,7 @@ def select_account(request):
 
     if request.method == "POST":
         selected_profile_id = request.POST.get('profile_id')
+        print(selected_profile_id)
         if selected_profile_id:
             profile = get_object_or_404(Profile, id=selected_profile_id, user=request.user)
             request.session['show_attendance_modal'] = True
@@ -224,7 +233,7 @@ def attendance_check(request):
     
 from django.views.decorators.csrf import csrf_exempt
 
-@csrf_exempt
+# @csrf_exempt
 @login_required
 def reset_show_attendance_modal(request):
     request.session['show_attendance_modal'] = False
@@ -242,16 +251,28 @@ def edit_profile(request, pk):
     return redirect('profile')
 
 @login_required
+@permission_required('profile.delete', raise_exception=True)
 def profile_delete(request, pk):
     profile = get_object_or_404(Profile, pk=pk, user=request.user)
-    if request.method == 'POST':
-        profile.delete()
+
+    if request.method == 'POST':      
+        profile.delete()  
         if request.session.get('selected_profile_id') == pk:
             del request.session['selected_profile_id']
             del request.session['selected_profile_avatar']
             del request.session['selected_profile_name']
-        return redirect('profile')  # 모든 프로필 목록으로 리다이렉트
+
     return redirect('profile')
 
 def privacy_policy_view(request):
-    return render(request, 'registration/privacy_policy.html') 
+    return render(request, 'privacy_policy.html') 
+
+def terms(request):
+    return render(request, 'terms.html')
+
+def check_username(request):
+    username = request.GET.get('username', None)
+    response = {
+        'is_taken': User.objects.filter(username=username).exists()
+    }
+    return JsonResponse(response)

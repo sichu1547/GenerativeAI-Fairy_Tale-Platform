@@ -22,7 +22,7 @@ class ProfileMiddleware(MiddlewareMixin):
                     choose_profile_url = reverse('choose_profile', args=[profile.id])
                     allowed_paths.append(choose_profile_url)
                 except Profile.DoesNotExist:
-                    pass
+                    print('Profile does not exist')
 
             path_resolver = resolve(request.path)
             if path_resolver.url_name in ['edit_profile', 'profile_delete', 'profile', 'profile_detail'] or request.path in allowed_paths:

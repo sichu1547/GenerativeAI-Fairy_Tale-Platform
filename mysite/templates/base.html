@@ -34,8 +34,25 @@
 
 <!-- Custom CSS -->
 <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
-<style type="text/css" id="wp-custom-css"></style>
-
+<style type="text/css" id="wp-custom-css">
+    
+</style>
+<style>
+    .footer {
+        background-color: #000; 
+        padding: 20px 0;
+    }
+    .footer .site-info, .footer .footer-credit {
+        color: #fff; 
+    }
+    .footer .footer-credit {
+        text-decoration: none; /* 밑줄 제거 */
+        color: #fff; /* 흰색 링크 */
+    }
+    .footer .footer-credit:hover {
+        color: #ddd; /* 링크에 마우스를 올렸을 때 밝은 회색 */
+    }
+</style>
 </head>
 <body class="home page-template page-template-page-templates page-template-template-home page-template-page-templatestemplate-home-php page page-id-1863 has-sidebar-right elementor-default elementor-kit-2257">
 <div id="page" class="site">
@@ -118,11 +135,15 @@
     </div>
     <div class="row">
         <div class="site-info col-sm-6">
+            <div class="footer-credits">
+                <ul>
+                    <li><a class="footer-credit1" href="{% url 'privacy_policy' %}">개인정보처리방침</a></li>
+                    <li>|</li>
+                    <li><a class="footer-credit2" href="{% url 'terms' %}">이용약관</a></li>
+                </ul>
+            </div>
             <div class="copyright-text">
                 © 2024 MealKid. All rights reserved.
-            </div>
-            <div class="footer-credits">
-                <li><a class="footer-credit" href="{% url 'privacy_policy' %}">개인정보처리방침</a></li>
             </div>
         </div>
     </div>
@@ -198,72 +219,14 @@ if (pathPrefix === "reader") {
 } else if (pathPrefix === "myaccount") {
     userIcon.classList.add("label-background"); // 내 정보
 }
-            function showLoading() {
-                document.getElementById('loading').style.display = 'block';
-            }
+    function showLoading() {
+        document.getElementById('loading').style.display = 'block';
+    }
     document.getElementById('logout-link').addEventListener('click', function(event) {
         event.preventDefault();
         document.getElementById('logout-form').submit();
     });
-    
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const modal = document.getElementById("chatModal");
-        const openModalBtn = document.getElementById("openModalBtn");
-        const closeModalSpan = document.getElementsByClassName("close")[0];
-        const sendBtn = document.getElementById("sendBtn");
-        const chatInput = document.getElementById("chatInput");
-        const chatBody = document.getElementById("chatBody");
-    
-        openModalBtn.onclick = function() {
-            modal.style.display = "block";
-        }
-    
-        closeModalSpan.onclick = function() {
-            modal.style.display = "none";
-        }
-    
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-    
-        sendBtn.onclick = function() {
-            const message = chatInput.value.trim();
-            if (message !== "") {
-                // 사용자 메시지를 추가
-                const userMessageElement = document.createElement("div");
-                userMessageElement.textContent = "User: " + message;
-                chatBody.appendChild(userMessageElement);
 
-                // 챗봇 서버에 메시지를 전송하고 응답을 받음
-                fetch('/chatbot/api/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({ question: message })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    const botMessageElement = document.createElement("div");
-                    botMessageElement.textContent = "Bot: " + data.response;
-                    chatBody.appendChild(botMessageElement);
-                    chatBody.scrollTop = chatBody.scrollHeight;
-                });
-
-                chatInput.value = "";
-                chatBody.scrollTop = chatBody.scrollHeight;
-            }
-        }
-    
-        chatInput.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                sendBtn.click();
-            }
-        });
-    });
 </script>
 </body>
 </html>

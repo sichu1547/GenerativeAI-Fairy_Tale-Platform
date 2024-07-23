@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import environ
 import os
+from datetime import timedelta
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -40,6 +41,8 @@ CSRF_TRUSTED_ORIGINS = ['https://mealkid.kro.kr',]
 # HTTPS 사용 시 설정
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 14
 
 # 프록시 설정(Nginx)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -58,7 +61,6 @@ INSTALLED_APPS = [
     "generator",
     'quiz',
     #'debug_toolbar',
-    # all auth
     #"django.contrib.sites",
     'allauth',
     'allauth.account',
@@ -68,11 +70,13 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.kakao',
     "mine",
     'review',
+    'axes',
 ]
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
+    'axes.backends.AxesBackend',
 ]
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
@@ -88,6 +92,7 @@ MIDDLEWARE = [
     "myaccount.custom_middleware.UserSessionMiddleware",  # 사용자 정의 미들웨어 추가
     "allauth.account.middleware.AccountMiddleware",
     'myaccount.profile_middleware.ProfileMiddleware',
+    'axes.middleware.AxesMiddleware',
     #"debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
@@ -193,12 +198,6 @@ LOGIN_REDIRECT_URL = 'select_account'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     },
-# }
 DEFAULT_USER_ID = 1
 DEFAULT_PROFILE_ID = 1
 
@@ -227,28 +226,33 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
+
 AUTH_PASSWORD_VALIDATORS = [
-    # {
-    #     "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    # },
-    # {
-    #     "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    # },
-    # {
-    #     "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    # },
-    # {
-    #     "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    # },
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "OPTIONS": {
+            "user_attributes": ("username", "email")
+        }
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 8,
+        }
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-# LANGUAGE_CODE = "en-us"
 LANGUAGE_CODE = 'ko-kr'
-# TIME_ZONE = "UTC"
 TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True
@@ -282,6 +286,15 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 GOOGLE_APPLICATION_CREDENTIALS = env('GOOGLE_APPLICATION_CREDENTIALS')
+
+# Axes 설정
+AXES_FAILURE_LIMIT = 5  # 최대 실패 시도 횟수
+AXES_COOLOFF_TIME = timedelta(minutes=30)  # 차단 기간
+AXES_LOCKOUT_TEMPLATE = 'lockout.html'  # 차단 시 보여줄 템플릿
+AXES_LOCKOUT_URL = '/locked-out/'  # 차단 시 리디렉션할 URL
+AXES_RESET_ON_SUCCESS = True # 로그인 성공하면 차단 해제
+AXES_LOCKOUT_PARAMETERS = [['ip_address', 'username']]

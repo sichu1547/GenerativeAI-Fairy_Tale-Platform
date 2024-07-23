@@ -36,21 +36,6 @@ import random
 from generator.models import GenStory
 import mysql.connector
 
-# def search(request):
-#     keyword = request.GET.get('keyword')
-#     search_type = request.GET.get('search_type', 'title')
-#     if keyword:
-#         if search_type == 'title':
-#             stories = Story.objects.filter(title__icontains=keyword)
-#         else:
-#             stories = Story.objects.filter(category__icontains=keyword)
-#     else:
-#         stories = Story.objects.all() 
-#    # 정수형 필드에 대해 정렬 적용
-#     stories = stories.order_by('starpoint')
-        
-#     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword})
-
 def list(request):
     story_list = Story.objects.all()
     search_key = request.GET.get('keyword')
@@ -207,7 +192,7 @@ memory = ConversationBufferMemory(memory_key="history", input_key="input", outpu
 # Create the conversation chain
 qa = ConversationChain(llm=chat, memory=memory)
 
-@csrf_exempt
+# @csrf_exempt
 def answer_question(request, story_id):
     if request.method == 'POST':
         profile_id = request.POST.get('profile_id')
@@ -226,10 +211,14 @@ def answer_question(request, story_id):
                 f"질문: '{question}'은 동화 '{story.title}'에 대한 질문입니다. "
                 f"동화 내용: '{story.body}' "
                 f"어린아이가 잘 이해할 수 있도록 200글자 이하로만 답변하세요. "
-                f"어려운 단어를 사용하지 말고 아이들의 눈높이에 맞춰 답변하세요. "
+                f"어려운 단어를 사용하지 말고 아이들의 수준에 맞춰 답변하세요. "
                 f"참고: 질문으로 인사가 들어올때는 동화 내용 없이 인사로만 답변하세요. "
                 f"단어 의미를 물어볼 때는 동화 내용 없이 단어의 의미만 답변하세요. "
                 f"동화 내용에 대한 답변을 해줄 때 맨 앞에 인사를 붙이지 마세요."
+                f"동화 내용을 요약 해달라는 요구가 없으면 답변에 동화 내용 요약을 붙이지 마세요. "
+                f"존댓말과 반말을 섞어서 사용하지말고 통일해서 답변하세요. "
+                f"물어본 내용에 대해서만 답변하세요. 임의로 답변을 추가하지마세요. "
+                f"질문이 이상하다면 무슨 말인지 모르겠으니 다시 물어봐달라고 말하세요."
                 f"프롬프트 내용을 답변에 포함하지 마세요. "
             )
 
@@ -294,19 +283,13 @@ def rate_story(request, id):
                     story.starsum += starpoint
                     story.starpoint = story.starsum / story.starcount
                     story.save()
-                #return HttpResponse(status=200)
             except ValueError:
-                pass
+                print('wrong value of point')
     if keyword:
         return HttpResponseRedirect(reverse('reader:search') + f'?keyword={keyword}')
     else:
         return HttpResponseRedirect(reverse('reader:search'))
     
-    # return JsonResponse({'message': '별점이 저장되었습니다!'}, status=200)
-    # if keyword:
-    #     return HttpResponseRedirect(reverse('reader:search') + f'?keyword={keyword}')
-    # else:
-    #     return HttpResponseRedirect(reverse('reader:search'))
         
 def genstory_detail(request, story_id):
     story = get_object_or_404(GenStory, id=story_id)   

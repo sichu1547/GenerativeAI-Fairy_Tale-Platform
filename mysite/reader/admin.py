@@ -14,7 +14,6 @@ class StoryAdmin(admin.ModelAdmin):
     ordering = ['id']
     list_filter = ['category']
     search_fields = ['body']
-    #list_per_page = 3
 
     change_list_template = "admin/story_changelist.html"
     upload_csv_template = "admin/story_upload.html"

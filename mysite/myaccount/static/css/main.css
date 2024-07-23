@@ -877,15 +877,32 @@ ul.slides img {
   }
 }
 
+.footer-credits ul {
+  list-style-type: none; /* li 요소의 기본 목록 스타일을 제거 */
+  padding: 0; /* 기본 패딩 제거 */
+  margin: 0; /* 기본 마진 제거 */
+  display: flex; /* 가로 배치를 위한 flexbox 사용 */
+}
 
-.footer-credit {
+.footer-credits li {
+  margin-right: 20px; /* 리스트 아이템 간의 간격 조절 */
+}
+
+
+.footer-credit1 {
   font-family: 'Pretendard-Regular';
-  font-size: 14px;
-  font-weight: normal;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.footer-credit2 {
+  font-family: 'Pretendard-Regular';
+  font-size: 16px;
 }
 
 .copyright-text {
   font-family: 'Montserrat-Regular';
+  font-size: 16px;
 }
 
 .site-info {
