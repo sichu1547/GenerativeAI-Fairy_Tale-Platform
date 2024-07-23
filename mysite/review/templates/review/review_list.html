@@ -42,7 +42,6 @@
         position: relative;
         display: flex;
         flex-direction: column;
-        margin-bottom: 20px;
     }
     .review-question label {
         font-weight: bold;
@@ -156,6 +155,11 @@
         <div class="review-question">
             <label for="title">💁🏽 독후감의 이름을 수정해주세요!</label>
             {{ form.title }}
+        </div>
+        <div class="review-middle">
+            <div class="review-question">
+                <label for="painting">💁🏽 책을 읽고 느낀점을 자유롭게 그려보세요!</label>
+            </div>
         </div>
         {% comment %} <div class="review-middle">
             <div class="review-question">
