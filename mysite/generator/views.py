@@ -72,6 +72,7 @@ def create_story(request):
         initial_story = request.POST.get('initial_story', '')
         generated_stories = request.POST.getlist('generated_stories', [])
         generated_story_parts_json = request.POST.get('generated_story_parts', '[]')
+        
         try:
             generated_story_parts = json.loads(generated_story_parts_json)
         except json.JSONDecodeError:
@@ -89,11 +90,11 @@ def create_story(request):
 
         # 사용자 입력값을 이야기의 주요 키워드로 사용
         if stage > 0:
-            story = " ".join(generated_stories) + f" 주요 키워드: {user_input}"
+            story = " ".join(generated_stories) + f"참고 내용: {user_input}"
         else:
-            story = initial_story + f" 주요 키워드: {user_input}"
+            story = initial_story + f" 참고 내용: {user_input}"
 
-        # 스테이지가 3보다 작은 경우, 이야기를 생성하는 단계를 진행
+        # 스테이지가 3보다 작은 경우 이야기를 생성하는 단계를 진행
         if stage < 3:
             role = system_roles[stage]
             response = generate_response(story, role)
@@ -103,9 +104,8 @@ def create_story(request):
             # generated_stories에 생성된 이야기 추가
             generated_stories.append(generated_story.strip())
 
-            # 중복이 없도록 generated_story_parts에 생성된 이야기 파트 추가
-            if generated_story.strip() not in generated_story_parts:
-                generated_story_parts.append(generated_story.strip())
+            # generated_story_parts에 생성된 이야기 파트 추가
+            generated_story_parts.append(generated_story.strip())
             
             # 생성된 이야기를 바탕으로 이미지를 생성하고 리스트에 추가
             image_url = generate_image(generated_story_parts[-1])
@@ -120,14 +120,14 @@ def create_story(request):
             context = {
                 'story': " ".join(generated_stories),
                 'generated_stories': generated_stories,
-                'generated_story_parts': json.dumps(generated_story_parts),
+                'generated_story_parts': json.dumps(generated_story_parts, ensure_ascii=False),
                 'stage': stage + 1,
                 'question_prompt': question_prompt,
                 'generated_images': generated_images
             }
             return render(request, 'generator/create_story.html', context)
         else:
-            # 스테이지가 3인 경우, 최종 이야기 결말을 생성
+            # 스테이지가 3인 경우, 최종 이야기 결말을 생성 (+마지막 이미지 생성 추가)
             role = system_roles[3]
             final_prompt = f"{story}\n이 동화를 어떻게 마무리할까요?"
             final_response = generate_response(final_prompt, role, max_tokens=300)
@@ -137,12 +137,16 @@ def create_story(request):
             # generated_stories에 생성된 이야기 추가
             generated_stories.append(final_generated_story.strip())
             
-            # 중복이 없도록 generated_story_parts에 생성된 이야기 파트 추가
-            if final_generated_story.strip() not in generated_story_parts:
-                generated_story_parts.append(final_generated_story.strip())
+            # generated_story_parts에 생성된 이야기 파트 추가
+            generated_story_parts.append(final_generated_story.strip())
            
+            # 생성된 이야기를 바탕으로 이미지를 생성하고 리스트에 추가
+            image_url = generate_image(generated_story_parts[-1])
+            if not image_url:
+                image_url = ""
+            generated_images.append(image_url)
             
-            # 최종 이야기 전체를 하나의 문자열로 결합하여 분할
+            # 최종 이야기 전체를 하나의 문자열로 결합
             final_story = " ".join(generated_stories)
             
             # db
@@ -160,7 +164,7 @@ def create_story(request):
                 'final_story': final_story,
                 'generated_stories': generated_stories,
                 'generated_images': generated_images,
-                'generated_story_parts': json.dumps(generated_story_parts),
+                'generated_story_parts': json.dumps(generated_story_parts, ensure_ascii=False),
                 'file_path': file_path  # 파일 경로를 컨텍스트에 추가
             }
             return render(request, 'generator/story_result.html', context)
@@ -183,9 +187,11 @@ def generate_image(sentence):
     #         style="natural"
     #     )
     #     image_url = response.data[0].url
+    #     print('성공')
     #     return image_url
 
     # except Exception as e:
+    #     print('실패')
     #     return ""
     return ""
 

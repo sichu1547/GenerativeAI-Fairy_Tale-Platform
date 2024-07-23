@@ -51,6 +51,7 @@
     flex-direction: row;
     margin-left: auto;
     margin-right: 12px;
+    min-width: 155px;
 }
 
 .audio-button {
@@ -71,17 +72,43 @@
 
 .audio-button-label {
     font-family: 'Ownglyph_ryuttung-Rg', Arial, sans-serif;
-    font-size: 11px;
+    font-size: 14px;
     color: white;
     margin: 0 3px;
+    word-break: keep-all;
+}
+
+/* 경고 박스 스타일 */
+.warning-box {
+    background-color: #ffcccc; /* 연한 빨간색 배경 */
+    color: #000; /* 검정색 텍스트 */
+    padding: 50px;
+    border-radius: 10px;
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    text-align: center;
+    margin: 20px auto; /* 가운데 정렬 */
+    width: 80%; /* 박스의 가로 길이 조절, 필요에 따라 퍼센트 값을 조절 */
+    max-width: 600px; /* 박스의 최대 가로 길이 설정 */
+    box-sizing: border-box; /* padding과 border를 포함한 총 가로 길이 조절 */
+}
+
+.warning-title {
+    font-size: 35px;
+    font-weight: bold;
+    color: #ff0000; /* 빨간색 텍스트 */
+}
+
+.warning-message {
+    font-size: 25px;
+    margin-top: 30px;
 }
 
 input[type="radio"][name="voice"] {
     -webkit-appearance: none; /* 웹킷 브라우저에서 기본 스타일 제거 */
     -moz-appearance: none; /* 모질라 브라우저에서 기본 스타일 제거 */
     appearance: none; /* 기본 브라우저에서 기본 스타일 제거 */
-    width: 12px;
-    height: 12px;
+    width: 11px;
+    height: 11px;
     border: 2px solid #ffffff;
     border-radius: 50%;
     outline: none; 
@@ -386,7 +413,10 @@ input[type="text"] {
     }
 }
 
-@media (max-width: 767px) {    
+@media (max-width: 767px) {
+    .inner-audio-buttons {
+        min-width: auto;
+    }    
     p {
         font-size: 22px !important;
         line-height: 120%;

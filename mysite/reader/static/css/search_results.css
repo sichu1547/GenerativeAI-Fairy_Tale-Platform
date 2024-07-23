@@ -204,3 +204,10 @@
 .star.full {
     background-image: url("../images/full-star.png");
 }
+
+.sorted_story{
+    position: absolute;
+    right: 0;
+    top: 200px; /* 필요에 따라 조정 가능 */
+    width: 200px; /* 필요에 따라 조정 가능 */
+}
