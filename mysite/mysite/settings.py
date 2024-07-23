@@ -195,12 +195,6 @@ LOGIN_REDIRECT_URL = 'select_account'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     },
-# }
 DEFAULT_USER_ID = 1
 DEFAULT_PROFILE_ID = 1
 
@@ -248,9 +242,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-# LANGUAGE_CODE = "en-us"
 LANGUAGE_CODE = 'ko-kr'
-# TIME_ZONE = "UTC"
 TIME_ZONE = 'Asia/Seoul'
 
 USE_I18N = True

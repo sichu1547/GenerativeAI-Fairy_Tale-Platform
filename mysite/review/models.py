@@ -6,7 +6,6 @@ from myaccount.models import Profile
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    #story = models.ForeignKey(Story, on_delete=models.CASCADE, default=1)
     content = models.TextField()
     story_title = models.CharField(max_length=200, default='')
     title = models.CharField(max_length=200, default='')
