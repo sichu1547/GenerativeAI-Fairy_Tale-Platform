@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    {% block title %}<title>계정 잠금</title>{% endblock %}
+</head>
+{% block content %}
+<body>
+    <h1>계정이 잠겼습니다</h1>
+    <p>너무 많은 로그인 시도 실패로 인해 계정이 잠겼습니다. 나중에 다시 시도해 주세요.</p>
+    <li><a href="{% url 'login' %}">로그인화면으로 돌아가기</a></li>
+</body>
+{% endblock %}
+</html>

@@ -49,4 +49,4 @@ def generate_tts(request, ssml_text):
         return HttpResponse(audio_stream.getvalue(), content_type='audio/mpeg')
     
     except Exception as e:
-        return HttpResponse(f"Error: {e}", status=500)
+        return HttpResponse(f"TTS Error: {e}", status=500)

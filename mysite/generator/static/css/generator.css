@@ -141,8 +141,8 @@ p {
     scrollbar-width: thin;  /* 스크롤바 얇게 설정 */
     scrollbar-color: #ffa07a transparent;  /* 스크롤바 색상 및 트랙 색상 */
     padding-right: 10px;
-    font-size: 24px !important;
-    line-height: 1.15;
+    font-size: 26px !important;
+    line-height: 1.4;
 }
 
 .story-image {
@@ -219,7 +219,7 @@ p {
     margin-bottom: 10px;
     border: 2px solid #ffa07a;
     border-radius: 5px;
-    font-size: 20px;
+    font-size: 22px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: white;
 }
@@ -256,7 +256,7 @@ input[type="text"] {
 #left-page, #right-page {
     font-size: 26px;
     padding-bottom: 0;
-    line-height: 1.25;    
+    line-height: 1.5;    
 }
 
 #left-text, #right-text {

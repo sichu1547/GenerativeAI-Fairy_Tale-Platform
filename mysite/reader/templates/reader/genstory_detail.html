@@ -123,7 +123,7 @@
   
     <!-- 챗봇 -->
     <button id="chat-button">
-        <img src="{% static 'images/젖소.png' %}" alt="챗봇"/>
+        <img id = "chatbot-img" src="{% static 'images/젖소.png' %}" alt="챗봇"/>
         <p class="tooltip">밀키에게 질문하기💡</p>
     </button>
     <div id="chat-popup" class="resizable">
@@ -149,6 +149,7 @@
     </div>
     
     <script>
+        let sentenceAudio = null;
        
         document.addEventListener('DOMContentLoaded', function() {
             const stars = document.querySelectorAll('.star');
@@ -272,6 +273,14 @@
                 currentPage += direction;
                 if (currentPage < 0) currentPage = 0;
                 if (currentPage >= totalPages) currentPage = totalPages - 1;
+
+                // 현재 재생 중인 문단 읽기 오디오가 있다면 멈추기
+                if (sentenceAudio) {
+                    sentenceAudio.pause();
+                    sentenceAudio.currentTime = 0;
+                    sentenceAudio = null;
+                }
+
                 showPage(currentPage);
                 book.classList.remove('turn-right');
                 book.classList.remove('turn-left');
@@ -326,6 +335,9 @@
             sourceElement.src = ttsUrl;
             audioElement.load();
             audioElement.play();
+
+            // 새로운 오디오 객체로 업데이트
+            sentenceAudio = audioElement;
    
             // 모든 문장에서 하이라이트 제거
             sentences.forEach((_, i) => {

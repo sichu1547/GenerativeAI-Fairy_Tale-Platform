@@ -210,7 +210,8 @@
 
     
     <script>
-       
+        let sentenceAudio = null;
+
         document.addEventListener('DOMContentLoaded', function() {
             const stars = document.querySelectorAll('.star');
             const numberSelect = document.getElementById('number-select');
@@ -368,6 +369,14 @@
                 currentPage += direction;
                 if (currentPage < 0) currentPage = 0;
                 if (currentPage >= totalPages) currentPage = totalPages - 1;
+
+                // 현재 재생 중인 문단 읽기 오디오가 있다면 멈추기
+                if (sentenceAudio) {
+                    sentenceAudio.pause();
+                    sentenceAudio.currentTime = 0;
+                    sentenceAudio = null;
+                }
+
                 showPage(currentPage);
                 book.classList.remove('turn-right');
                 book.classList.remove('turn-left');
@@ -487,6 +496,9 @@ function generateImages() {
             sourceElement.src = ttsUrl;
             audioElement.load();
             audioElement.play();
+
+            // 새로운 오디오 객체로 업데이트
+            sentenceAudio = audioElement;
    
             // 모든 문장에서 하이라이트 제거
             sentences.forEach((_, i) => {

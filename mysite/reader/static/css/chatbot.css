@@ -31,6 +31,10 @@
     z-index: 9998; /* 다른 요소보다 앞에 위치하도록 높은 값 설정 */
 }
 
+#chatbot-img {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));  /* 그림자 효과 */
+}
+
 #chat-popup {
     font-family: 'Pretendard-Regular';
     display: none;
@@ -165,13 +169,13 @@
 .tooltip {
     position: absolute;
     display: block;
-    font-size: 12px;
+    font-size: 13px !important;
     font-weight: bold !important;
     text-align: start;
-    opacity: 0;
+    opacity: 1 !important;
     line-break: auto;
     font-family: 'Pretendard-Regular' !important;
-    visibility: hidden; /* 기본적으로 툴팁을 숨김 */
+    visibility: visible !important; /* 기본적으로 툴팁을 숨김 */
     width: auto; /* 툴팁의 너비 */
     background-color: white; /* 툴팁 배경색 */
     color: black; /* 텍스트 색상 */
@@ -183,9 +187,10 @@
     position: absolute; /* 절대 위치 */
     z-index: 1; /* z-index 설정 */
     bottom: 0%; /* 버튼 아래 위치 */
-    left: -160%; 
+    left: -170%; 
     transition: opacity 0.3s; /* 페이드 효과 */
     text-align: center !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);  /* 그림자 효과 */
 }
 
 /* 호버 시 툴팁 표시 */

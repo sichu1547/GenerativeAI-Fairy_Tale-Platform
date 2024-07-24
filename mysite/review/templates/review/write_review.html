@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
-
 <head>
-    <title>{% block title %}{{ story.title }} 독후감 쓰기</title>
+    <title>{% block title %}{{ review.story_title }} 독후감 쓰기</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{% static 'css/review.css' %}">
@@ -10,13 +9,13 @@
 
 </head>
 {% endblock %}
-
 {% block content %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Jua&display=swap" rel="stylesheet">
+
 <div class="review-container gamja-flower-regular">
-    <h1>{{ story.title }} 독후감 쓰기</h1>
+    <h1>✏️ {{ story.title }} 독후감 쓰기</h1>
     <form id="jsForm" method="post">
         {% csrf_token %}
         <div class="review-question">
@@ -25,19 +24,21 @@
         </div>
         <div class="review-middle">
             <div class="review-question">
-                <label for="painting">💁🏽 책을 읽고 느낀점을 자유롭게 그려보세요!</label>
+                <label for="painting">💁🏽 책을 읽고 느낀 점을 자유롭게 그려보세요!</label>
             </div>
         </div>
         <canvas id="jsCanvas" class="canvas"></canvas>
         <div class="controls">
             <div class="controls__range">
+                <span>·</span>
                 <input type="range" id="jsRange"
                 min="0.1" max="5.0" value="2.5" step="0.1"/>
+                <span>●</span>
             </div>
             <div class="controls__btns">
-                <button type="button" id="jsMode">채우기</button>
-                <button type="button" id="jsEraser">지우기</button> <!-- 지우개 버튼 추가 -->
-                <button type="button" id="jsClear">초기화</button> <!-- Clear 버튼 추가 -->
+                <button type="button" id="jsMode">🪣 채우기</button>
+                <button type="button" id="jsEraser">🧈 지우기</button> <!-- 지우개 버튼 추가 -->
+                <button type="button" id="jsClear">🔄 초기화</button> <!-- Clear 버튼 추가 -->
             </div>
             <div class="controls__colors" id="jsColors">
                 <div class="controls__color jsColor" 
@@ -61,7 +62,6 @@
             </div>
         </div>
         <input type="hidden" name="image_data" id="jsImageInput">
-
         <div class="submit-button-container">
             <button type="submit" id="submit-button">저장</button>
         </div>
@@ -77,7 +77,7 @@
         const mode = document.getElementById("jsMode");
         const eraser = document.getElementById("jsEraser");
         const clearButton = document.getElementById("jsClear"); // Clear 버튼 가져오기
-        const submitBtn = document.querySelector(".submit-button"); // 저장 수정된 부분
+        const submitBtn = document.querySelector("#submit-button"); // 저장 수정된 부분
 
         const form = document.getElementById("jsForm");
         const imageInput = document.getElementById("jsImageInput");
@@ -94,7 +94,7 @@
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
 
-        ctx.fillStyle = "white";
+        ctx.fillStyle = BACKGROUND_COLOR;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         ctx.strokeStyle = INITIAL_COLOR;
@@ -146,15 +146,15 @@
 
         function handleModeClick() {
             filling = !filling;
-            mode.innerText = filling ? "칠하기" : "채우기";
+            mode.innerText = filling ? "🖌️ 칠하기" : "🪣 채우기";
             erasing = false; // 모드 변경 시 지우개 모드 해제
         }
-
+    
         function handleEraserClick() {
             erasing = !erasing;
-            eraser.innerText = erasing ? "그리기" : "지우기"; // 지우개 모드 텍스트 변경
+            eraser.innerText = erasing ? "🎨 그리기" : "🧈 지우기"; // 지우개 모드 텍스트 변경
             filling = false; // 지우개 모드 활성화 시 채우기 모드 해제
-            mode.innerText = "채우기";
+            mode.innerText = "🪣 채우기";
         }
     
         function handleCanvasClick() {
