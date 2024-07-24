@@ -299,7 +299,6 @@ def check_username(request):
 
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate
 
 class CustomLoginView(LoginView):
     form_class = AuthenticationForm
@@ -308,12 +307,15 @@ class CustomLoginView(LoginView):
     def form_invalid(self, form):
         username = self.request.POST.get('username')
         password = self.request.POST.get('password')
-        user = authenticate(self.request, username=username, password=password)
-        
+
+        # 사용자가 존재하는지 확인
+        user = User.objects.filter(username=username).first()
+
         if user is None:
-            if not User.objects.filter(username=username).exists():
-                form.add_error('username', '존재하지 않는 아이디 입니다.')
-            else:
+            form.add_error('username', '존재하지 않는 아이디 입니다.')
+        else:
+            # 사용자가 존재하면 비밀번호가 일치하는지 확인
+            if not user.check_password(password):
                 form.add_error('password', '비밀번호가 일치하지 않습니다.')
         
         return super().form_invalid(form)
