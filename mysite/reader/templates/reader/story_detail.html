@@ -68,30 +68,24 @@
         height: 100%;
     }
     #loading {
-        display: none;
-        position: fixed;
-        z-index: 999;
-        height: 7em;
-        width: 7em;
-        overflow: visible;
-        margin: auto;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        text-align: center; /* Center the content horizontally */
+        display: none; /* 기본적으로 보이지 않게 설정 */
+    position: absolute; /* 절대 위치로 설정 */
+    top: 50%; /* 컨테이너의 세로 중앙 */
+    left: 50%; /* 컨테이너의 가로 중앙 */
+    transform: translate(-50%, -50%); /* 실제 중앙으로 이동 */
+    text-align: center; /* 내용 수평 중앙 정렬 */
     }
     
     #loading img {
-        display: block; /* Ensures the image is a block element */
-        margin: 0 auto; /* Centers the image horizontally */
+        display: block; /* 이미지를 블록 요소로 설정 */
+        margin: 0 auto; /* 이미지를 수평으로 중앙에 배치 */
     }
     
     #loading a {
-        display: block; /* Ensures the anchor tag behaves like a block element */
-        margin-top: 5px; /* Adjust as needed to create space between image and text */
-        color: black; /* Example text color */
-        text-decoration: none; /* Remove underline */
+        display: block; /* 링크를 블록 요소로 설정 */
+        margin-top: 5px; /* 이미지와 링크 사이의 간격 설정 */
+        color: black; /* 링크 텍스트 색상을 검정색으로 설정 */
+        text-decoration: none; /* 링크의 밑줄 제거 */
     }
     </style>
 </head>{% endblock %}
@@ -102,10 +96,7 @@
         <div id="curtain-right" class="curtain"></div>
         <!--<div id="loading-message">Loading...</div>-->
     </div>
-    <div id="loading" style="display: none;">
-        <img src="{% static 'images/책넘기기.gif' %}" alt="Loading...">
-        <a>생성중!</a>
-    </div>    
+     
     <div class="story-detail-container">
        
         <div class="header">
@@ -133,6 +124,10 @@
             <button class="arrow-button" id="previous_button">←</button>
             <div class="book">
                 <div class="left-page">
+                    <div id="loading" style="display: none;">
+                        <img src="{% static 'images/책넘기기.gif' %}" alt="Loading...">
+                        <a>생성중!</a>
+                    </div>   
                     <div class="image-container" style="background-image: url('{{ image_urls.0 }}');"></div>
                 </div>
                 <div class="spine">
