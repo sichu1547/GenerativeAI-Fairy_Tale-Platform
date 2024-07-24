@@ -16,7 +16,8 @@ from openai import OpenAI
 from django.conf import settings
 import string
 import json
-
+import requests
+from django.core.files.base import ContentFile
 
 client = OpenAI(
     api_key=settings.OPENAI_API_KEY
@@ -157,7 +158,8 @@ def create_story(request):
             default_user = User.objects.get(id=settings.DEFAULT_USER_ID)
             if not user.is_authenticated:
                 user = default_user
-            file_path = save_final_story_to_database(final_story, profile, user, title)
+            thumbnail_url = generated_images[0].split(',')[0]
+            file_path = save_final_story_to_database(final_story, profile, user, title, thumbnail_url)
 
             # 최종 이야기와 이를 분할한 파트, 생성된 이야기 및 이미지 리스트를 컨텍스트로 전달하여 렌더링
             context = {
@@ -173,36 +175,42 @@ def create_story(request):
         return render(request, 'generator/create_story.html')
 
 def generate_image(sentence):
-    # print('이미지 생성 중')
-    # api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
-    # client = OpenAI(api_key = api_key)
+    print('이미지 생성 중')
+    api_key = settings.OPENAI_API_KEY
+    client = OpenAI(api_key = api_key)
     
-    # try:
-    #     response = client.images.generate(
-    #         model="dall-e-3",
-    #         prompt=f"Create a cute and colorful children's book illustration. The scene should be inspired by the following sentence: '{sentence}'. Ensure the style is drawn with soft lines, bright and pastel colors, and a friendly, playful feel. The background should be detailed but not too complex, keeping it engaging but simple for children. Use a hand-drawn, cartoon-like style. The image should only consist of picture elements, NOT TEXT.",
-    #         size="1024x1024",
-    #         n=1,
-    #         quality="standard",
-    #         style="natural"
-    #     )
-    #     image_url = response.data[0].url
-    #     print('성공')
-    #     return image_url
+    try:
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=f"Create a cute and colorful children's book illustration. The scene should be inspired by the following sentence: '{sentence}'. Ensure the style is drawn with soft lines, bright and pastel colors, and a friendly, playful feel. The background should be detailed but not too complex, keeping it engaging but simple for children. Use a hand-drawn, cartoon-like style. The image should only consist of picture elements, NOT TEXT.",
+            size="1024x1024",
+            n=1,
+            quality="standard",
+            style="natural"
+        )
+        image_url = response.data[0].url
+        print('성공')
+        return image_url
 
-    # except Exception as e:
-    #     print('실패')
-    #     return ""
+    except Exception as e:
+        print('실패')
+        return ""
     return ""
 
-def save_final_story_to_database(final_story, profile, user, title):
+def save_final_story_to_database(final_story, profile, user, title, thumbnail_url):
     try:
+        response = requests.get(thumbnail_url)
+        if response.status_code == 200:
+            filename = f"{title}.png"
+            content_file = ContentFile(response.content)
+            
         Gen_Story = GenStory.objects.create(
             title = title,
             user = user,
             body=final_story,
             profile = profile
         )
+        Gen_Story.thumbnail.save(filename, content_file)
         Gen_Story.save()
     except Exception as e:
         print(f"Error saving to database: {e}")

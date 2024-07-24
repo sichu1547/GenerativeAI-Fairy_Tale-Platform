@@ -851,13 +851,10 @@ span.dropdown-toggle.shapely-dropdown {
 ul.slides img {
   width: auto;
 }
-.label-background {
-  animation: slider .3s;
-          background-color: #B9E9FF;
-          border-radius: 50%; 
-          width: 60px;       /* 원의 너비 */
-          height: 55px !important;
-          text-align: center; /* 텍스트 중앙 정렬 */
+#label-background {
+  font-weight: bold !important;        /* 텍스트를 굵게 만듭니다. */
+    text-decoration: underline !important; /* 텍스트에 밑줄을 추가합니다. */
+    color: #000 !important;
 }
 .service-background {
   animation: slider .3s;

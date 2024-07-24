@@ -832,13 +832,13 @@ function generateImages() {
     });
     
     
-    
+    var len_story = {{ len_story }};
 
     
     // 동화 이동하기
     function prevPage(id) {
         if (id == 01){
-            window.location.href = `/reader/story/442/`;
+            window.location.href = `/reader/story/${len_story}/`;
         } else{
             id = id - 1;
             window.location.href = `/reader/story/${id}/`;
@@ -847,7 +847,7 @@ function generateImages() {
 
     // 동화 이동하기
     function nextPage(id) {
-        if (id == 442){
+        if (id == len_story){
             window.location.href = `/reader/story/01/`;
         } else{
             id = id + 1;
