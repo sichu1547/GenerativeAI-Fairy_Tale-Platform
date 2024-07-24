@@ -13,6 +13,8 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from review.models import Review
 from generator.models import GenStory
+from reader.models import Story
+from datetime import datetime
 
 def index(request):
     
