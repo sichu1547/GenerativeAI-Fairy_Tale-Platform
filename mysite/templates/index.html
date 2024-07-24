@@ -71,12 +71,12 @@
     </div>
     <div class="num-item">
         <img class="in-title" alt="Portfolio Section" src="{% static 'images/동화책.png' %}" style="width: 120px; height: 120px;"><br>
-        <span class="nums" data-count="442">0</span><span id="num-unit">편</span><br>
+        <span class="nums" data-count={{ len_story }}>0</span><span id="num-unit">편</span><br>
         <span class="sub-title">총 동화 수</span><br>
     </div>
     <div class="num-item">
         <img class="in-title" alt="Portfolio Section" src="{% static 'images/시간.png' %}" style="width: 120px; height: 120px;"><br>
-        <span class="nums" data-count="1031">0</span><span id="num-unit">시간</span><br>
+        <span class="nums" data-count={{ time_count }}>0</span><span id="num-unit">시간</span><br>
         <span class="sub-title">제작 기간</span><br>
     </div>
 </div>

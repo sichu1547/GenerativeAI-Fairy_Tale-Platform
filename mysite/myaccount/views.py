@@ -13,9 +13,28 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from review.models import Review
 from generator.models import GenStory
+from reader.models import Story
+from datetime import datetime
 
 def index(request):
-    return render(request, 'index.html')
+    
+    stories = Story.objects.all()
+    len_story = stories.count()
+    
+    # 시작일과 종료일 설정
+    start_date_str = '2023-06-17'
+    end_date_str = '2023-07-30'
+
+    # 문자열을 datetime 객체로 변환
+    start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+    end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+
+    # 두 날짜 사이의 시간 계산
+    time_difference = end_date - start_date
+    hours_difference = time_difference.total_seconds() / 3600
+
+    time_count = hours_difference
+    return render(request, 'index.html', {'len_story':len_story, 'time_count':time_count})
 
 def signup(request):
     if request.method == 'POST':
