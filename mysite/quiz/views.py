@@ -64,8 +64,8 @@ class QuizView(View):
         answer = request.POST.get('answer')
         correct_answer = request.POST.get('correct_answer')
         keyword = request.POST.get('keyword', '')
-
-        if answer == correct_answer:
+        print(answer, correct_answer)
+        if answer in correct_answer:
             result = "축하합니다🥳"
             QuizView.m_context = {}
         else:
@@ -113,27 +113,28 @@ class QuizView(View):
         chat = ChatOpenAI(model="gpt-4o", openai_api_key=api_key)
         
         prompt = f"다음 문단을 읽고 최대한 간단하고 본문에 명시된 답변이 나오게 질문을 하나 만들고 그에 대한 정답 1개와 정답과 비슷한 보기를 정답을 포함해서 3개를 제시해라:\n\n{paragraph}"
-        response = chat.invoke([HumanMessage(content=prompt)])
-
-        lines = response.content.split('\n\n')     
-        question = lines[0].replace("질문: ", "")
         cnt = 0
-        while self.is_answer_asked(question) and cnt < 5:
-            cnt += 1
+        
+        while cnt < 5:
             response = chat.invoke([HumanMessage(content=prompt)])
-            lines = response.content.split('\n\n')     
-            question = lines[0].replace("질문: ", "")
+            lines = response.content.split('\n\n')
+            lines = [re.sub(r'[###|%%%|\$\$\$|\*\*\*]', '', item).strip() for item in lines]
+            
+            try:
+                question = lines[0].replace("질문: ", "")
+                answer = lines[1].replace("정답: ", "")
+                temp = lines[2].split('\n')
+                example = [temp[i].split('. ')[1] for i in range(1, len(temp))]
+                
+                # 질문이 이미 존재하는지 확인하고 조건을 만족하면 리턴
+                if not self.is_answer_asked(question):
+                    return question, answer, example
+            except IndexError:
+                # 필요한 요소가 없을 경우 카운트 증가 및 다시 시도
+                cnt += 1
 
-        lines = [re.sub(r'[###|%%%|\$\$\$|\*\*\*]', '', item).strip() for item in lines]
-        question = lines[0].replace("질문: ", "")
-        answer = lines[1].replace("정답: ", "")
-        temp = lines[2].split('\n')
-        example = []
-
-        for i in range(1, len(temp)):
-            example.append(temp[i].split('. ')[1])
-
-        return question, answer, example          
+        # 실패 시 기본값 리턴 (예외처리 필요 시)
+        return None, None, None       
         
 def index(request):
     return render(request, 'quiz/quiz.html')
