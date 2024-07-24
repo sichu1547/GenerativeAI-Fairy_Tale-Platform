@@ -38,23 +38,7 @@
     
 </style>
 <style>
-    .footer {
-        background-color: #000; 
-        padding: 20px 0;
-    }
-    .footer .site-info, .footer .footer-credit {
-        color: #fff; 
-    }
-    .footer .footer-credit {
-        text-decoration: none; /* 밑줄 제거 */
-        color: #fff; /* 흰색 링크 */
-    }
-    .footer .footer-credit:hover {
-        color: #ddd; /* 링크에 마우스를 올렸을 때 밝은 회색 */
-    }
-    .gr {
-        color: ##7D7D7D !important;
-    }
+    
 </style>
 </head>
 <body class="home page-template page-template-page-templates page-template-template-home page-template-page-templatestemplate-home-php page page-id-1863 has-sidebar-right elementor-default elementor-kit-2257">
@@ -88,11 +72,11 @@
                                                 </a>
                                             </li>
                                             {% endif %}
-                                            <li id='readerbutton'><a href="{% url 'reader:list' %}" class='gr'>읽기</a></li>
-                                            <li id='genbutton'><a href="{% url 'generator:index' %}" class='gr'>만들기</a></li>
-                                            <li id='creatbutton'><a href="{% url 'reader:search' %}?keyword=Generative" class='gr'>생성 동화</a></li>
+                                            <li><a href="{% url 'reader:list' %}" id='readerbutton' class='gr'>읽기</a></li>
+                                            <li><a href="{% url 'generator:index' %}" id='genbutton' class='gr'>만들기</a></li>
+                                            <li><a href="{% url 'reader:search' %}?keyword=Generative" id='creatbutton' class='gr'>생성 동화</a></li>
                                         {% endif %}
-                                        <li id='servicebutton'><a href="{% url 'mine:index' %}" class='gr'>서비스 소개</a></li> 
+                                        <li><a href="{% url 'mine:index' %}" id='servicebutton' class='gr'>서비스 소개</a></li> 
                                         <li>
                                             <a href="/" id="logout-link" class='gr'>로그아웃</a>
                                             <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
@@ -100,21 +84,21 @@
                                             </form>
                                         </li>
                                         {% if request.session.selected_profile_id %}
-                                        <li id='userbutton'><a href="{% url 'profile_detail' request.session.selected_profile_id %}" class='gr'>내 정보</a></li>
+                                        <li><a href="{% url 'profile_detail' request.session.selected_profile_id %}" id='userbutton' class='gr'>내 정보</a></li>
                                         {% else %}
-                                            <li id='userbutton'><a href="{% url 'profile' %}" class='gr'>내 정보</a></li>
+                                            <li><a href="{% url 'profile' %}" id='userbutton' class='gr'>내 정보</a></li>
                                         {% endif %}
 
                                     {% else %}
-                                        <li id='servicebutton'><a href="{% url 'mine:index' %}" class='gr'>서비스 소개</a></li> 
+                                        <li><a href="{% url 'mine:index' %}" id='servicebutton' class='gr'>서비스 소개</a></li> 
 
                                         {% if request.path != '/myaccount/login/'%}
-                                            <li id='readerbutton'><a href="{% url 'reader:list' %}" class='gr'>읽기</a></li>
-                                            <li id='genbutton'><a href="{% url 'generator:index' %}" class='gr'>만들기</a></li>
-                                            <li id='creatbutton'><a href="{% url 'reader:search' %}?keyword=Generative" class='gr'>생성 동화</a></li>
-                                            <li id='loginbutton'><a href="{% url 'login' %}" class='gr'>로그인</a></li>
+                                            <li><a href="{% url 'reader:list' %}" id='readerbutton' class='gr'>읽기</a></li>
+                                            <li><a href="{% url 'generator:index' %}" id='genbutton' class='gr'>만들기</a></li>
+                                            <li><a href="{% url 'reader:search' %}?keyword=Generative" id='creatbutton' class='gr'>생성 동화</a></li>
+                                            <li><a href="{% url 'login' %}" id='loginbutton' class='gr'>로그인</a></li>
                                         {% endif %}
-                                        <li id='signupbutton'><a href="{% url 'signup' %}" class='gr'>회원가입</a></li>
+                                        <li><a href="{% url 'signup' %}" id='signupbutton' class='gr'>회원가입</a></li>
                                     {% endif %}
                                     {% if user.is_staff %}
                                         <li><a href="/admin/">관리자 페이지</a></li>

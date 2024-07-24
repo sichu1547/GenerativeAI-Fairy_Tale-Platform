@@ -851,18 +851,27 @@ span.dropdown-toggle.shapely-dropdown {
 ul.slides img {
   width: auto;
 }
+.footer {
+  background-color: #000; 
+  padding: 20px 0;
+}
+.footer .site-info, .footer .footer-credit {
+  color: #fff; 
+}
+.footer .footer-credit {
+  text-decoration: none; /* 밑줄 제거 */
+  color: #fff; /* 흰색 링크 */
+}
+.footer .footer-credit:hover {
+  color: #ddd; /* 링크에 마우스를 올렸을 때 밝은 회색 */
+}
+.gr {
+  color: #7D7D7D !important;
+}
 #label-background {
   font-weight: bold !important;        /* 텍스트를 굵게 만듭니다. */
     text-decoration: underline !important; /* 텍스트에 밑줄을 추가합니다. */
-    color: #000 !important;
-}
-.service-background {
-  animation: slider .3s;
-          background-color: #B9E9FF;
-          border-radius: 50%; 
-          width: 80px;       /* 원의 너비 */
-          height: 55px !important;
-          text-align: center; /* 텍스트 중앙 정렬 */
+    color: #98C2D4 !important;
 }
 
 @keyframes slider {
