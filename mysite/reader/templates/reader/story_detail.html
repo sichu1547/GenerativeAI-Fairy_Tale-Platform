@@ -66,7 +66,34 @@
         top: 50%;
         width: 200px; /* 원하는 너비로 설정 */
         height: 100%;
-    }</style>
+    }
+    #loading {
+        display: none;
+        position: fixed;
+        z-index: 999;
+        height: 7em;
+        width: 7em;
+        overflow: visible;
+        margin: auto;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        text-align: center; /* Center the content horizontally */
+    }
+    
+    #loading img {
+        display: block; /* Ensures the image is a block element */
+        margin: 0 auto; /* Centers the image horizontally */
+    }
+    
+    #loading a {
+        display: block; /* Ensures the anchor tag behaves like a block element */
+        margin-top: 5px; /* Adjust as needed to create space between image and text */
+        color: black; /* Example text color */
+        text-decoration: none; /* Remove underline */
+    }
+    </style>
 </head>{% endblock %}
 {% block content %}
 <body>
@@ -75,6 +102,10 @@
         <div id="curtain-right" class="curtain"></div>
         <!--<div id="loading-message">Loading...</div>-->
     </div>
+    <div id="loading" style="display: none;">
+        <img src="{% static 'images/책넘기기.gif' %}" alt="Loading...">
+        <a>생성중!</a>
+    </div>    
     <div class="story-detail-container">
        
         <div class="header">
@@ -272,7 +303,11 @@
 
             // 세션에서 가져온 이미지 URL을 사용
             if (imageUrls[page]) { // 이미지 URL이 유효한지 확인
-                leftPage.style.backgroundImage = `url(${imageUrls[page]})`;               
+                leftPage.style.backgroundImage = `url(${imageUrls[page]})`;     
+                $('#loading').hide();                          
+            }
+            else{
+                $('#loading').show();
             }
 
             // 마지막 페이지에서만 rating-form, 하단 buttons 보이기
@@ -363,7 +398,9 @@ function generateImages() {
                             csrfmiddlewaretoken: '{{ csrf_token }}'
                         },
                         success: function() {
-                            showPage(currentPage); // 페이지 업데이트
+                            {
+                                showPage(currentPage); // 현재 페이지가 업데이트 된 경우에만 페이지 업데이트
+                            }
                         }
                     });
                 },
@@ -378,7 +415,9 @@ function generateImages() {
                             csrfmiddlewaretoken: '{{ csrf_token }}'
                         },
                         success: function() {
-                            showPage(currentPage); // 페이지 업데이트
+                            {
+                                showPage(currentPage); // 현재 페이지가 업데이트 된 경우에만 페이지 업데이트
+                            }
                         }
                     });
                 },

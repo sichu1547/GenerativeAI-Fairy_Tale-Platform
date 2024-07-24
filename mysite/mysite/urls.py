@@ -29,7 +29,7 @@ urlpatterns = [
     path('reader/', include('reader.urls')),
     path('generator/', include('generator.urls')),
     path('quiz/', include('quiz.urls')),
-    path('mine/', include('mine.urls')),
+    path('intro/', include('mine.urls')),
     path('review/', include('review.urls')),
 ]
 
