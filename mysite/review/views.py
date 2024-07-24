@@ -56,13 +56,14 @@ class StoryListView(ListView):
 class ReviewListView(View):
     def get(self, request, review_id):
         review = get_object_or_404(Review, id=review_id, user=request.user)
+        request.session['profile_id'] = review.profile.id
         form = ReviewForm(instance=review)
         return render(request, 'review/review_list.html', {'form': form, 'review': review})
     
     def post(self, request, review_id):
         review = get_object_or_404(Review, id=review_id, user=request.user)
         form = ReviewForm(request.POST, request.FILES, instance=review)
-        print('POST', request.user, request.user.pk)
+        print('POST', request.session.get('profile_id'))
         if form.is_valid():
             review = form.save(commit=False)
             image_data = request.POST.get('image_data')
@@ -71,7 +72,7 @@ class ReviewListView(View):
                 ext = format.split('/')[-1]
                 review.painting = ContentFile(base64.b64decode(imgstr), name=f'temp.{ext}')
             review.save()
-            return redirect('profile_detail', pk=request.user.pk)
+            return redirect('profile_detail', pk=request.session.get('profile_id'))
         return render(request, 'review/review_list.html', {'form': form, 'review': review})
 
 class ReviewDeleteView(DeleteView):

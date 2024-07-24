@@ -155,7 +155,17 @@
     box-shadow: 5px 5px 10px black;
 }
 
-.left-page, .right-page {
+.left-page {
+    background-image: url("../images/paper_texture.jpg");
+    background-size: cover; /* 이미지가 페이지 비율을 유지하며 최대 크기로 확장 */
+    background-position: center; 
+    background-repeat: no-repeat;
+    flex: 1;
+    width: 40%;
+    display: flex;
+    position: relative; /* 부모 컨테이너를 상대 위치로 설정 */
+}
+.right-page {
     background-image: url("../images/paper_texture.jpg");
     background-size: cover; /* 이미지가 페이지 비율을 유지하며 최대 크기로 확장 */
     background-position: center; 
