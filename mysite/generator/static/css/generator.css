@@ -134,15 +134,15 @@ p {
 
 
 #story-content {
-    max-height: 110px;
+    max-height: auto;
     overflow-y: auto;
     margin-top: 0 !important;
     margin-bottom: 10px !important;
     scrollbar-width: thin;  /* 스크롤바 얇게 설정 */
     scrollbar-color: #ffa07a transparent;  /* 스크롤바 색상 및 트랙 색상 */
-    padding-right: 10px;
+    padding: 0;
     font-size: 26px !important;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 .story-image {
