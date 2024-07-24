@@ -109,9 +109,9 @@
                                             <li id='readerbutton'><a href="{% url 'reader:list' %}">읽기</a></li>
                                             <li id='genbutton'><a href="{% url 'generator:index' %}">만들기</a></li>
                                             <li id='creatbutton'><a href="{% url 'reader:search' %}?keyword=Generative">생성 동화</a></li>
-                                            <li><a href="{% url 'login' %}">로그인</a></li>
+                                            <li id='loginbutton'><a href="{% url 'login' %}">로그인</a></li>
                                         {% endif %}
-                                        <li><a href="{% url 'signup' %}">회원가입</a></li>
+                                        <li id='signupbutton'><a href="{% url 'signup' %}">회원가입</a></li>
                                     {% endif %}
                                     {% if user.is_staff %}
                                         <li><a href="/admin/">관리자 페이지</a></li>
@@ -187,38 +187,49 @@
 
 
 // 현재 페이지의 URL에서 경로를 추출하는 함수
-function getPathPrefix(url) {
+function getPathPart(url, partIndex) {
     // URL 객체를 생성하여 pathname을 얻습니다.
     const parser = new URL(url);
-    return parser.pathname.split('/')[1]; // URL 경로의 첫 번째 부분을 반환합니다.
+    const pathParts = parser.pathname.split('/').filter(part => part.length > 0); // 빈 문자열을 필터링하여 경로 부분 배열을 만듭니다.
+    return pathParts[partIndex - 1]; // partIndex가 1부터 시작한다고 가정
 }
 
-// 현재 페이지의 경로의 첫 번째 부분을 얻습니다.
-var pathPrefix = getPathPrefix(window.location.href);
-console.log("현재 경로의 첫 부분:", pathPrefix);
-const readerIcon = document.getElementById("readerbutton");
-            const genIcon = document.getElementById("genbutton");
-            const creatIcon = document.getElementById("creatbutton");
-            const serviceIcon = document.getElementById("servicebutton");
-            const userIcon = document.getElementById("userbutton");
-// 경로의 첫 번째 부분이 목표와 일치하는지 확인
-if (pathPrefix === "reader") {
-    {% if keyword == 'Generative' %}
-        creatIcon.classList.add("label-background"); // 생성 동화
-    {% else %}
-        readerIcon.classList.add("label-background"); // 읽기
-    {% endif %}
-} else if (pathPrefix === "review") {
-    readerIcon.classList.add("label-background");
-} else if (pathPrefix === "quiz") {
-    readerIcon.classList.add("label-background");
-} else if (pathPrefix === "generator") {
-    genIcon.classList.add("label-background"); // 만들기
-} else if (pathPrefix === "mine") {
-    serviceIcon.classList.add("service-background"); // 서비스 소개
-} else if (pathPrefix === "myaccount") {
-    userIcon.classList.add("label-background"); // 내 정보
+// 브라우저 창 폭이 991px 이상일 때만 적용되도록
+if (window.innerWidth >= 991) {
+    var pathPart = getPathPart(window.location.href, 1);
+    var secondpathPart = getPathPart(window.location.href, 2);
+    const readerIcon = document.getElementById("readerbutton");
+    const genIcon = document.getElementById("genbutton");
+    const creatIcon = document.getElementById("creatbutton");
+    const serviceIcon = document.getElementById("servicebutton");
+    const userIcon = document.getElementById("userbutton");
+    const signupIcon = document.getElementById("signupbutton");
+    
+    // 경로의 첫 번째 부분이 목표와 일치하는지 확인
+    if (pathPart === "reader") {
+        {% if keyword == 'Generative' %}
+            creatIcon.classList.add("service-background"); // 생성 동화
+        {% else %}
+            readerIcon.classList.add("label-background"); // 읽기
+        {% endif %}
+    } else if (pathPart === "review") {
+        readerIcon.classList.add("label-background");
+    } else if (pathPart === "quiz") {
+        readerIcon.classList.add("label-background");
+    } else if (pathPart === "generator") {
+        genIcon.classList.add("label-background"); // 만들기
+    } else if (pathPart === "intro") {
+        serviceIcon.classList.add("service-background"); // 서비스 소개
+    } else if (pathPart === "signup") {
+        signupIcon.classList.add("service-background"); // 회원가입
+    } else if (pathPart === "myaccount") {
+        userIcon.classList.add("label-background"); // 내 정보
+        if (secondpathPart == "login") {
+            loginIcon.classList.add("label-background"); // 로그인
+        }
+    }
 }
+
     function showLoading() {
         document.getElementById('loading').style.display = 'block';
     }
