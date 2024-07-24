@@ -52,8 +52,6 @@
                         {% csrf_token %}
                         <button type="submit" id="delete-button">삭제하기</button>
                     </form>
-                    {% comment %} <button type="button" id="edit-button" onclick="location.href='{% url 'review:review_list' profile.id %}'">독후감 보기</button>
-                    <button type="button" id="edit-button" onclick="location.href='{% url 'reading_history' profile.id %}'">열람 기록 보기</button> {% endcomment %}
                 </li>
                 {% endfor %}
             </ul>
@@ -74,6 +72,11 @@
         };
 
         document.addEventListener("DOMContentLoaded", function() {
+            {% if messages %}
+                {% for message in messages %}
+                    alert("{{ message }}");
+                {% endfor %}
+            {% endif %}
             {% if form.errors %}
                 let errors = [];
                 {% for field in form %}
