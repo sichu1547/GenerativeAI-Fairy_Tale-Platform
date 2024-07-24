@@ -122,7 +122,6 @@ def password_reset_complete(request):
 def select_account(request):
     profiles = request.user.profiles.all()
     next_url = request.GET.get('next', request.POST.get('next', 'index'))
-    selected_profile_id = request.POST.get('profile_id')
 
     if request.method == "POST":
         selected_profile_id = request.POST.get('profile_id')
@@ -131,7 +130,7 @@ def select_account(request):
             profile = get_object_or_404(Profile, id=selected_profile_id, user=request.user)
             request.session['show_attendance_modal'] = True
             request.session['selected_profile_id'] = profile.id
-            request.session['selected_profile_avatar'] = profile.avatar.url
+            request.session['selected_profile_avatar'] = profile.avatar.url if profile.avatar else None
             request.session['selected_profile_name'] = profile.name
             
             return redirect(next_url)
@@ -258,7 +257,10 @@ def profile_delete(request, pk):
 
     if request.method == 'POST':      
         profile.delete()  
-
+        if request.session.get('selected_profile_id') == pk:
+            del request.session['selected_profile_id']
+            del request.session['selected_profile_avatar']
+            del request.session['selected_profile_name']
     return redirect('profile')
 
 def privacy_policy_view(request):
