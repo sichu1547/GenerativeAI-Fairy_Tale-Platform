@@ -1,11 +1,10 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
-from .views import CustomLoginView
 
 urlpatterns = [
     path('signup/', views.signup, name='signup'),  # 회원가입 URL
-    path('login/', CustomLoginView.as_view(), name='login'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('set-session/', views.set_session_data, name='set_session_data'),
     path('get-session/', views.get_session_data, name='get_session_data'), 
