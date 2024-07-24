@@ -52,6 +52,9 @@
     .footer .footer-credit:hover {
         color: #ddd; /* 링크에 마우스를 올렸을 때 밝은 회색 */
     }
+    .gr {
+        color: ##7D7D7D !important;
+    }
 </style>
 </head>
 <body class="home page-template page-template-page-templates page-template-template-home page-template-page-templatestemplate-home-php page page-id-1863 has-sidebar-right elementor-default elementor-kit-2257">
@@ -85,33 +88,33 @@
                                                 </a>
                                             </li>
                                             {% endif %}
-                                            <li id='readerbutton'><a href="{% url 'reader:list' %}" >읽기</a></li>
-                                            <li id='genbutton'><a href="{% url 'generator:index' %}">만들기</a></li>
-                                            <li id='creatbutton'><a href="{% url 'reader:search' %}?keyword=Generative">생성 동화</a></li>
+                                            <li id='readerbutton'><a href="{% url 'reader:list' %}" class='gr'>읽기</a></li>
+                                            <li id='genbutton'><a href="{% url 'generator:index' %}" class='gr'>만들기</a></li>
+                                            <li id='creatbutton'><a href="{% url 'reader:search' %}?keyword=Generative" class='gr'>생성 동화</a></li>
                                         {% endif %}
-                                        <li id='servicebutton'><a href="{% url 'mine:index' %}">서비스 소개</a></li> 
+                                        <li id='servicebutton'><a href="{% url 'mine:index' %}" class='gr'>서비스 소개</a></li> 
                                         <li>
-                                            <a href="/" id="logout-link">로그아웃</a>
+                                            <a href="/" id="logout-link" class='gr'>로그아웃</a>
                                             <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
                                                 {% csrf_token %}
                                             </form>
                                         </li>
                                         {% if request.session.selected_profile_id %}
-                                        <li id='userbutton'><a href="{% url 'profile_detail' request.session.selected_profile_id %}">내 정보</a></li>
+                                        <li id='userbutton'><a href="{% url 'profile_detail' request.session.selected_profile_id %}" class='gr'>내 정보</a></li>
                                         {% else %}
-                                            <li id='userbutton'><a href="{% url 'profile' %}">내 정보</a></li>
+                                            <li id='userbutton'><a href="{% url 'profile' %}" class='gr'>내 정보</a></li>
                                         {% endif %}
 
                                     {% else %}
-                                        <li id='servicebutton'><a href="{% url 'mine:index' %}">서비스 소개</a></li> 
+                                        <li id='servicebutton'><a href="{% url 'mine:index' %}" class='gr'>서비스 소개</a></li> 
 
                                         {% if request.path != '/myaccount/login/'%}
-                                            <li id='readerbutton'><a href="{% url 'reader:list' %}">읽기</a></li>
-                                            <li id='genbutton'><a href="{% url 'generator:index' %}">만들기</a></li>
-                                            <li id='creatbutton'><a href="{% url 'reader:search' %}?keyword=Generative">생성 동화</a></li>
-                                            <li id='loginbutton'><a href="{% url 'login' %}">로그인</a></li>
+                                            <li id='readerbutton'><a href="{% url 'reader:list' %}" class='gr'>읽기</a></li>
+                                            <li id='genbutton'><a href="{% url 'generator:index' %}" class='gr'>만들기</a></li>
+                                            <li id='creatbutton'><a href="{% url 'reader:search' %}?keyword=Generative" class='gr'>생성 동화</a></li>
+                                            <li id='loginbutton'><a href="{% url 'login' %}" class='gr'>로그인</a></li>
                                         {% endif %}
-                                        <li id='signupbutton'><a href="{% url 'signup' %}">회원가입</a></li>
+                                        <li id='signupbutton'><a href="{% url 'signup' %}" class='gr'>회원가입</a></li>
                                     {% endif %}
                                     {% if user.is_staff %}
                                         <li><a href="/admin/">관리자 페이지</a></li>
@@ -194,8 +197,7 @@ function getPathPart(url, partIndex) {
     return pathParts[partIndex - 1]; // partIndex가 1부터 시작한다고 가정
 }
 
-// 브라우저 창 폭이 991px 이상일 때만 적용되도록
-if (window.innerWidth >= 991) {
+if (window.innerWidth) {
     var pathPart = getPathPart(window.location.href, 1);
     var secondpathPart = getPathPart(window.location.href, 2);
     const readerIcon = document.getElementById("readerbutton");
@@ -208,24 +210,24 @@ if (window.innerWidth >= 991) {
     // 경로의 첫 번째 부분이 목표와 일치하는지 확인
     if (pathPart === "reader") {
         {% if keyword == 'Generative' %}
-            creatIcon.classList.add("service-background"); // 생성 동화
+        creatIcon.id = "label-background"; // 생성 동화
         {% else %}
-            readerIcon.classList.add("label-background"); // 읽기
+        readerIcon.id = "label-background"; // 읽기
         {% endif %}
     } else if (pathPart === "review") {
-        readerIcon.classList.add("label-background");
+        readerIcon.id = "label-background";
     } else if (pathPart === "quiz") {
-        readerIcon.classList.add("label-background");
+        readerIcon.id = "label-background";
     } else if (pathPart === "generator") {
-        genIcon.classList.add("label-background"); // 만들기
+        genIcon.id = "label-background"; // 만들기
     } else if (pathPart === "intro") {
-        serviceIcon.classList.add("service-background"); // 서비스 소개
+        serviceIcon.id = "label-background"; // 서비스 소개
     } else if (pathPart === "signup") {
-        signupIcon.classList.add("service-background"); // 회원가입
+        signupIcon.id = "label-background"; // 회원가입
     } else if (pathPart === "myaccount") {
-        userIcon.classList.add("label-background"); // 내 정보
+        userIcon.id = "label-background"; // 내 정보
         if (secondpathPart == "login") {
-            loginIcon.classList.add("label-background"); // 로그인
+            loginIcon.id = "label-background"; // 로그인
         }
     }
 }
