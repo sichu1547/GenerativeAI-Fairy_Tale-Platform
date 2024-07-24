@@ -27,10 +27,16 @@
             margin-bottom: 10px;
         }
         .successlist {
+            font-size: 0.8em;
             color: blue;
+            margin-top: -10px;
+            margin-bottom: 10px;
         }
         .faillist {
+            font-size: 0.8em;
             color: red;
+            margin-top: -10px;
+            margin-bottom: 10px;
         }        
     </style>
 </head>
@@ -117,8 +123,8 @@
                         {% include 'registration/form_errors.html' with field=form.email %}
                         
                         <div class="container-login100-form-btn">
-                            <button type="submit" class="login100-form-btn">
-                                가입!
+                            <button type="submit" class="login100-form-btn" id="signup-btn">
+                                가입
                             </button>
                         </div>
                     </div>

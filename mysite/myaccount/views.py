@@ -13,6 +13,7 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from review.models import Review
 from generator.models import GenStory
+from django.contrib import messages 
 
 def index(request):
     return render(request, 'index.html')
@@ -149,9 +150,11 @@ def profile(request):
             profile = get_object_or_404(Profile, id=profile_id, user=request.user)
             form = ProfileForm(request.POST, request.FILES, instance=profile)
         else:  # 생성
-            form = ProfileForm(request.POST, request.FILES)
             if request.user.profiles.count() >= 4:
-                return HttpResponse("최대 4개까지만 생성할 수 있습니다.")
+                messages.error(request, "최대 4개까지만 생성할 수 있습니다.")
+                return redirect('profile')
+
+            form = ProfileForm(request.POST, request.FILES)
         
         if form.is_valid():
             profile = form.save(commit=False)
