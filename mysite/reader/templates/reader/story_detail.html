@@ -87,6 +87,9 @@
         color: black; /* 링크 텍스트 색상을 검정색으로 설정 */
         text-decoration: none; /* 링크의 밑줄 제거 */
     }
+    .submitbutton {
+
+    }
     </style>
 </head>{% endblock %}
 {% block content %}
@@ -205,6 +208,17 @@
 
     
     <script>
+        // 페이지 로드 후 실행되는 스크립트
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // 버튼 요소를 선택합니다.
+            const button = document.querySelector('.submitbutton');
+            
+            // 버튼에 클릭 이벤트 리스너를 추가합니다.
+            button.addEventListener('click', () => {
+                // 버튼 클릭 시 알림 팝업을 표시합니다.
+                alert('저장완료!');
+            });
+        });
         let sentenceAudio = null;
 
         document.addEventListener('DOMContentLoaded', function() {

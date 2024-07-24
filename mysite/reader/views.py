@@ -283,6 +283,7 @@ def rate_story(request, id):
                     story.starsum += starpoint
                     story.starpoint = story.starsum / story.starcount
                     story.save()
+                    return HttpResponse(status=204)
             except ValueError:
                 print('wrong value of point')
     if keyword:
