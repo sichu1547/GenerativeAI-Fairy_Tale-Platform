@@ -64,7 +64,7 @@ class QuizView(View):
         answer = request.POST.get('answer')
         correct_answer = request.POST.get('correct_answer')
         keyword = request.POST.get('keyword', '')
-        print(answer, correct_answer)
+
         if answer in correct_answer:
             result = "축하합니다🥳"
             QuizView.m_context = {}
