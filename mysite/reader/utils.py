@@ -8,7 +8,7 @@ def generate_image(sentence):
     # print('생성중')
     # api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
     # client = OpenAI(api_key = api_key)
-    
+
     # try:
     #     response = client.images.generate(
     #         model="dall-e-3",

@@ -20,7 +20,7 @@ class Profile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='profiles')
     profile_id = models.PositiveIntegerField(editable=False)
     name = models.CharField(max_length=255)
-    avatar = models.ImageField(upload_to='avatars/', default='avatars/ru8.jpg')
+    avatar = models.ImageField(upload_to='avatars/', default='avatars/default.png')
     full_profile_id = models.CharField(max_length=255, editable=False, unique=True, default=1)
     date = models.DateField(default=timezone.now)
     attendance_dates = models.JSONField(default=list)

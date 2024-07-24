@@ -123,18 +123,17 @@ def password_reset_complete(request):
 def select_account(request):
     profiles = request.user.profiles.all()
     next_url = request.GET.get('next', request.POST.get('next', 'index'))
-    selected_profile_id = request.POST.get('profile_id')
 
     if request.method == "POST":
         selected_profile_id = request.POST.get('profile_id')
-        print(selected_profile_id)
+        
         if selected_profile_id:
             profile = get_object_or_404(Profile, id=selected_profile_id, user=request.user)
             request.session['show_attendance_modal'] = True
             request.session['selected_profile_id'] = profile.id
-            request.session['selected_profile_avatar'] = profile.avatar.url
+            request.session['selected_profile_avatar'] = profile.avatar.url if profile.avatar else None
             request.session['selected_profile_name'] = profile.name
-
+            
             return redirect(next_url)
         else:
             #messages.error(request, "프로필을 선택하세요.")
@@ -146,6 +145,7 @@ def select_account(request):
 def profile(request):
     if request.method == 'POST':
         profile_id = request.POST.get('profile_id')
+        
         if profile_id:  # 업데이트
             profile = get_object_or_404(Profile, id=profile_id, user=request.user)
             form = ProfileForm(request.POST, request.FILES, instance=profile)
@@ -244,6 +244,7 @@ def reset_show_attendance_modal(request):
 
 def edit_profile(request, pk):
     profile = get_object_or_404(Profile, pk=pk, user=request.user)
+
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
@@ -254,7 +255,6 @@ def edit_profile(request, pk):
     return redirect('profile')
 
 @login_required
-@permission_required('profile.delete', raise_exception=True)
 def profile_delete(request, pk):
     profile = get_object_or_404(Profile, pk=pk, user=request.user)
 
@@ -264,7 +264,6 @@ def profile_delete(request, pk):
             del request.session['selected_profile_id']
             del request.session['selected_profile_avatar']
             del request.session['selected_profile_name']
-
     return redirect('profile')
 
 def privacy_policy_view(request):

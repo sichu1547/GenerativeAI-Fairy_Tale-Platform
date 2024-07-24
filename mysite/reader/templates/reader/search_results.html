@@ -79,6 +79,8 @@
                             {% endif %}">
                         {% if story.image %}
                         <img class="card" src="{{ story.image.url }}" alt="{{ story.title }}">
+                        {% elif story.thumbnail %}
+                        <img class="card" src="{{ story.thumbnail.url }}" alt="{{ story.title }}">
                         {% else %}
                         <img class="card" src="{% static 'images/상자.png' %}" alt="{{ story.title }}">
                         {% endif %}

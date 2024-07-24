@@ -14,3 +14,4 @@ class GenStory(models.Model):
     starcount = models.IntegerField(default=0)
     starsum = models.IntegerField(default=0)
     datetime = models.DateTimeField(default=timezone.now)
+    thumbnail = models.ImageField(upload_to="gen_thumbnails/", null=True)

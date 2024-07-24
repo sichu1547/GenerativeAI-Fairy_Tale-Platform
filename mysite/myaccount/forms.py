@@ -51,7 +51,14 @@ class ProfileForm(forms.ModelForm):
 
     def clean_avatar(self):
         image = self.cleaned_data.get('avatar')
-        if image:
+        
+        if image == 'avatars/default.png':
+            # 기본 이미지인 경우 유효성 검사 생략
+            return image
+
+        elif image:
+            print('image', '='*10, image)
+            print('type of image', '='*10, type(image))
             # if image.content_type not in ALLOWED_IMAGE_TYPES:
             #     print('형식!')
             #     raise ValidationError('허용되지 않는 이미지 형식입니다. JPEG 또는 PNG 파일만 업로드할 수 있습니다.')
