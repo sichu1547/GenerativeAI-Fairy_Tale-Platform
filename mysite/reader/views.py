@@ -138,6 +138,8 @@ def story_detail(request, id):
     }
     # 제목과 내용을 새로운 데이터프레임으로 저장
     df = pd.DataFrame(data)
+    
+    len_story = len(df)
 
     # 모델에서 id가 해당 동화인 데이터 가져오기
     # 제목만 따로 저장하기
@@ -164,7 +166,7 @@ def story_detail(request, id):
     story = Story.objects.filter(title=recommended_title).first()
     recommended_id = story.id
 
-    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id, 'profile' : profile})
+    return render(request, 'reader/story_detail.html', {'story': sentences, 'keyword': keyword, 'title': tale_title, 'id': id, 'image_urls': image_urls, 'rec_title':recommended_title, 'rec_id':recommended_id, 'profile' : profile, 'len_story' : len_story})
     ########################################################################################################    
 
 def redirect_to_quiz(request, id):

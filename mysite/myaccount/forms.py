@@ -51,6 +51,7 @@ class ProfileForm(forms.ModelForm):
 
     def clean_avatar(self):
         image = self.cleaned_data.get('avatar')
+
         if image:
             # if image.content_type not in ALLOWED_IMAGE_TYPES:
             #     print('형식!')
