@@ -11,12 +11,11 @@ def generate_image(sentence):
     
     try:
         response = client.images.generate(
-            model="dall-e-3",
+            model="dall-e-2",
             prompt=f"Create a cute and colorful children's book illustration. The scene should be inspired by the following sentence: '{sentence}'. Ensure the style is drawn with soft lines, bright and pastel colors, and a friendly, playful feel. The background should be detailed but not too complex, keeping it engaging but simple for children. Use a hand-drawn, cartoon-like style. The image should only consist of picture elements, NOT TEXT.",
-            size="1024x1024",
+            size="256x256",
             n=1,
             quality="standard",
-            style = "vivid",
         )
         image_url = response.data[0].url
         print('성공')
