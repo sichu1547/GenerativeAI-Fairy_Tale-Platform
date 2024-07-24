@@ -13,8 +13,6 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from review.models import Review
 from generator.models import GenStory
-from reader.models import Story
-from datetime import datetime
 
 def index(request):
     
@@ -168,9 +166,11 @@ def profile(request):
             profile = get_object_or_404(Profile, id=profile_id, user=request.user)
             form = ProfileForm(request.POST, request.FILES, instance=profile)
         else:  # 생성
-            form = ProfileForm(request.POST, request.FILES)
             if request.user.profiles.count() >= 4:
-                return HttpResponse("최대 4개까지만 생성할 수 있습니다.")
+                messages.error(request, "최대 4개까지만 생성할 수 있습니다.")
+                return redirect('profile')
+
+            form = ProfileForm(request.POST, request.FILES)
         
         if form.is_valid():
             profile = form.save(commit=False)
@@ -294,3 +294,24 @@ def check_username(request):
         'is_taken': User.objects.filter(username=username).exists()
     }
     return JsonResponse(response)
+
+from django.contrib.auth.views import LoginView
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import authenticate
+
+class CustomLoginView(LoginView):
+    form_class = AuthenticationForm
+    template_name = 'registration/login.html'
+
+    def form_invalid(self, form):
+        username = self.request.POST.get('username')
+        password = self.request.POST.get('password')
+        user = authenticate(self.request, username=username, password=password)
+        
+        if user is None:
+            if not User.objects.filter(username=username).exists():
+                form.add_error('username', '존재하지 않는 아이디 입니다.')
+            else:
+                form.add_error('password', '비밀번호가 일치하지 않습니다.')
+        
+        return super().form_invalid(form)

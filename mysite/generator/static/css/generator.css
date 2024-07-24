@@ -36,7 +36,7 @@
 
 /* 설명 박스 스타일 */
 .use-box {
-    background-color: #fffdcc; /* 연한 빨간색 배경 */
+    background-color: #fffdcc; /* 배경 */
     color: #000; /* 검정색 텍스트 */
     padding: 30px;
     border-radius: 10px;
@@ -54,7 +54,7 @@
 .use-title {
     font-size: 35px;
     font-weight: bold;
-    color: #ff9500; /* 빨간색 텍스트 */
+    color: #ff9500; /* 텍스트 */
     text-align: center; /* 가운데 정렬 */
 }
 
