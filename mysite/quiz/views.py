@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from reader.models import Story
 from django.conf import settings
@@ -64,12 +64,14 @@ class QuizView(View):
         answer = request.POST.get('answer')
         correct_answer = request.POST.get('correct_answer')
         keyword = request.POST.get('keyword', '')
-
-        if answer in correct_answer:
-            result = "축하합니다🥳"
-            QuizView.m_context = {}
+        if answer == "동화 리스트로 돌아가기":
+            return redirect(f'/reader/search/?keyword={keyword}')
         else:
-            result = "틀렸습니다😢<br>다시 풀어보세요!".format(correct_answer)
+            if answer in correct_answer:
+                result = "축하합니다🥳"
+                QuizView.m_context = {}
+            else:
+                result = "틀렸습니다😢<br>다시 풀어보세요!".format(correct_answer)
 
         return render(request, 'quiz/quiz_result.html', {'result': result, 'quiz_id': id, 'keyword': keyword})
 
@@ -134,7 +136,10 @@ class QuizView(View):
                 cnt += 1
 
         # 실패 시 기본값 리턴 (예외처리 필요 시)
-        return None, None, None       
+        question = "퀴즈가 모두 소진되었습니다. 동화 리스트로 돌아가세요"
+        answer = "동화 리스트로 돌아가기"
+        example = ["동화 리스트로 돌아가기", "동화 리스트로 돌아가기", "동화 리스트로 돌아가기"]
+        return question, answer, example       
         
 def index(request):
     return render(request, 'quiz/quiz.html')
