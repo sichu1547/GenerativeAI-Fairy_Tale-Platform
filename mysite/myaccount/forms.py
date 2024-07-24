@@ -66,3 +66,4 @@ class ProfileForm(forms.ModelForm):
                 print('용량!')
                 raise ValidationError('이미지 파일의 크기는 5MB를 초과할 수 없습니다.')
         return image
+
