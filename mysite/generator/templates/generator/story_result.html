@@ -66,9 +66,13 @@
             const leftIndex = currentPage * 2;
             const rightIndex = leftIndex + 1;
 
-            leftText.innerHTML = leftIndex < totalParts ? `<p>${generatedStories[leftIndex]}</p>` : '';
-            rightText.innerHTML = rightIndex < totalParts ? `<p>${generatedStories[rightIndex]}</p>` : '';
+            const replaceNewlines = (text) => {
+                return text ? text.replace(/\n/g, '<br>') : '';
+            }; // 개행도 그대로 표현되도록 
 
+            leftText.innerHTML = leftIndex < totalParts ? `<p>${replaceNewlines(generatedStories[leftIndex])}</p>` : '';
+            rightText.innerHTML = rightIndex < totalParts ? `<p>${replaceNewlines(generatedStories[rightIndex])}</p>` : '';
+        
             const isValidUrl = (url) => {
                 try {
                     new URL(url);

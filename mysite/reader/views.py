@@ -41,7 +41,22 @@ def list(request):
     search_key = request.GET.get('keyword')
     if search_key :
         story_list = Story.objects.filter(title__contains=search_key)
-    return render(request, 'reader/index.html', {'story_all': story_list})
+        
+    # 가장 많이 읽은 동화의 장르 가져오기
+    stories = Story.objects.all()
+    data = {
+        '제목': [i.title for i in stories],
+        '내용': [i.body for i in stories],
+        '장르': [i.category for i in stories],
+        '본 횟수':[i.starcount for i in stories]
+    }
+    # 제목과 내용을 새로운 데이터프레임으로 저장
+    df = pd.DataFrame(data)
+    max_tale = df['본 횟수'].groupby(df['장르']).sum()
+    max_tale = max_tale.sort_values(ascending=False).index[0]
+    # max_tale = df['장르'].value_counts().index[0]
+    text = f'가장 많이 읽은 동화 카테고리는 {max_tale}입니다.'
+    return render(request, 'reader/index.html', {'story_all': story_list, 'text':text})
 
 def search(request):
     keyword = request.GET.get('keyword', '')
@@ -296,7 +311,7 @@ def rate_story(request, id):
         
 def genstory_detail(request, story_id):
     story = get_object_or_404(GenStory, id=story_id)   
-    patterns = r'\r\n\r\n|\r\n \r\n'
+    patterns = r'\r\n\r\n\r\n|\r\n \r\n \r\n'
     sentences = re.split(patterns, story.body)
     keyword = request.GET.get('keyword')
     profile_id = request.session.get('selected_profile_id')

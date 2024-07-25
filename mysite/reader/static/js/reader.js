@@ -30,4 +30,14 @@ document.addEventListener('DOMContentLoaded', function() {
             button.style.transform = 'translate(-50%, 0)';
         });
     });
+
+    const button1 = document.querySelector('.button1');
+    const hiddenText = document.querySelector('.hidden-text');
+
+    button1.addEventListener('transitionend', () => {
+        if (button1.classList.contains('falling')) {
+            hiddenText.classList.add('show');
+        }
+    });
+
 });

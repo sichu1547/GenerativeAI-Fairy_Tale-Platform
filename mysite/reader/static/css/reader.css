@@ -11,7 +11,7 @@
     min-height: 95vh;
     padding: 10px 0 10px 0;
 }
-.button1 {
+.button1{
     position: absolute;
     left: 50%;
     transform: translateX(-50%) translateY(0); /* 초기 위치 설정 */
@@ -134,4 +134,20 @@ input{
     src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_noocar-Rg.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
+}
+
+.hidden-text{
+    font-family: "Ownglyph_noocar-Rg";
+    align-items: center;
+    position: relative;
+    font-size: 18px;
+    color: #333;
+    text-align: center;
+    margin-top: 200px;
+    opacity: 0; /* 처음에는 보이지 않음 */
+    transition: opacity .5s ease; /* 투명도 전환 효과 */
+}
+
+.hidden-text.show {
+    opacity: 1; /* 보이도록 설정 */
 }
