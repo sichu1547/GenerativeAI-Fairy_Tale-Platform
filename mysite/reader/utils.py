@@ -6,7 +6,7 @@ from openai import OpenAI
 
 def generate_image(sentence):
     print('생성중')
-    api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
+    api_key = settings.OPENAI_API_KEY
     client = OpenAI(api_key = api_key)
 
     try:
