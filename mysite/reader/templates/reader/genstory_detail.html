@@ -222,16 +222,20 @@
         
             leftPage.innerHTML = "";
             rightPage.innerHTML = "";
+
+            const replaceNewlines = (text) => {
+                return text ? text.replace(/\n/g, '<br>') : '';
+            }; // 개행도 그대로 표현되도록 
         
             if (page % 2 === 0) {
-                leftPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
+                leftPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${replaceNewlines(sentences[page])}</p>`;
                 if (page + 1 < totalPages) {
-                    rightPage.innerHTML = `<p onclick="readSentence(${page + 1})" id="sentence-${page + 1}">${sentences[page + 1]}</p>`;
+                    rightPage.innerHTML = `<p onclick="readSentence(${page + 1})" id="sentence-${page + 1}">${replaceNewlines(sentences[page + 1])}</p>`;
                 }
             } else {
-                rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;
+                rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${replaceNewlines(sentences[page])}</p>`;
                 if (page + 1 < totalPages) {
-                    leftPage.innerHTML = `<p onclick="readSentence(${page + 1})" id="sentence-${page + 1}">${sentences[page + 1]}</p>`;
+                    leftPage.innerHTML = `<p onclick="readSentence(${page + 1})" id="sentence-${page + 1}">${replaceNewlines(sentences[page + 1])}</p>`;
                 }
             }
         

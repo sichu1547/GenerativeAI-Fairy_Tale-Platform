@@ -311,7 +311,7 @@ def rate_story(request, id):
         
 def genstory_detail(request, story_id):
     story = get_object_or_404(GenStory, id=story_id)   
-    patterns = r'\r\n\r\n|\r\n \r\n'
+    patterns = r'\r\n\r\n\r\n|\r\n \r\n \r\n'
     sentences = re.split(patterns, story.body)
     keyword = request.GET.get('keyword')
     profile_id = request.session.get('selected_profile_id')

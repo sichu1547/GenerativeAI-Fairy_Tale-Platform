@@ -306,10 +306,14 @@
             openCurtains();
             imageUrls = cleanImageUrls(imageUrls);
 
+            const replaceNewlines = (text) => {
+                return text ? text.replace(/\n/g, '<br>') : '';
+            }; // 개행도 그대로 표현되도록 
+
             leftPage.innerHTML = "";
             rightPage.innerHTML = "";
             leftPage.style.backgroundImage = ""; // 이전 배경이미지 clear
-            rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${sentences[page]}</p>`;            
+            rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${replaceNewlines(sentences[page])}</p>`;            
 
             // 세션에서 가져온 이미지 URL을 사용
             if (imageUrls[page]) { // 이미지 URL이 유효한지 확인

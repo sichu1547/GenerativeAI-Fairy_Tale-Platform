@@ -103,10 +103,10 @@ def create_story(request):
             generated_story = response.strip()
 
             # generated_stories에 생성된 이야기 추가
-            generated_stories.append(generated_story.strip())
+            generated_stories.append(generated_story + '\n\n\n')
 
             # generated_story_parts에 생성된 이야기 파트 추가
-            generated_story_parts.append(generated_story.strip())
+            generated_story_parts.append(generated_story)
             
             # 생성된 이야기를 바탕으로 이미지를 생성하고 리스트에 추가
             image_url = generate_image(generated_story_parts[-1])
@@ -136,7 +136,7 @@ def create_story(request):
             final_generated_story = final_response.strip()
             
             # generated_stories에 생성된 이야기 추가
-            generated_stories.append(final_generated_story.strip())
+            generated_stories.append(final_generated_story.strip() + '\n\n\n')
             
             # generated_story_parts에 생성된 이야기 파트 추가
             generated_story_parts.append(final_generated_story.strip())
@@ -176,7 +176,7 @@ def create_story(request):
 
 def generate_image(sentence):
     print('이미지 생성 중')
-    api_key = settings.OPENAI_API_KEY
+    api_key = settings.OPENAI_API_KEY_FOR_IMAGE_GEN
     client = OpenAI(api_key = api_key)
     
     try:
@@ -195,7 +195,7 @@ def generate_image(sentence):
     except Exception as e:
         print('실패')
         return ""
-    #return ""
+
 
 def save_final_story_to_database(final_story, profile, user, title, thumbnail_url):
     try:
