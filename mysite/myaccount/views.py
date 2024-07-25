@@ -15,6 +15,7 @@ from review.models import Review
 from generator.models import GenStory
 from reader.models import Story
 from datetime import datetime
+from django.contrib import messages 
 
 def index(request):
     
