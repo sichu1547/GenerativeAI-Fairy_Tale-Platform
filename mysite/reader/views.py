@@ -87,8 +87,8 @@ def search(request):
     return render(request, 'reader/search_results.html', {'stories': stories, 'keyword': keyword, 'selected_option': option, 'no_results': no_results})
 
 def story_detail(request, id):
-    # if not request.user.is_authenticated:
-    #     return redirect(f"{reverse('login')}?next={request.path}")
+    if not request.user.is_authenticated:
+        return redirect(f"{reverse('login')}?next={request.path}")
     keyword = request.GET.get('keyword')
 
     story = get_object_or_404(Story, id=id)
@@ -310,13 +310,17 @@ def rate_story(request, id):
     
         
 def genstory_detail(request, story_id):
+    if not request.user.is_authenticated:
+        return redirect(f"{reverse('login')}?next={request.path}")
     story = get_object_or_404(GenStory, id=story_id)   
     patterns = r'\r\n\r\n\r\n|\r\n \r\n \r\n'
     sentences = re.split(patterns, story.body)
     keyword = request.GET.get('keyword')
     profile_id = request.session.get('selected_profile_id')
-    profile = get_object_or_404(Profile, id=profile_id, user=request.user)
     
+    if profile_id:
+        profile = get_object_or_404(Profile, id=profile_id, user=request.user)
+ 
     # TTS
     if 'tts' in request.GET:
         print("Here's GenStory TTS")
@@ -328,8 +332,11 @@ def genstory_detail(request, story_id):
         ssml_text = f"""<speak>{text}</speak>"""
 
         return generate_tts(request, ssml_text)
-    
-    return render(request, 'reader/genstory_detail.html', {'story': sentences, 'id' : story_id, 'keyword': keyword, 'title' : story.title, 'profile' : profile})
+    if profile_id:
+        return render(request, 'reader/genstory_detail.html', {'story': sentences, 'id' : story_id, 'keyword': keyword, 'title' : story.title, 'profile' : profile})
+    else:
+        return render(request, 'reader/genstory_detail.html', {'story': sentences, 'id' : story_id, 'keyword': keyword, 'title' : story.title})
+
 
 import json
 

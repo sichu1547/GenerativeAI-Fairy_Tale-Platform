@@ -24,7 +24,9 @@ client = OpenAI(
 )
 
 def index(request):
-
+    if not request.user.is_authenticated:
+        return redirect(f"{reverse('login')}?next={request.path}")
+    
     return render(request, 'generator/index.html')
 
 # GPT 시스템 역할 정의
@@ -65,6 +67,8 @@ def generate_response(prompt, role, max_tokens=110):
         return content
 
 def create_story(request):
+    if not request.user.is_authenticated:
+        return redirect(f"{reverse('login')}?next={request.path}")
     if request.method == "POST":
         # 최종 결과 TTS
         if request.POST.get('tts') == 'true':
