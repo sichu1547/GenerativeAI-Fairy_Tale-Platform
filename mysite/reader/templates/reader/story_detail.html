@@ -318,10 +318,15 @@
             // 세션에서 가져온 이미지 URL을 사용
             if (imageUrls[page]) { // 이미지 URL이 유효한지 확인
                 leftPage.style.backgroundImage = `url(${imageUrls[page]})`;     
-                $('#loading').hide();                          
+                $('#loading').hide();
             }
             else{
-                $('#loading').show();
+                if(imageUrls[1] === "/static/images/default_image.jpg")
+                {
+                    leftPage.style.backgroundImage = `url(${defaultImageUrl})`; 
+                }                  
+                else
+                    $('#loading').show();
             }
 
             // 마지막 페이지에서만 rating-form, 하단 buttons 보이기
@@ -410,6 +415,7 @@ function generateImages() {
                 data: { sentence: sentences[currentImageIndex] },
                 success: function(response) {
                     const imageUrl = response.image_url || defaultImageUrl; // 기본 이미지 URL 설정
+                    console.log(imageUrl)
                     imageUrls[currentImageIndex] = imageUrl;
                     // 세션 업데이트 요청
                     $.ajax({
@@ -423,10 +429,16 @@ function generateImages() {
                             {
                                 showPage(currentPage); // 현재 페이지가 업데이트 된 경우에만 페이지 업데이트
                             }
+                        },
+                        error: function() {
+                            {
+                                console.log('imageUrl')
+                            }
                         }
                     });
                 },
                 error: function() {
+                    console.log('e')
                     imageUrls[currentImageIndex] = defaultImageUrl; // 기본 이미지 URL 설정
                     // 세션 업데이트 요청
                     $.ajax({

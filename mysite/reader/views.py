@@ -344,6 +344,7 @@ def update_image_session(request):
     if request.method == "POST":
         image_urls = json.loads(request.POST.get('image_urls', '[]'))
         image_urls = [url for url in image_urls if url is not None]
+        print(image_urls)
         request.session['image_urls'] = image_urls
      
         return JsonResponse({'status': 'success'})
