@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="ko">
+
+<head>
+    <title>{% block title %}프로필 선택</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/select_account.css' %}">
+</head>
+{% endblock %}
+
+{% block content %}
+<body>
+    <div class="selector-container">
+        <div class="main-container">
+            <section class="content-area">
+                <div id="main" role="main">
+                    {% if profiles %}
+                    <h1><img src="{% static 'images/선택로고.png' %}"></h1>
+                    <div class="account-selection">
+                        {% for profile in profiles %}
+                        <div class="account">
+                            <a class="profile" href="#" data-profile-id="{{ profile.id }}">
+                                <img class="profile-img" src="{{ profile.avatar.url }}" alt="Profile Image" width="50" height="50">
+                                <p class="profile-name">{{ profile.name }}</p>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <a class="select-account-h3" href="{% url 'profile' %}"><img src="{% static 'images/프로필관리.png' %}"></a>
+                    {% else %}
+                    <h1><img src="{% static 'images/프로필없음.png' %}"></h1>
+                    <div style="height: 50px;"></div> <!-- 원하는 여백 크기 -->
+                    <a class="select-account-h3" href="{% url 'profile' %}"><img src="{% static 'images/프로필관리.png' %}"></a>
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <form id="profileForm" method="post" style="display: none;">
+        {% csrf_token %}
+        <input type="hidden" name="profile_id" id="profileIdInput">
+        <input type="hidden" name="next" value="{{ next }}">
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll('.profile').forEach(function(element) {
+                element.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    var profileId = this.getAttribute('data-profile-id');
+                    document.getElementById('profileIdInput').value = profileId;
+                    document.getElementById('profileForm').submit();
+                });
+            });
+        });
+    </script>
+    <form id="profileForm" method="post" style="display: none;">
+        {% csrf_token %}
+        <input type="hidden" name="profile_id" id="profileIdInput">
+    </form>
+</body>
+{% endblock %}
+</html>

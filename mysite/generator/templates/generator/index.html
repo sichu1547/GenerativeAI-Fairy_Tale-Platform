@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+<html lang="ko">
+    
+<head>
+    <title>{% block title %}동화 만들기</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/generator.css' %}">
+    <style>
+        /* 로딩 GIF를 숨기기 위한 기본 스타일 */
+        #loading {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            height: 7em;
+            width: 7em;
+            overflow: visible;
+            margin: auto;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            text-align: center; /* Center the content horizontally */
+        }
+        
+        #loading img {
+            display: block; /* Ensures the image is a block element */
+            margin: 0 auto; /* Centers the image horizontally */
+        }
+        
+        #loading a {
+            display: block; /* Ensures the anchor tag behaves like a block element */
+            margin-top: 5px; /* Adjust as needed to create space between image and text */
+            color: black; /* Example text color */
+            text-decoration: none; /* Remove underline */
+        }
+    </style>
+</head>
+{% endblock %}
+
+{% block content %}
+<body>
+    <!-- 로딩 GIF 추가 -->
+    <div id="loading">
+        <img src="{% static 'images/책넘기기.gif' %}" alt="Loading...">
+        <a>생성중!</a>
+    </div>
+
+    <div class="story-container">
+        <div class="book" id="index-book">
+            <div class="story-page">
+                <form id="index-form" action="create_story" method="post" enctype="application/x-www-form-urlencoded" onsubmit="showLoading()">
+                    {% csrf_token %}
+                    <div id="file-module-1">
+                        <label class="generator-h1" for="initial_story">📒 이야기의 시작을 입력하세요</label>
+                    </div>
+                    <div class="use-box">
+                        <div class="use-title">🌞사용 방법🌞</div>
+                        <p class="use-message">
+                            🌻1. 만들고 싶은 주제로 이야기를 시작해봐요! ex. 맑은 하늘, 비오는 날<br>
+                            🌻2. 이야기가 생성된 후 나온 그림과 내용을 확인해요.<br>
+                            🌻3. 다음 장면을 상상하면서 동화를 이어서 만들어요.<br>
+                            🌻4. 이어서 만들기 위해서는 생성된 물음에 맞게 대답해요.<br>
+                            🌻5. 그 후 완성된 동화를 원하는 목소리로 들어요.<br>
+                            🌻6. 생성 동화 페이지에 가면 친구들이 만든 동화도 볼 수 있어요!
+                        </p>
+                    </div>
+                    <div class="story-input">
+                        <textarea id="initial_story" name="initial_story" placeholder="여기에 이야기를 시작해보세요..." required></textarea>
+                        <div class="buttons">
+                            <button id="story-button" type="submit">동화 만들기</button>
+                            <div class="voice-recognition">
+                                <button type="button" id="speech-button">🎙️</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        document.getElementById('speech-button').addEventListener('click', function() {
+            startRecognition();
+            document.getElementById('speech-button').innerHTML = '🔴';  // 🎙️ 이모지를 🔴 이모지로 변경
+            document.getElementById('initial_story').setAttribute('placeholder', '녹음 중...'); 
+        });
+
+        function startRecognition() {
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                var recognition = new SpeechRecognition();
+                recognition.lang = 'ko-KR';
+                recognition.start();
+
+                recognition.onresult = function(event) {
+                    var transcript = event.results[0][0].transcript;
+                    document.getElementById('initial_story').value += transcript;
+                    document.getElementById('speech-button').innerHTML = '🎙️';  // 🔴 이모지를 🎙️ 이모지로 변경
+                    document.getElementById('initial_story').setAttribute('placeholder', '여기에 이야기를 시작해보세요...');
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Recognition error:', event.error);
+                    document.getElementById('speech-button').innerHTML = '🎙️';  // 🔴 이모지를 🎙️ 이모지로 변경
+                    document.getElementById('initial_story').setAttribute('placeholder', '여기에 이야기를 시작해보세요...');
+                };
+
+                recognition.onend = function() {
+                    console.log('Recognition ended');
+                    document.getElementById('speech-button').innerHTML = '🎙️';  // 🔴 이모지를 🎙️ 이모지로 변경
+                    document.getElementById('initial_story').setAttribute('placeholder', '여기에 이야기를 시작해보세요...');
+                };
+            } else {
+                alert('이 브라우저에서는 음성 인식이 지원되지 않습니다.');
+                document.getElementById('speech-button').innerHTML = '🎙️';  // 🔴 이모지를 🎙️ 이모지로 변경
+                document.getElementById('initial_story').setAttribute('placeholder', '여기에 이야기를 시작해보세요...');
+            }
+        }
+    </script>
+</body>
+{% endblock %}
+</html>

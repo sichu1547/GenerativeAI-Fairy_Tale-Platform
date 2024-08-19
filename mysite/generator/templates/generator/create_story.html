@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% load static %}
+<html lang="ko">
+
+<head>
+    <title>{% block title %}동화 만들기</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/generator.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* 로딩 GIF를 숨기기 위한 기본 스타일 */
+        #loading {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            height: 7em;
+            width: 7em;
+            overflow: visible;
+            margin: auto;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            text-align: center; /* Center the content horizontally */
+        }
+        
+        #loading img {
+            display: block; /* Ensures the image is a block element */
+            margin: 0 auto; /* Centers the image horizontally */
+        }
+        
+        #loading a {
+            display: block; /* Ensures the anchor tag behaves like a block element */
+            margin-top: 5px; /* Adjust as needed to create space between image and text */
+            color: black; /* Example text color */
+            text-decoration: none; /* Remove underline */
+        }
+    </style>
+</head>
+{% endblock %}
+
+{% block content %}
+<body>
+    <!-- 로딩 GIF 추가 -->
+    <div id="loading">
+        <img src="{% static 'images/책넘기기.gif' %}" alt="Loading...">
+        <a>생성중!</a>
+    </div>
+
+    <div class="story-container">
+        <div class="book" id="create-book">
+            <div class="story-page">
+                <h2 class="generator-h2">✨생성된 이야기✨</h2>
+                <div id="story-image">
+                    <img src="" id="story-image-part" alt="story image">
+                </div>
+                <div class="navigation">
+                    <button id="prev-btn" onclick="navigateStory(-1)">← 이전 페이지로</button>
+                    <button id="next-btn" onclick="navigateStory(1)">다음 페이지로 →</button>
+                </div>
+            </div>
+            <div class="story-page">
+                <h2 class="generator-h2">다음 내용을 만들어 볼까요?</h2>
+                <div id="story-text">
+                    <p id="story-content"></p>
+                </div>
+                <form method="post" onsubmit="return setLastPage()">
+                    {% csrf_token %}
+                    <input type="hidden" name="initial_story" value="{{ initial_story }}">
+                    <input type="hidden" name="story" value="{{ story }}">
+                    <input type="hidden" name="stage" value="{{ stage }}">
+                    <input type="hidden" name="generated_stories" value="{{ generated_stories|join:' ' }}">
+                    <input type="hidden" name="generated_story_parts" value='{{ generated_story_parts|safe }}'>
+                    <input type="hidden" name="generated_images" value="{{ generated_images|join:',' }}">
+                    <div class="question-prompt">
+                        <label for="user_input" class="question">{{ question_prompt }}</label>
+                    </div>
+                    <div class="story-input">
+                        <input type="text" id="user_input" name="user_input" placeholder="다음 부분을 입력하세요..." required>
+                        <div class="buttons">
+                            <button id="story-button" type="submit">동화 만들기</button>
+                            <div class="voice-recognition">
+                                <button type="button" id="speech-button">🎙️</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        const generatedStories = {{ generated_stories|safe }};
+        const generatedStoryParts = {{ generated_story_parts|safe }};
+        const generatedImages = `{{ generated_images|safe }}`.split(',').map(img => img.replace(/[\[\]']/g, '').trim());
+        const defaultImage = "{% static 'images/default_image.jpg' %}";
+        let currentPage = generatedStoryParts.length - 1;
+
+        function updateStoryPage() {
+
+            const isValidUrl = (url) => {
+                try {
+                  new URL(url);
+                  return true;
+                } catch (e) {
+                  return false;
+                }
+              };
+              
+              
+            const imageUrl = (generatedImages[currentPage] && isValidUrl(generatedImages[currentPage])) ? generatedImages[currentPage] : defaultImage;
+            document.getElementById('story-content').innerText = generatedStoryParts[currentPage] || "No story content available";
+            document.getElementById('story-image-part').src = imageUrl;
+            document.getElementById('prev-btn').disabled = currentPage === 0;
+            document.getElementById('next-btn').disabled = currentPage === generatedStoryParts.length - 1;
+        }
+
+        function navigateStory(direction) {
+            showLoading();  // 로딩 표시
+            const newPage = currentPage + direction;
+            if (newPage >= 0 && newPage < generatedStoryParts.length) {
+                currentPage = newPage;
+                updateStoryPage();
+            }
+            hideLoading();  // 로딩 숨기기
+        }
+
+        function setLastPage() {
+            showLoading();  // 로딩 표시
+            currentPage = generatedStoryParts.length;
+            return true; // form submission continues
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            currentPage = generatedStoryParts.length - 1;
+            updateStoryPage();
+            hideLoading();  // 로딩 숨기기
+        });
+
+        document.getElementById('speech-button').addEventListener('click', function() {
+            startRecognition();
+            document.getElementById('speech-button').innerHTML = '🔴';  // 🎙️ 이모지를 🔴 이모지로 변경
+            document.getElementById('user_input').setAttribute('placeholder', '녹음 중...'); 
+        });
+
+        function startRecognition() {
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                var recognition = new SpeechRecognition();
+                recognition.lang = 'ko-KR';
+                recognition.start();
+
+                recognition.onresult = function(event) {
+                    var transcript = event.results[0][0].transcript;
+                    document.getElementById('user_input').value = transcript;
+                    document.getElementById('speech-button').innerHTML = '🎙️';  // 🔴 이모지를 🎙️ 이모지로 변경
+                    document.getElementById('user_input').setAttribute('placeholder', '다음 부분을 입력하세요...');  // "녹음 중"을 "다음 부분을 입력하세요..."로 변경
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Recognition error:', event.error);
+                    document.getElementById('speech-button').innerHTML = '🎙️';
+                    document.getElementById('user_input').setAttribute('placeholder', '다음 부분을 입력하세요...');
+                };
+
+                recognition.onend = function() {
+                    console.log('Recognition ended');
+                    document.getElementById('speech-button').innerHTML = '🎙️';
+                    document.getElementById('user_input').setAttribute('placeholder', '다음 부분을 입력하세요...');
+                };
+            } else {
+                alert('이 브라우저에서는 음성 인식이 지원되지 않습니다.');
+                document.getElementById('speech-button').innerHTML = '🎙️';
+                document.getElementById('user_input').setAttribute('placeholder', '다음 부분을 입력하세요...');
+            }
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

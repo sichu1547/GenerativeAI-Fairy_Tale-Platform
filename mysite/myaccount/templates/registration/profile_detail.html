@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="ko">
+
+<head>
+    <title>{% block title %}내 정보</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/profile_detail.css' %}">
+</head>
+{% endblock %}
+
+{% block content %}
+<body>
+    <div class="my-container">
+        <div class="info-container">
+            <h2 class="profile-h2" style="font-size: 18px;">👤내 정보</h2>
+            <p class="info-text">안녕하세요😊 <br>{{ profile.name }}님!</p>
+            <p class="email-text">이메일: {{ user.email }}</p>
+            <div class="profile-select-btn">
+                <a class="profile-select" href="{% url 'select_account' %}">➡️ 프로필 선택<br></a>
+            </div>
+            <div class="profile-select-btn">
+                <a class="profile-select" href="{% url 'profile' %}">➡️ 전체 프로필 관리<br></a>
+            </div>
+            <div class="profile-select-btn">
+                <a class="profile-select" href="#" onclick="showContent('profile-form-container')">🔑 프로필 수정</a>
+            </div>
+            <div class="profile-select-btn">
+                <a class="profile-select" href="#" onclick="showContent('history-container')">📜 열람 기록</a>
+            </div>
+            <div class="profile-select-btn">
+                <a class="profile-select" href="#" onclick="showContent('reviews-container')">✏️ 독후감</a>
+            </div>
+            <div class="profile-select-btn">
+                <a class="profile-select" href="#" onclick="showContent('stories-container')">📚 내가 만든 동화</a>
+            </div>
+        </div>
+
+        <div class="content-container">
+            <div id="profile-form-container" class="profile-box">
+                <form id="profile-form" method="post" enctype="multipart/form-data" class="content-area profile-change">
+                    {% csrf_token %}
+                    <h2 class="profile-h2">🔑 프로필 수정</h2>
+                    <div class="add-profile">
+                        <p class="id-name-p">
+                            <label class="id-name-label" for="id_name">이름 :</label>
+                            <input type="text" name="name" maxlength="255" required="" id="id_name" value="{{ form.name.value }}">
+                        </p>
+                        <p class="id-avatar-p">
+                            <label class="id-avatar-label" for="id_avatar">프로필 사진 :</label>
+                            <img class="profile-img" src="{{ profile.avatar.url }}" alt="Profile Image" width="50" height="50">
+                            <input type="file" name="avatar" accept="image/*" id="id_avatar">
+                            <label class="id-avatar-label" for="id_avatar">※ 5MB이하의 이미지 파일만 등록 가능합니다.</label>
+                        </p>
+                        <button type="submit" id="save-button">수정하기</button>
+                    </div>
+                </form>
+            </div>
+            <div id="history-container" class="profile-box" style="display: none;">
+                <section class="content-area profile-history">
+                    <h2 class="profile-h2">📜 열람 기록</h2>
+                    <div class="read-history">
+                        {% for history in page_histories %}
+                            <div class="blog-post">
+                                <a href="{% url 'reader:story_detail' history.story_id %}"></a>
+                                <div class="blog-post-title">
+                                    {{ history.story_title }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="pagination">
+                            {% for num in page_histories.paginator.page_range %}
+                                {% if page_histories.number == num %}
+                                    <span class="active">{{ num }}</span>
+                                {% else %}
+                                    <a href="?page_histories={{ num }}&container=history-container">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div id="reviews-container" class="profile-box" style="display: none;">
+                <section class="content-area profile-reviews">
+                    <h2 class="profile-h2">✏️ 독후감</h2>
+                    <div class="review">
+                        {% for review in page_reviews %}
+                            <div class="blog-post">
+                                <a href="{% url 'review:review_list' review.id %}"></a>
+                                <div class="blog-post-title">
+                                    {% comment %} <a href="{% url 'review:review_list' review.id %}">{{ review.story_title }}</a> {% endcomment %}
+                                    동화 제목 : {{ review.story_title }}<br>
+                                    독후감 제목 : {{ review.title }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="pagination">
+                            {% for num in page_reviews.paginator.page_range %}
+                                {% if page_reviews.number == num %}
+                                    <span class="active">{{ num }}</span>
+                                {% else %}
+                                    <a href="?page_reviews={{ num }}&container=reviews-container">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <div id="stories-container" class="profile-box" style="display: none;">
+                <section class="content-area profile-stories">
+                    <h2 class="profile-h2">📚 내가 만든 동화</h2>
+                    <div class="my-story">
+                        {% for story in page_stories %}
+                            <div class="blog-post">
+                                <div class="blog-post-title">{{ story.title }}</div>
+                                <div class="blog-post-content">
+                                    <a href="{% url 'reader:genstory_detail' story.id %}?keyword=Generative"></a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="pagination">
+                            {% for num in page_stories.paginator.page_range %}
+                                {% if page_stories.number == num %}
+                                    <span class="active">{{ num }}</span>
+                                {% else %}
+                                    <a href="?page_stories={{ num }}&container=stories-container">{{ num }}</a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function showContent(id) {
+            var containers = document.querySelectorAll('.profile-box');
+            containers.forEach(function(container) {
+                if (container.id === id) {
+                    container.style.display = 'block';
+                    container.classList.add('active');
+                } else {
+                    container.style.display = 'none';
+                    container.classList.remove('active');
+                }
+            });
+        }
+
+        function getParameterByName(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 페이지 로드 시 URL 파라미터로부터 container ID 가져오기
+        document.addEventListener('DOMContentLoaded', function() {
+            var containerId = getParameterByName('container') || 'profile-form-container';
+            showContent(containerId);
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            {% if form.errors %}
+                let errors = [];
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        errors.push("{{ error|escapejs }}");
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    errors.push("{{ error|escapejs }}");
+                {% endfor %}
+                if (errors.length > 0) {
+                    alert(errors.join("\\n"));
+                }
+            {% endif %}
+        });
+    </script>
+</body>
+
+{% endblock %}
+</html>

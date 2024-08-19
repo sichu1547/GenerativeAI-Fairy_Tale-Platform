@@ -1,0 +1,224 @@
+@font-face {
+    font-family: 'Ownglyph_noocar-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_noocar-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+#chat-button {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-color: transparent; /* 배경색 설정 */
+    color: white;
+    border: none;
+    position: fixed;
+    bottom: 20px;
+    right: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px !important;
+    font-weight: bold;
+    z-index: 9998; /* 다른 요소보다 앞에 위치하도록 높은 값 설정 */
+}
+
+#chatbot-img {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));  /* 그림자 효과 */
+}
+
+#chat-popup {
+    font-family: 'Pretendard-Regular';
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 400px;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 15px;
+    box-sizing: border-box; /* 내부 패딩 포함하여 크기 조정 */
+    min-width: 375px;
+    min-height: 300px;
+    height: calc(100vh - 200px); /* 채팅 내용이 넘칠 경우 스크롤 가능하도록 높이 설정 */
+    z-index: 9999; /* 다른 요소보다 앞에 위치하도록 높은 값 설정 */
+}
+
+#chatbot-label {
+    color: black;
+    font-size: 16px;
+    margin: 0;
+    padding: 5px;
+    padding-top: 0;
+}
+
+#answer-container {
+    background-color: #e1dcff;
+    padding: 20px;
+    padding-top: 25px;
+    padding-bottom: 15px;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    border-radius: 5px !important;
+    overflow-y: auto; /* 세로 스크롤바 추가 */
+    scrollbar-width: thin;
+    scrollbar-color: #bfb4ff transparent;
+    box-sizing: border-box; /* 내부 패딩 포함하여 크기 조정 */
+    flex-grow: 1;
+}
+
+#chat-popup button.close-popup {
+    color: white;
+    border: none;
+    background-color: transparent;
+    padding: 5px;
+    margin-left: auto;
+    padding-top: 0;
+}
+
+.message {
+    font-size: 14px !important;
+    /* letter-spacing: -0.01em;
+    word-spacing: -0.01em; */
+    clear: both;
+    padding: 10px 15px;
+    margin: 10px 0;
+    max-width: 70%; /* 말풍선 최대 너비 설정 */
+    word-wrap: break-word; /* 긴 단어들이 말풍선 너비를 넘어가지 않도록 */
+    position: relative;
+}
+
+.message.me {
+    border-radius: 20px 0 20px 20px; /* 말풍선 모양 설정 */
+    float: right;
+    background-color: #745cf9; /* 사용자 말풍선 배경색 */
+    color: white; /* 사용자 말풍선 글자색 */
+}
+
+.message.bot {
+    border-radius: 0 20px 20px 20px; /* 말풍선 모양 설정 */
+    float: left;
+    background-color: rgb(255, 255, 255); /* 봇 말풍선 배경색 */
+    color: black; /* 봇 말풍선 글자색 */
+    position: relative; /* 상대적 위치 설정 */
+}
+
+.message.bot::before {
+    content: '🐄'; /* 가상 요소에 표시할 텍스트 */
+    position: absolute; /* 절대적 위치 설정 */
+    top: -25px; /* 말풍선 위에 위치하도록 조정 */
+    left: 0px; /* 말풍선 왼쪽에 위치하도록 조정 */
+}
+
+
+#speech-button, #q-button {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-size: 18px !important;
+    font-weight: normal;
+    background-color: #745cf9;
+    border: none;
+    color: white;
+    padding: 2px 15px;
+    border-radius: 5px !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-height: 50px;
+    margin: 0;
+    max-width: 100%;
+}
+
+#speech-button:hover, #q-button:hover{
+    background-color: #333333;
+}
+
+#user-question {
+    border-radius: 5px;
+    margin-top: auto;
+    margin-bottom: 10px;
+    box-sizing: border-box; /* 내부 패딩 포함하여 크기 조정 */
+    min-height: 50px;
+}
+
+#speech-button {
+    font-size:  14px; 
+    margin-left: 10px;
+}
+
+#chatbot-buttons {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box; /* 내부 패딩 포함하여 크기 조정 */
+}
+
+#chat-button:hover {
+    transform: scale(1.1); /* 호버 시 버튼이 105% 크기로 확대됨 */
+}
+
+.tooltip {
+    position: absolute;
+    display: block;
+    font-size: 13px !important;
+    font-weight: bold !important;
+    text-align: start;
+    opacity: 1 !important;
+    line-break: auto;
+    font-family: 'Pretendard-Regular' !important;
+    visibility: visible !important; /* 기본적으로 툴팁을 숨김 */
+    width: auto; /* 툴팁의 너비 */
+    background-color: white; /* 툴팁 배경색 */
+    color: black; /* 텍스트 색상 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    border-radius: 20px 0 20px 20px; /* 말풍선 모양 설정 */
+    padding: 10px;
+    padding-left: 15px;
+    margin: 10px 0;
+    position: absolute; /* 절대 위치 */
+    z-index: 1; /* z-index 설정 */
+    bottom: 0%; /* 버튼 아래 위치 */
+    left: -170%; 
+    transition: opacity 0.3s; /* 페이드 효과 */
+    text-align: center !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);  /* 그림자 효과 */
+}
+
+/* 호버 시 툴팁 표시 */
+#chat-button:hover .tooltip {
+    visibility: visible; /* 보이도록 설정 */
+    opacity: 1; /* 불투명 */
+}
+
+#chat-form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+
+/* 챗봇 리사이즈 */
+.resizable {
+    position: relative;
+}
+
+.resizer {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    border-left: 10px solid transparent;
+    border-bottom: 10px solid #bfb4ff;
+}
+

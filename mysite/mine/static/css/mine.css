@@ -1,0 +1,145 @@
+:root {
+    /* color */
+    --white-color: #fff;
+    --black-color: #140a00;
+    --blue-color: #045fd4;
+    --red-color: #ff0000;
+    --grey-dark-color: #909090;
+    --grey-light-color: #e0e0e0;
+   
+    /* Size */
+    --padding: 12px;
+    --avatar-size: 36px;
+   
+    /* font size */
+    --font-large: 18px;
+    --font-medium: 14px;
+    --font-small: 12px;
+    --font-micro: 10px;
+   
+    /* animation */
+    --annimation-duration: 300ms;
+  }
+   
+  * {
+    padding: 0;
+    margin: 0;
+  }
+   
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--grey-light-color);
+    border-top: 2px solid black;
+  }
+   
+  .timer {
+    margin-right: var(--padding);
+    font-size: large;
+    color: blue;
+    font-weight: bold;
+  }
+   
+  .container {
+    margin-top: 5vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+   
+  .cells {
+    border: 2px solid var(--black-color);
+    display: grid;
+    width: max-content;
+    height: max-content;
+    grid-auto-columns: 30px;
+    grid-auto-rows: 30px;
+    align-content: center;
+    background-color: var(--grey-dark-color);
+  }
+   
+  .cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--grey-light-color);
+    width: 70%;
+    height: 70%;
+    border: 4px outset;
+    font-size: 22px;
+    font-weight: bold;
+  }
+   
+  button {
+    background-color: var(--grey-light-color);
+  }
+   
+  .row0 {
+    grid-row: 1;
+  }
+   
+  .col0 {
+    grid-column: 1;
+  }
+   
+  .difficultyLevelSelectionWindow {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-left: 2vh;
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+  }
+   
+  .difficultyLevelSelectionButton {
+    height: 5vh;
+    width: 10vh;
+    font-size: var(--font-large);
+    transition: transform var(--annimation-duration) ease;
+    background-color: white;
+    border: none;
+  }
+   
+  .difficultyLevelSelectionButton:hover {
+    transform: scale(1.1);
+    pointer-events: auto;
+  }
+   
+  .window {
+    width: 100vh;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    margin: auto;
+  }
+   
+  .gameWindow {
+    background-color: var(--grey-light-color);
+    display: flex;
+    flex-direction: column;
+    border: 2px solid black;
+    height: fit-content;
+    width: fit-content;
+  }
+   
+  .newGame {
+    margin-left: var(--padding);
+    padding-left: pa;
+    font-size: var(--font-large);
+    transition: transform var(--annimation-duration) ease;
+  }
+   
+  .newGame:hover {
+    transform: scale(1.1);
+  }
+   
+  button {
+    text-align: center;
+  }
+   
+  div {
+    text-align: center;
+  }
+   
+  

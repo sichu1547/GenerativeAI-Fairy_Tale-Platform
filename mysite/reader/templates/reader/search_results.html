@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+<html lang="ko">
+<head>
+    <title>
+        {% block title %}
+            {% if keyword == 'Generative' %}
+                생성 동화
+            {% elif keyword == '그림형제' %}
+                그림형제
+            {% elif keyword == '이솝우화' %}
+                이솝우화
+            {% elif keyword == '전래동화' %}
+                전래동화
+            {% elif keyword == '샤를페로' %}
+                샤를페로
+            {% else %}
+                검색 결과
+            {% endif %}
+    </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/search_results.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>{% endblock %}
+{% block content %}
+<body>
+    <div id="preloader">
+        <div id="curtain-left" class="curtain"></div>
+        <div id="curtain-right" class="curtain"></div>
+    </div>
+    <div class="search-results-container">
+        <h1 class='h'>
+            {% if keyword == 'Generative' %}
+                📚 생성 동화
+            {% elif keyword == '그림형제' %}
+                📘 그림형제
+            {% elif keyword == '이솝우화' %}
+                📕 이솝우화
+            {% elif keyword == '전래동화' %}
+                📗 전래동화
+            {% elif keyword == '샤를페로' %}
+                📙 샤를페로
+            {% else %}
+                {% if not no_results %}
+                    🔍 검색 결과
+                {% else %}
+                    😢 검색 결과가 없습니다
+                {% endif %}
+            {% endif %}
+        </h1>
+        {% if not no_results %}
+        <form class="sorted_story" method="GET" action="{% url 'reader:search' %}">
+            <input type="hidden" id="keyword" name="keyword" value="{{ keyword }}">
+            
+            <label class="sorted_method" for="options">[ 정렬 방법 선택 ]</label>
+            <select id="options" name="options" onchange="this.form.submit()">
+                <option value="high-rating" {% if selected_option == 'high-rating' %}selected{% endif %}>별점 높은 순</option>
+                <option value="low-rating" {% if selected_option == 'low-rating' %}selected{% endif %}>별점 낮은 순</option>
+                <option value="name" {% if selected_option == 'name' %}selected{% endif %}>이름 순</option>
+                <option value="random" {% if selected_option == 'random' %}selected{% endif %}>랜덤 순</option>
+            </select>
+        </form>
+        {% endif %}
+        <div class="books">
+            <ul class="gallery">
+                {% for story in stories %}
+                <li class='book container1'>
+                    <div class="overlay"></div>
+                    {% comment %} <a class='link-click-animation' href="{% url 'reader:story_detail' story.id %}?keyword={{ keyword }}"> {% endcomment %}
+                    <a class='link-click-animation' 
+                        href=
+                            "{% if keyword == 'Generative' %}
+                                {% url 'reader:genstory_detail' story.id %}?keyword={{ keyword }}
+                            {% else %}
+                                {% url 'reader:story_detail' story.id %}?keyword={{ keyword }}
+                            {% endif %}">
+                        {% if story.image %}
+                        <img class="card" src="{{ story.image.url }}" alt="{{ story.title }}">
+                        {% elif story.thumbnail %}
+                        <img class="card" src="{{ story.thumbnail.url }}" alt="{{ story.title }}">
+                        {% else %}
+                        <img class="card" src="{% static 'images/상자.png' %}" alt="{{ story.title }}">
+                        {% endif %}
+                        <span class="book-title">{{ story.title }}</span>
+                    </a>
+                    <div class="star-rating">
+                        {% for i in 5|to_range %}
+                        <div class="star {% if i <= story.starpoint %}full{% endif %}"></div>
+                        {% endfor %}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <script>
+     $(document).ready(function() {
+            $('.link-click-animation').on('click', function(e) {
+                e.preventDefault();
+
+                var targetUrl = $(this).attr('href');
+                if (!targetUrl.endsWith("?keyword=Generative")) { // 생성 동화는 커튼 필요 없음
+                    // 프리로더 보이기
+                    $('#preloader').show();
+                }
+
+                // 실제 페이지로 이동
+                var targetUrl = $(this).attr('href');
+                
+                setTimeout(function() {
+                    window.location.href = targetUrl;
+                }, 1000);
+            });
+        });
+        $(window).on('pageshow', function(event) {
+            console.log('뒤로가기 이벤트 발생');
+            preloader.style.display = 'none';
+        });
+        var containers = document.querySelectorAll('.container1');
+        containers.forEach(function(container) {
+            var overlay = container.querySelector('.overlay');
+            var timeout;
+
+            container.addEventListener('mousemove', function(e) {
+                var x = e.offsetX;
+                var y = e.offsetY;
+                var rotateY = -1 / 5 * x + 20;
+                var rotateX = 4 / 30 * y - 20;
+
+                overlay.style.backgroundPosition = `${x / 5 + y / 5}%`;
+                overlay.style.filter = `opacity(${x / 200}) brightness(1.2)`;
+
+                container.style.transition = 'transform 0.1s ease';
+                container.style.transform = `perspective(350px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+                clearTimeout(timeout);
+            });
+
+            container.addEventListener('mouseout', function() {
+                overlay.style.filter = 'opacity(0)';
+                timeout = setTimeout(function() {
+                    container.style.transition = 'transform 0.1s ease';
+                    container.style.transform = 'perspective(350px) rotateY(0deg) rotateX(0deg)';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

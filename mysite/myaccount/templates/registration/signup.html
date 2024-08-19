@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load socialaccount %}
+<html lang="ko">
+<head>
+    <title>{% block title %}회원가입</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <script type="text/javascript">
+        // Django 템플릿에서 CSRF 토큰을 가져와서 JavaScript 변수에 저장
+        var csrfToken = '{{ csrf_token }}';
+    </script>
+    <style>
+        .warning-text {
+            font-size: 0.8em;
+            color: black;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+        .errorlist {
+            font-size: 0.8em;
+            color: #FF0000;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+        .successlist {
+            font-size: 0.8em;
+            color: blue;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+        .faillist {
+            font-size: 0.8em;
+            color: red;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }        
+    </style>
+</head>
+{% endblock %}
+{% block content %}
+<body style="background-color: #666666;">
+    <div class="limiter">
+        <div class="container-login100">
+            <div class="wrap-login100">
+                <form method="post" class="login100-form validate-form">
+                    {% csrf_token %}
+                    <span class="login100-form-title p-b-43">
+                        회원 가입
+                    </span>
+
+                    <div id="privacy-section" class="privacy-section">
+                        <div class="privacy-title" id="privacy-title2">
+                            <input type="checkbox" id="agree_all" name="agree_all">
+                            <label class="privacy-label" for="agree_all"><strong>전체 동의하기</strong></label>
+                        </div>
+                        <hr>
+                        <div class="privacy-item">
+                            <div id="privacy-title2">
+                                <input type="checkbox" id="agree_terms" name="agree_terms">
+                                <label class="privacy-label" for="agree_terms"><strong>MealKid 이용약관</strong> (필수)</label>
+                            </div>
+                            <div class="privacy-content scrollable-p">
+                                <p class="privacy-text">MealKid 서비스 및 제품(이하 '서비스')을 이용해 주셔서 감사합니다. 본 약관은 다양한 MealKid 서비스의 이용과 관련하여 MealKid 서비스를 제공하는 MealKid 주식회사(이하 'MealKid')와 이를 이용하는 MealKid 서비스 회원(이하 '회원') 또는 비회원과의 관계를 설명하며, 아울러 여러분의 MealKid 서비스 이용에 도움이 될 수 있는 유익한 정보를 포함하고 있습니다.</p>
+                            </div>
+                        </div>
+                        <div class="privacy-item">
+                            <div id="privacy-title2">
+                                <input type="checkbox" id="agree_privacy" name="agree_privacy">
+                                <label class="privacy-label" for="agree_privacy"><strong>개인정보 수집 및 이용</strong> (필수)</label>
+                            </div>
+                            <div class="privacy-content scrollable-p">
+                                <p class="privacy-text" style="white-space: pre-wrap;">개인정보보호법에 따라 MealKid에 회원가입 신청하시는 분께 수집하는 개인정보의 항목, 개인정보의 수집 및 이용목적, 개인정보의 보유 및 이용기간, 동의 거부권 및 동의 거부 시 불이익에 관한 사항을 안내 드리오니 자세히 읽은 후 동의하여 주시기 바랍니다.
+
+수집하는 개인정보: 아이디, 비밀번호, 이메일</p>
+                            </div>
+                        </div>
+
+                        <div class="container-login100-form-btn">
+                            <button type="button" class="login100-form-btn" id="next-button">
+                                다음
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="signup-container" class="signup-container hidden">
+                        <div class="wrap-input100 validate-input" data-validate="Username is required">
+                            <input class="input100" type="text" name="username" id="username" required>
+                            <span class="focus-input100"></span>
+                            <span class="label-input100">아이디</span>
+                        </div>
+                        <p class="warning-text">* 영문, 숫자 포함 5 ~ 20자 까지 가능합니다.</p>
+                        <div id="username-error" class="faillist" style="display: none;"></div>
+                        <div id="username-error" class="errorlist" style="display: none;"></div>                        
+                        {% include 'registration/form_errors.html' with field=form.username %}
+                        
+                        <div class="wrap-input100 validate-input" data-validate="Password is required">
+                            <input class="input100" id="password1" type="password" name="password1" required>
+                            <span class="focus-input100"></span>
+                            <span class="label-input100">비밀번호</span>
+                        </div>
+                        {% comment %} {% include 'registration/form_errors.html' with field=form.password1 %} {% endcomment %}
+                        <p class="warning-text">* 숫자로만 포함되지 않은 8자 이상 입력 가능합니다.</p>
+                        <p class="warning-text">* 이메일, 아이디와 중복되지 않게 주의하세요.</p>
+                        
+                        <div class="wrap-input100 validate-input" data-validate="Confirm Password is required">
+                            <input class="input100" id="password2" type="password" name="password2" required>
+                            <span class="focus-input100"></span>
+                            <span class="label-input100">비밀번호 확인</span>
+                        </div>
+                        <div id="password2-error" class="faillist" style="display: none;"></div>
+                        <div id="password2-error" class="errorlist" style="display: none;"></div>
+                        {% include 'registration/form_errors.html' with field=form.password2 %}
+                        
+                        <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+                            <input class="input100" type="email" name="email" required>
+                            <span class="focus-input100"></span>
+                            <span class="label-input100">이메일</span>
+                        </div>
+                        {% include 'registration/form_errors.html' with field=form.email %}
+                        
+                        <div class="container-login100-form-btn">
+                            <button type="submit" class="login100-form-btn" id="signup-btn">
+                                가입
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="text-center p-t-46 p-b-20">
+                        <span class="txt2">
+                            SNS 계정으로 회원 가입
+                        </span>
+                    </div>
+                    <div class="login100-form-social flex-c-m">
+                        <a href="{% provider_login_url 'google' %}" class="login100-form-social-item flex-c-m bg1 m-r-5">
+                            <img src="{% static 'images/icons/google_icon.png' %}" alt="Google Image" style="width: 20px; height: 20px;">
+                        </a>
+
+                        <a href="{% provider_login_url 'naver' %}" class="login100-form-social-item flex-c-m bg2 m-r-5">
+                            <img src="{% static 'images/icons/naver_icon.png' %}" alt="Naver Image" style="width: 20px; height: 20px;">
+                        </a>
+
+                        <a href="{% provider_login_url 'kakao' %}" class="login100-form-social-item flex-c-m bg3 m-r-5">
+                            <img src="{% static 'images/icons/kakaotalk_icon.png' %}" alt="Kakaotalk Image" style="width: 18px; height: 18px;">
+                        </a>
+                    </div>
+                </form>
+                
+                <div class="login100-more">
+                    <video width="100%" autoplay loop>
+                        <source src="{% static 'images/영상2.mp4' %}" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'vendor/animsition/js/animsition.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/popper.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'vendor/select2/select2.min.js' %}"></script>
+    <script src="{% static 'vendor/daterangepicker/moment.min.js' %}"></script>
+    <script src="{% static 'vendor/daterangepicker/daterangepicker.js' %}"></script>
+    <script src="{% static 'vendor/countdowntime/countdowntime.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <script>
+        $('#agree_all').click(function() {
+            $('input[type="checkbox"]').prop('checked', this.checked);
+        });
+
+        $('#next-button').click(function(event) {
+            if (!$('#agree_terms').prop('checked') || !$('#agree_privacy').prop('checked')) {
+                alert('필수 항목에 동의해 주세요.');
+                return;
+            }
+
+            $('#privacy-section').hide();
+            $('#signup-container').removeClass('hidden').addClass('slide-left');
+        });
+
+        if ('{% if form.errors %}true{% else %}false{% endif %}' == 'true') {
+            $('#privacy-section').addClass('hidden');
+            $('#signup-container').removeClass('hidden');
+        }
+
+        // CSRF 토큰을 AJAX 요청에 포함
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrfToken);
+                }
+            }
+        });
+
+        // 예제 AJAX 요청
+        function submitData() {
+            $.ajax({
+                type: "POST",
+                url: "/your-url/",
+                data: {
+                    username: $('#id_username').val(),
+                    email: $('#id_email').val()
+                },
+                success: function(response) {
+                    // 성공 처리
+                    console.log("성공:", response);
+                },
+                error: function(xhr, status, error) {
+                    // 에러 처리
+                    console.error("에러:", error);
+                }
+            });
+        }
+
+        // 실시간 비밀번호 일치 여부 확인
+        function checkPasswordMatch() {
+            var password1 = $('#password1').val();
+            var password2 = $('#password2').val();
+            var numberOnlyPattern = /^\d+$/;
+            if (password1 !== ''){
+                if (password1.length < 8) {
+                    $('#password2-error.errorlist').hide();
+                    $('#password2-error').text('비밀번호는 최소 8자 이상이어야 합니다.').removeClass('successlist').addClass('faillist').show();
+                }else if (numberOnlyPattern.test(password1)) {
+                    $('#password2-error').text('비밀번호는 숫자로만 이루어질 수 없습니다.').removeClass('successlist').addClass('faillist').show();
+                }    
+                else if (password1 === password2) {
+                    $('#password2-error.errorlist').hide();
+                    $('#password2-error').text('비밀번호가 일치합니다.').removeClass('faillist').addClass('successlist').show();
+                } else {
+                    $('#password2-error').text('비밀번호가 일치하지 않습니다.').removeClass('successlist').addClass('faillist').show();
+                }
+            } else {
+                $('#password2-error').hide();
+            }
+        }
+        function checkUsernameValidity() {
+            var username = $('#username').val();
+            var usernamePattern = /^[a-zA-Z0-9]{5,20}$/;
+            if (username !== '') {
+                if (!usernamePattern.test(username)) {
+                    $('#username-error.errorlist').hide();
+                    $('#username-error').text('아이디는 영문, 숫자 포함 5 ~ 20자여야 합니다.').removeClass('successlist').addClass('faillist').show();
+                } else {
+                    $.ajax({
+                        url: '{% url "check_username" %}',
+                        data: {
+                            'username': username
+                        },
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.is_taken) {
+                                $('#username-error').removeClass('successlist').addClass('faillist').text('이미 사용 중인 아이디입니다.').show();
+                            } else {
+								$('#username-error.errorlist').hide();
+                                $('#username-error').removeClass('faillist').addClass('successlist').text('사용 가능한 아이디입니다.').show();
+                            }
+                        }
+                    });
+                }
+            } else {
+                $('#username-error').hide();
+            }
+        }
+        $(document).ready(function() {
+            // 처음 제출 시 에러 메시지 활성화
+            $('form').on('submit', function(event) {
+                var password1 = $('#password1').val();
+                var password2 = $('#password2').val();
+                if (password1 !== password2) {
+                    $('#password2-error').text('비밀번호가 일치하지 않습니다.').removeClass('successlist').addClass('faillist').show();
+                }
+            });
+
+            // 실시간 비밀번호 일치 여부 확인
+            $('#password1, #password2').on('input', checkPasswordMatch);
+            $('#username').on('input', checkUsernameValidity);
+            // strong 기준 줄바꿈 추가
+            $('.error-item').each(function() {
+                var html = $(this).html();
+                html = html.replace(/<\/strong>/g, '</strong><br>');
+                $(this).html(html);
+            });
+        });
+
+        $('#password1, #password2').on('input', checkPasswordMatch);
+        $('#username').on('input', checkUsernameValidity);
+    </script>
+</body>
+{% endblock %}
+</html>

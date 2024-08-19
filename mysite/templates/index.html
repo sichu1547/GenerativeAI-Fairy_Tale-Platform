@@ -1,0 +1,839 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}꿈을 꾸는 아이들 Mealkid
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale/ko.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+<div id="main" class role="main">
+    <div id="shapely_home_parallax-2" class="widget shapely_home_parallax">
+        <section class="cover fullscreen image-bg">
+            <div class="parallax-window fullscreen" data-parallax="scroll" data-image-src="{% static 'images/배경.png' %}" data-ios-fix="true" data-over-scroll-fix="true" data-android-fix="true">
+                <div class="align-transform">
+                    <div class="row">
+                        <div class="top-parallax-section">
+                            <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 text-center">
+                                <h1><img src="{% static 'images/메인로고.png' %}"></h1>
+                                <form action="{% url 'reader:search' %}" method="GET" style="display: inline;">
+                                    <input type='text' class="search" name='keyword' value="{{ keyword }}" placeholder="동화 제목을 입력하세요...">
+                                    <button type="submit" style="border: none; background: none;">
+                                        <img src="{% static 'images/검색바.png' %}" alt="검색">
+                                    </button>
+                                </form>
+                                <!--
+                                <div class="mb32"><h1> 상상력이 세상을 만든다 </h1></div>
+                                <a class="btn btn-lg btn-filled" href="{% url 'reader:list' %}">Read Stories</a>
+                                <a class="btn btn-lg btn-white" href="{% url 'generator:index' %}">Gen</a>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="clearfix"></div>
+    </div>
+<!--<div class="slider"><img src="{% static 'images/red.png' %}" alt="이미지1"></div>-->
+    <div id="shapely_home_parallax-3" class="widget shapely_home_parallax">
+        <div class="slide slide_wrap">
+            <button class="slide_item item1" onclick="location.href = '{% url 'reader:list' %}';"></button>
+            <button class="slide_item item2" onclick="location.href = '{% url 'generator:index' %}';"></button>
+            <button class="slide_item item3" onclick="randomPage()"></button>
+            <button class="slide_item item4" onclick="location.href = '{% url 'mine:index' %}';"></button>
+            <div class="slide_prev_button slide_button">◀</div>
+            <div class="slide_next_button slide_button">▶</div>
+            <ul class="slide_pagination"></ul>
+          </div>
+        <div class="clearfix"></div>
+    </div>
+<!-- 출석 체크 달력 모달 -->
+    <div id="attendance-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>{{ profile_name }}님의 출석 달력</h2>
+            <div id="calendar"></div>
+        </div>
+    </div>
+<!--수치-->
+<div class="num-container" id="num-container">
+    <div class="num-item">
+        <img class="in-title" alt="Portfolio Section" src="{% static 'images/팀원.png' %}" style="width: 120px; height: 120px;"><br>
+        <span class="nums" data-count="8">0</span><span id="num-unit">명</span><br>
+        <span class="sub-title">팀원</span><br>
+    </div>
+    <div class="num-item">
+        <img class="in-title" alt="Portfolio Section" src="{% static 'images/동화책.png' %}" style="width: 120px; height: 120px;"><br>
+        <span class="nums" data-count={{ len_story }}>0</span><span id="num-unit">편</span><br>
+        <span class="sub-title">총 동화 수</span><br>
+    </div>
+    <div class="num-item">
+        <img class="in-title" alt="Portfolio Section" src="{% static 'images/시간.png' %}" style="width: 120px; height: 120px;"><br>
+        <span class="nums" data-count={{ time_count }}>0</span><span id="num-unit">시간</span><br>
+        <span class="sub-title">제작 기간</span><br>
+    </div>
+</div>
+<!--왼쪽 맨트 오른쪽 사진 
+    <div id="shapely_home_parallax-4" class="widget shapely_home_parallax">
+        <section class="bg-secondary">
+            <div class="container">
+                <div class="row align-children">
+                    <div class="col-md-4 col-sm-5 mb-xs-24">
+                        <div class>
+                            <h3>Portfolio Section</h3>
+                            <div class="mb32"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam pulvinar luctus sem, eget porta orci. Maecenas molestie dui id diam feugiat, eu tincidunt mauris aliquam. Duis commodo vitae ligula et interdum.</p></div>
+                            <a class="btn btn-lg btn-filled" href="#">See it in action</a>
+                        </div>
+                    </div>
+                    <div class="col-md-7 col-md-offset-1 col-sm-6 col-sm-offset-1 text-center">
+                        <img class="img-responsive" alt="Portfolio Section" src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/03/flexible-portfolio.png">
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="clearfix"></div>
+    </div>-->
+<!-- 배경 사진안에 맨트
+    <div id="shapely_home_parallax-5" class="widget shapely_home_parallax">
+        <section class="small-screen image-bg p0">
+            <div class="parallax-window " data-parallax="scroll" data-image-src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/12/photo-1452723312111-3a7d0db0e024.jpg" data-ios-fix="true" data-over-scroll-fix="true" data-android-fix="true">
+                <div class>
+                    <div class="row">
+                        <div class="top-parallax-section">
+                            <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 text-center">
+                                <h1>Small Parallax Section</h1>
+                                <div class="mb32"><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus imperdiet rhoncus porta. Ut quis sem quis purus lobortis dictum. Aliquam nec dignissim nisl. Vivamus cursus feugiat sapien, eget tincidunt leo ornare quis.</p></div>
+                                <a class="btn btn-lg btn-filled" href="#">MORE INFO</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="clearfix"></div>
+    </div>-->
+<!-- 위에 맨트 아래 큰사진
+    <div id="shapely_home_parallax-6" class="widget shapely_home_parallax">
+        <section class="bg-secondary pb0">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-10 col-sm-offset-1 text-center">
+                        <div class>
+                            <h3>Limitless Options</h3>
+                            <div class="mb32"><p>Phasellus sed nisi ac dui interdum semper. Etiam consequat fermentum sollicitudin. Fusce vulputate porta faucibus. Vivamus nulla tellus, accumsan non efficitur id, pretium quis ante</p></div>
+                            <a class="btn btn-lg btn-filled" href="#">Download Now</a>
+                        </div>
+                    </div>
+                    <div class>
+                        <img class="img-responsive" alt="Limitless Options" src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/12/photo-1440557653082-e8e186733eeb-1.jpg">
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="clearfix"></div>
+    </div>-->
+<!--여러 사진
+    <div id="shapely_home_portfolio-2" class="widget shapely_home_portfolio">
+        <section class="projects pb0" style="background-color:#0e1015">
+            <div class="container">
+                <div class="col-sm-12 text-center">
+                    <h3 class="mb32" style="color:#ffffff">Our Latest Projects</h3>
+                    <p class="mb40" style="color:#ffffff">Here is our latest projects. You&#039;ll love them!</p>
+                </div>
+            </div>
+            <div class="row masonry-loader fixed-center fadeOut">
+                <div class="col-sm-12 text-center">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+            <div class="row fadeIn masonry masonryFlyIn">
+                <div class="col-md-3 col-sm-6 project fadeIn masonry-item">
+                    <div class="image-tile inner-title hover-reveal text-center" style>
+                        <a href="https://colorlibhub.com/shapely/portfolio/project-15/" title="Project #15">
+                            <img width="1200" height="837" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/12/photo-1443890484047-5eaa67d1d630-1.jpg" class="attachment-full size-full wp-post-image" alt decoding="async" fetchpriority="high" srcset="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/12/photo-1443890484047-5eaa67d1d630-1.jpg 1200w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/12/photo-1443890484047-5eaa67d1d630-1-300x209.jpg 300w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/12/photo-1443890484047-5eaa67d1d630-1-768x536.jpg 768w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/12/photo-1443890484047-5eaa67d1d630-1-1024x714.jpg 1024w " sizes="(max-width: 1200px) 100vw, 1200px" />
+                            <div class="title">
+                                <h5 class="mb0">Project #15</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 project fadeIn masonry-item">
+                    <div class="image-tile inner-title hover-reveal text-center" style>
+                        <a href="https://colorlibhub.com/shapely/portfolio/project-14/" title="Project #14">
+                            <img width="1200" height="837" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1422568374078-27d3842ba676-1.jpg" class="attachment-full size-full wp-post-image" alt decoding="async" srcset="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1422568374078-27d3842ba676-1.jpg 1200w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1422568374078-27d3842ba676-1-300x209.jpg 300w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1422568374078-27d3842ba676-1-768x536.jpg 768w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1422568374078-27d3842ba676-1-1024x714.jpg 1024w " sizes="(max-width: 1200px) 100vw, 1200px" />
+                            <div class="title">
+                                <h5 class="mb0">Project #14</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 project fadeIn masonry-item">
+                    <div class="image-tile inner-title hover-reveal text-center" style>
+                        <a href="https://colorlibhub.com/shapely/portfolio/project-13/" title="Project #13">
+                            <img width="1200" height="853" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1447834353189-91c48abf20e1-1-1.jpg" class="attachment-full size-full wp-post-image" alt decoding="async" srcset="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1447834353189-91c48abf20e1-1-1.jpg 1200w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1447834353189-91c48abf20e1-1-1-300x213.jpg 300w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1447834353189-91c48abf20e1-1-1-768x546.jpg 768w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1447834353189-91c48abf20e1-1-1-1024x728.jpg 1024w " sizes="(max-width: 1200px) 100vw, 1200px" />
+                            <div class="title">
+                                <h5 class="mb0">Project #13</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 project fadeIn masonry-item">
+                    <div class="image-tile inner-title hover-reveal text-center" style>
+                        <a href="https://colorlibhub.com/shapely/portfolio/project-12-2/" title="Project #12">
+                            <img width="1200" height="853" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/12/photo-1447877085163-3cce903855cd-1.jpg" class="attachment-full size-full wp-post-image" alt decoding="async" srcset="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/12/photo-1447877085163-3cce903855cd-1.jpg 1200w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/12/photo-1447877085163-3cce903855cd-1-300x213.jpg 300w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/12/photo-1447877085163-3cce903855cd-1-768x546.jpg 768w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/12/photo-1447877085163-3cce903855cd-1-1024x728.jpg 1024w " sizes="(max-width: 1200px) 100vw, 1200px" />
+                            <div class="title">
+                                <h5 class="mb0">Project #12</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 project fadeIn masonry-item">
+                    <div class="image-tile inner-title hover-reveal text-center" style>
+                        <a href="https://colorlibhub.com/shapely/portfolio/project-12/" title="Project #12">
+                            <img width="1200" height="853" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1447958374760-1ce70cf11ee3-1-1.jpg" class="attachment-full size-full wp-post-image" alt decoding="async" srcset="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1447958374760-1ce70cf11ee3-1-1.jpg 1200w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1447958374760-1ce70cf11ee3-1-1-300x213.jpg 300w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1447958374760-1ce70cf11ee3-1-1-768x546.jpg 768w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1447958374760-1ce70cf11ee3-1-1-1024x728.jpg 1024w " sizes="(max-width: 1200px) 100vw, 1200px" />
+                            <div class="title">
+                                <h5 class="mb0">Project #12</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 project fadeIn masonry-item">
+                    <div class="image-tile inner-title hover-reveal text-center" style>
+                        <a href="https://colorlibhub.com/shapely/portfolio/project-11/" title="Project #11">
+                            <img width="1200" height="837" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1430329429612-babb42f88673-1-1.jpg" class="attachment-full size-full wp-post-image" alt decoding="async" srcset="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1430329429612-babb42f88673-1-1.jpg 1200w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1430329429612-babb42f88673-1-1-300x209.jpg 300w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1430329429612-babb42f88673-1-1-768x536.jpg 768w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1430329429612-babb42f88673-1-1-1024x714.jpg 1024w " sizes="(max-width: 1200px) 100vw, 1200px" />
+                            <div class="title">
+                                <h5 class="mb0">Project #11</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 project fadeIn masonry-item">
+                    <div class="image-tile inner-title hover-reveal text-center" style>
+                        <a href="https://colorlibhub.com/shapely/portfolio/project-10/" title="Project #10">
+                            <img width="1200" height="853" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1449057528837-7ca097b3520c-1-1.jpg" class="attachment-full size-full wp-post-image" alt decoding="async" srcset="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1449057528837-7ca097b3520c-1-1.jpg 1200w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1449057528837-7ca097b3520c-1-1-300x213.jpg 300w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1449057528837-7ca097b3520c-1-1-768x546.jpg 768w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1449057528837-7ca097b3520c-1-1-1024x728.jpg 1024w " sizes="(max-width: 1200px) 100vw, 1200px" />
+                            <div class="title">
+                                <h5 class="mb0">Project #10</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 project fadeIn masonry-item">
+                    <div class="image-tile inner-title hover-reveal text-center" style>
+                        <a href="https://colorlibhub.com/shapely/portfolio/project-9/" title="Project #9">
+                            <img width="1200" height="837" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1449168013943-3a15804bb41c-1-1.jpg" class="attachment-full size-full wp-post-image" alt decoding="async" srcset="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1449168013943-3a15804bb41c-1-1.jpg 1200w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1449168013943-3a15804bb41c-1-1-300x209.jpg 300w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1449168013943-3a15804bb41c-1-1-768x536.jpg 768w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1449168013943-3a15804bb41c-1-1-1024x714.jpg 1024w " sizes="(max-width: 1200px) 100vw, 1200px" />
+                            <div class="title">
+                                <h5 class="mb0">Project #9</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 project fadeIn masonry-item">
+                    <div class="image-tile inner-title hover-reveal text-center" style>
+                        <a href="https://colorlibhub.com/shapely/portfolio/project-8/" title="Project #8">
+                            <img width="1200" height="837" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1448518184296-a22facb4446f-1-1.jpg" class="attachment-full size-full wp-post-image" alt decoding="async" srcset="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1448518184296-a22facb4446f-1-1.jpg 1200w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1448518184296-a22facb4446f-1-1-300x209.jpg 300w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1448518184296-a22facb4446f-1-1-768x536.jpg 768w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1448518184296-a22facb4446f-1-1-1024x714.jpg 1024w " sizes="(max-width: 1200px) 100vw, 1200px" />
+                            <div class="title">
+                                <h5 class="mb0">Project #8</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 project fadeIn masonry-item">
+                    <div class="image-tile inner-title hover-reveal text-center" style>
+                        <a href="https://colorlibhub.com/shapely/portfolio/project-7/" title="Project #7">
+                            <img width="1200" height="837" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1451186859696-371d9477be93-1-1.jpg" class="attachment-full size-full wp-post-image" alt decoding="async" srcset="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1451186859696-371d9477be93-1-1.jpg 1200w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1451186859696-371d9477be93-1-1-300x209.jpg 300w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1451186859696-371d9477be93-1-1-768x536.jpg 768w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/photo-1451186859696-371d9477be93-1-1-1024x714.jpg 1024w " sizes="(max-width: 1200px) 100vw, 1200px" />
+                            <div class="title">
+                                <h5 class="mb0">Project #7</h5>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>-->
+<!--제작자 표시
+    <div id="shapely_home_testimonial-2" class="widget shapely_home_testimonial">
+        <section class="parallax-section testimonial-section">
+            <div class="parallax-window" data-parallax="scroll" data-image-src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/12/photo-1451417379553-15d8e8f49cde.jpg" style="height: 500px;">
+                <div class="container align-transform">
+                    <div class="parallax-text image-bg testimonial">
+                        <div class="row">
+                            <div class="col-sm-12 text-center">
+                                <h3>What Our Customers Say</h3>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+                                <div class="text-slider slider-arrow-controls text-center relative">
+                                    <ul class="slides" style="overflow: hidden;">
+                                        <li>
+                                            <p>Integer ut rutrum nulla, sit amet fringilla nisi. Nam nisl velit, vehicula at nibh sed, porttitor sollicitudin ante. Sed justo augue, vestibulum ut efficitur vitae, euismod et justo. Mauris sed mattis ante. Ut ligula lectus, consequat vitae neque ac, gravida hendrerit ante.</p>
+                                            <div class="testimonial-author-section">
+                                                <img width="150" height="150" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/mike-muller-150x150.jpg" class="testimonial-img wp-post-image" alt decoding="async" srcset="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/mike-muller-150x150.jpg 150w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/mike-muller-50x50.jpg 50w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/mike-muller.jpg 440w " sizes="(max-width: 150px) 100vw, 150px" />
+                                                <div class="testimonial-author"><strong>John Doe</strong></div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <p>Nunc sit amet lobortis nulla. Nunc ullamcorper, mi id luctus dictum, augue tortor dictum ipsum, nec congue arcu lorem in nisl. Duis neque lacus, viverra non mauris ac, pharetra rhoncus libero. Aliquam varius viverra ex, in venenatis magna ornare sit amet. Integer varius sit amet turpis eu ullamcorper.</p>
+                                            <div class="testimonial-author-section">
+                                                <img width="150" height="150" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/Aigars-Silkalns-150x150.jpg" class="testimonial-img wp-post-image" alt decoding="async" srcset="https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/Aigars-Silkalns-150x150.jpg 150w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/Aigars-Silkalns-300x300.jpg 300w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/Aigars-Silkalns-768x768.jpg 768w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/Aigars-Silkalns-50x50.jpg 50w , https://149842022.v2.pressablecdn.com/shapely/wp-content/uploads/sites/59/2016/03/Aigars-Silkalns.jpg 800w " sizes="(max-width: 150px) 100vw, 150px" />
+                                                <div class="testimonial-author"><strong>Aigars Silkalns</strong></div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>-->
+<!--맨 아래 랭귀지 표시
+    <div id="shapely_home_clients-2" class="widget shapely_home_clients">
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 text-center">
+                        <h3 class="mb64 mb-xs-40">Our Main Clients</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="logo-carousel">
+                        <ul class="slides">
+                            <li><a href="#"><img alt="Logos" src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/03/colorlib-logo.png" /></a></li>
+                            <li><a href="#"><img alt="Logos" src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/03/js-logo.png" /></a></li>
+                            <li><a href="#"><img alt="Logos" src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/03/html5-logo.png" /></a></li>
+                            <li><a href="#"><img alt="Logos" src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/03/css-logo.png" /></a></li>
+                            <li><a href="#"><img alt="Logos" src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/03/less-logo.png" /></a></li>
+                            <li><a href="#"><img alt="Logos" src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/03/sass-logo.png" /></a></li>
+                            <li><a href="#"><img alt="Logos" src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/03/bootstrap-logo.jpg" /></a></li>
+                            <li><a href="#"><img alt="Logos" src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/03/adobe-logo.png" /></a></li>
+                            <li><a href="#"><img alt="Logos" src="https://149842022.v2.pressablecdn.com/wp-content/uploads/sites/59/2016/03/facebook-logo.png" /></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>-->
+
+<script src="{% static 'js/main.js' %}">
+    // 슬라이크 전체 크기(width 구하기)
+const slide = document.querySelector(".slide");
+let slideWidth = slide.clientWidth;
+
+// 버튼 엘리먼트 선택하기
+const prevBtn = document.querySelector(".slide_prev_button");
+const nextBtn = document.querySelector(".slide_next_button");
+
+// 슬라이드 전체를 선택해 값을 변경해주기 위해 슬라이드 전체 선택하기
+let slideItems = document.querySelectorAll(".slide_item");
+// 현재 슬라이드 위치가 슬라이드 개수를 넘기지 않게 하기 위한 변수
+const maxSlide = slideItems.length;
+
+// 버튼 클릭할 때 마다 현재 슬라이드가 어디인지 알려주기 위한 변수
+let currSlide = 1;
+
+// 페이지네이션 생성
+const pagination = document.querySelector(".slide_pagination");
+
+for (let i = 0; i < maxSlide; i++) {
+  if (i === 0) pagination.innerHTML += `<li class="active">•</li>`;
+  else pagination.innerHTML += `<li>•</li>`;
+}
+
+const paginationItems = document.querySelectorAll(".slide_pagination > li");
+
+// 무한 슬라이드를 위해 start, end 슬라이드 복사하기
+const startSlide = slideItems[0];
+const endSlide = slideItems[slideItems.length - 1];
+const startElem = document.createElement("div");
+const endElem = document.createElement("div");
+
+endSlide.classList.forEach((c) => endElem.classList.add(c));
+endElem.innerHTML = endSlide.innerHTML;
+
+startSlide.classList.forEach((c) => startElem.classList.add(c));
+startElem.innerHTML = startSlide.innerHTML;
+
+// 각 복제한 엘리먼트 추가하기
+slideItems[0].before(endElem);
+slideItems[slideItems.length - 1].after(startElem);
+
+// 슬라이드 전체를 선택해 값을 변경해주기 위해 슬라이드 전체 선택하기
+slideItems = document.querySelectorAll(".slide_item");
+//
+let offset = slideWidth + currSlide;
+slideItems.forEach((i) => {
+  i.setAttribute("style", `left: ${-offset}px`);
+});
+
+function nextMove() {
+  currSlide++;
+  // 마지막 슬라이드 이상으로 넘어가지 않게 하기 위해서
+  if (currSlide <= maxSlide) {
+    // 슬라이드를 이동시키기 위한 offset 계산
+    const offset = slideWidth * currSlide;
+    // 각 슬라이드 아이템의 left에 offset 적용
+    slideItems.forEach((i) => {
+      i.setAttribute("style", `left: ${-offset}px`);
+    });
+    // 슬라이드 이동 시 현재 활성화된 pagination 변경
+    paginationItems.forEach((i) => i.classList.remove("active"));
+    paginationItems[currSlide - 1].classList.add("active");
+  } else {
+    // 무한 슬라이드 기능 - currSlide 값만 변경해줘도 되지만 시각적으로 자연스럽게 하기 위해 아래 코드 작성
+    currSlide = 0;
+    let offset = slideWidth * currSlide;
+    slideItems.forEach((i) => {
+      i.setAttribute("style", `transition: ${0}s; left: ${-offset}px`);
+    });
+    currSlide++;
+    offset = slideWidth * currSlide;
+    // 각 슬라이드 아이템의 left에 offset 적용
+    setTimeout(() => {
+      // 각 슬라이드 아이템의 left에 offset 적용
+      slideItems.forEach((i) => {
+        // i.setAttribute("style", `transition: ${0}s; left: ${-offset}px`);
+        i.setAttribute("style", `transition: ${0.15}s; left: ${-offset}px`);
+      });
+    }, 0);
+    // // 슬라이드 이동 시 현재 활성화된 pagination 변경
+    paginationItems.forEach((i) => i.classList.remove("active"));
+    paginationItems[currSlide - 1].classList.add("active");
+  }
+}
+function prevMove() {
+  currSlide--;
+  // 1번째 슬라이드 이하로 넘어가지 않게 하기 위해서
+  if (currSlide > 0) {
+    // 슬라이드를 이동시키기 위한 offset 계산
+    const offset = slideWidth * currSlide;
+    // 각 슬라이드 아이템의 left에 offset 적용
+    slideItems.forEach((i) => {
+      i.setAttribute("style", `left: ${-offset}px`);
+    });
+    // 슬라이드 이동 시 현재 활성화된 pagination 변경
+    paginationItems.forEach((i) => i.classList.remove("active"));
+    paginationItems[currSlide - 1].classList.add("active");
+  } else {
+    // 무한 슬라이드 기능 - currSlide 값만 변경해줘도 되지만 시각적으로 자연스럽게 하기 위해 아래 코드 작성
+    currSlide = maxSlide + 1;
+    let offset = slideWidth * currSlide;
+    // 각 슬라이드 아이템의 left에 offset 적용
+    slideItems.forEach((i) => {
+      i.setAttribute("style", `transition: ${0}s; left: ${-offset}px`);
+    });
+    currSlide--;
+    offset = slideWidth * currSlide;
+    setTimeout(() => {
+      // 각 슬라이드 아이템의 left에 offset 적용
+      slideItems.forEach((i) => {
+        // i.setAttribute("style", `transition: ${0}s; left: ${-offset}px`);
+        i.setAttribute("style", `transition: ${0.15}s; left: ${-offset}px`);
+      });
+    }, 0);
+    // 슬라이드 이동 시 현재 활성화된 pagination 변경
+    paginationItems.forEach((i) => i.classList.remove("active"));
+    paginationItems[currSlide - 1].classList.add("active");
+  }
+}
+
+// 버튼 엘리먼트에 클릭 이벤트 추가하기
+nextBtn.addEventListener("click", () => {
+  // 이후 버튼 누를 경우 현재 슬라이드를 변경
+  nextMove();
+});
+// 버튼 엘리먼트에 클릭 이벤트 추가하기
+prevBtn.addEventListener("click", () => {
+  // 이전 버튼 누를 경우 현재 슬라이드를 변경
+  prevMove();
+});
+
+// 브라우저 화면이 조정될 때 마다 slideWidth를 변경하기 위해
+window.addEventListener("resize", () => {
+  slideWidth = slide.clientWidth;
+});
+
+// 각 페이지네이션 클릭 시 해당 슬라이드로 이동하기
+for (let i = 0; i < maxSlide; i++) {
+  // 각 페이지네이션마다 클릭 이벤트 추가하기
+  paginationItems[i].addEventListener("click", () => {
+    // 클릭한 페이지네이션에 따라 현재 슬라이드 변경해주기(currSlide는 시작 위치가 1이기 때문에 + 1)
+    currSlide = i + 1;
+    // 슬라이드를 이동시키기 위한 offset 계산
+    const offset = slideWidth * currSlide;
+    // 각 슬라이드 아이템의 left에 offset 적용
+    slideItems.forEach((i) => {
+      i.setAttribute("style", `left: ${-offset}px`);
+    });
+    // 슬라이드 이동 시 현재 활성화된 pagination 변경
+    paginationItems.forEach((i) => i.classList.remove("active"));
+    paginationItems[currSlide - 1].classList.add("active");
+  });
+}
+
+// 드래그(스와이프) 이벤트를 위한 변수 초기화
+let startPoint = 0;
+let endPoint = 0;
+
+// PC 클릭 이벤트 (드래그)
+slide.addEventListener("mousedown", (e) => {
+  startPoint = e.pageX; // 마우스 드래그 시작 위치 저장
+});
+
+slide.addEventListener("mouseup", (e) => {
+  endPoint = e.pageX; // 마우스 드래그 끝 위치 저장
+  if (startPoint < endPoint) {
+    // 마우스가 오른쪽으로 드래그 된 경우
+    prevMove();
+  } else if (startPoint > endPoint) {
+    // 마우스가 왼쪽으로 드래그 된 경우
+    nextMove();
+  }
+});
+
+// 모바일 터치 이벤트 (스와이프)
+slide.addEventListener("touchstart", (e) => {
+  startPoint = e.touches[0].pageX; // 터치가 시작되는 위치 저장
+});
+slide.addEventListener("touchend", (e) => {
+  endPoint = e.changedTouches[0].pageX; // 터치가 끝나는 위치 저장
+  if (startPoint < endPoint) {
+    // 오른쪽으로 스와이프 된 경우
+    prevMove();
+  } else if (startPoint > endPoint) {
+    // 왼쪽으로 스와이프 된 경우
+    nextMove();
+  }
+});
+
+// 기본적으로 슬라이드 루프 시작하기
+let loopInterval = setInterval(() => {
+  nextMove();
+}, 3000);
+
+// 슬라이드에 마우스가 올라간 경우 루프 멈추기
+slide.addEventListener("mouseover", () => {
+  clearInterval(loopInterval);
+});
+
+// 슬라이드에서 마우스가 나온 경우 루프 재시작하기
+slide.addEventListener("mouseout", () => {
+  loopInterval = setInterval(() => {
+    nextMove();
+  }, 3000);
+});
+</script>
+<script>
+$(document).ready(function() {
+    // 모달 열기
+    function openModal() {
+        $('#attendance-modal').show();
+        markAttendance();
+    }
+
+    // 모달 닫기
+    function closeModal() {
+        $('#attendance-modal').hide();
+    }
+    // 출석 체크 함수
+    function markAttendance() {
+        console.log('출석 체크 함수 호출됨'); // 디버그 메시지
+        $.ajax({
+            url: '{% url "attendance_check" %}',
+            type: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            success: function(data) {
+                if (data.status === 'ok') {
+                    console.log('출석 체크 성공'); // 디버그 메시지
+                    $('#calendar').fullCalendar('renderEvent', {
+                        start: moment().format('YYYY-MM-DD'), // 오늘 날짜를 가져옴
+                        allDay: true,
+                    });
+                } else if (data.status === 'already_checked') {
+                    console.log('이미 출석 체크됨'); // 디버그 메시지
+                } else {
+                    console.log('출석 체크 실패:', data.message); // 디버그 메시지
+                }
+            },
+            error: function(xhr, status, error) {
+                console.log('출석 체크 AJAX 요청 실패:', error); // 디버그 메시지
+            }
+        });
+    }
+    // 세션에서 모달 열기 플래그 확인
+    var showModal = "{{ request.session.show_attendance_modal|default:'false' }}" === 'True';
+    if (showModal) {
+        openModal();
+        // 플래그를 초기화하여 다시 새로고침할 때 모달이 자동으로 열리지 않도록 함
+        $.ajax({
+            url: '{% url "reset_show_attendance_modal" %}',
+            type: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+        });
+    }
+
+    // 모달 닫기 버튼 클릭 이벤트
+    $('.close').click(function() {
+        closeModal();
+    });
+
+    $('#calendar').fullCalendar({
+        header: {
+            left: 'prev',
+            center: 'title',
+            right: 'next'
+        },
+        editable: false,
+        droppable: false,
+        events: function(start, end, timezone, callback) {
+            var attendanceDates = {{ attendance_dates|safe }};
+            var events = [];
+            for (var i = 0; i < attendanceDates.length; i++) {
+                events.push({
+                    start: attendanceDates[i],
+                    allDay: true,
+                    color: 'transparent'
+                });
+            }
+            callback(events);
+        },
+        eventRender: function(event, element) {
+            element.addClass('fc-day-checked');
+        }
+    });
+});
+//숫자 카운트 애니메이션
+$(document).ready(function () {
+    function isElementInViewport(el) {
+        var rect = el.getBoundingClientRect();
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        );
+    }
+
+    function checkAnimation() {
+        $('.nums').each(function () {
+            const $this = $(this),
+                countTo = $this.attr('data-count');
+
+            if (isElementInViewport(this) && !$this.hasClass('counted')) {
+                $this.addClass('counted');
+                $({
+                    countNum: $this.text()
+                }).animate({
+                    countNum: countTo
+                }, {
+                    duration: 3000,
+                    easing: 'linear',
+                    step: function () {
+                        $this.text(Math.floor(this.countNum));
+                    },
+                    complete: function () {
+                        $this.text(this.countNum.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+                    }
+                });
+            }
+        });
+    }
+
+    $(window).on('scroll', checkAnimation);
+    $(window).on('load', checkAnimation); // Initial check on page load
+});
+
+// 랜덤 동화로 이동하기
+function randomPage() {
+    random_num = Math.floor(Math.random() * 442 + 1);
+    window.location.href = `/reader/story/${random_num}/`;
+}
+
+</script>
+<style>
+    @keyframes stamp {
+        0% {
+            transform: scale(4) rotate(15deg);
+            opacity: 0;
+        }
+        50% {
+            transform: scale(1.2) rotate(-5deg);
+            opacity: 1;
+        }
+        70% {
+            transform: scale(1.1) rotate(0deg);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+        }
+    }
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+        background-color: #fffcf2;
+        margin: 2% auto;
+        padding: 20px;
+        border: 1px solid #f1c40f;
+        max-width: 700px;
+        height: 650px; /* 모달 높이를 650px로 설정 */
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        border-radius: 15px;
+        text-align: center;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    #calendar {
+        background-color: #ecf0f1;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+        flex-grow: 1; /* 캘린더가 남은 공간을 채우도록 설정 */
+        width: 100%; /* 캘린더가 모달의 전체 너비를 차지하도록 설정 */
+        height: 100%; /* 캘린더 높이를 100%로 설정 */
+        overflow: hidden; /* 스크롤 바가 나타나지 않도록 설정 */
+    }
+    .fc-day-number {
+        position: relative;
+        z-index: 2; /* 숫자가 도장 위에 보이도록 z-index 조절 */
+        color:black;
+    }
+
+    .fc-event {
+        animation: stamp 0.5s ease-in-out forwards;
+        background: none;
+        background-image: url('/static/images/good_stamp.png');
+        background-size: 50%;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        background-repeat: no-repeat;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        background-position: center;
+        z-index: 1;
+        line-height:4.5;
+    }
+    .fc-row {
+        height: 20% !important; /* Adjusted height to make cells larger */
+    }
+
+    .fc-bg .fc-day, .fc-content-skeleton table {
+        height: 100% !important;
+    }
+
+    .fc-content-skeleton {
+        height: 100%;
+    }
+    /* 캘린더 구성 요소의 크기 및 스타일 조정 */
+    .fc-view-container {
+        height: 100%;
+    }
+    .fc-day-grid-container {
+        height: 100%;
+        overflow: hidden !important; /* 스크롤 바 제거 */
+    }
+
+    .fc-day-grid {
+        height: 100%;
+    }
+
+    .fc-row {
+        height: 16.6%; /* 각 행의 높이를 균등하게 설정 (총 6줄을 고려) */
+    }
+
+    /* 이벤트 스타일 */
+    .fc-event {
+        border: none;
+        border-radius: 5px;
+        color: white;
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    .fc-day-header {
+        background-color: #e74c3c;
+        color: white;
+        font-family: 'Noto Sans KR', sans-serif;
+        border-radius: 5px;
+        padding: 5px;
+    }
+
+    .fc-title {
+        white-space: normal;
+    }
+
+    h2 {
+        font-family: "Black Han Sans", sans-serif;
+        color: #3498db;
+        display: inline-block; /* 버튼과 제목을 같은 줄에 표시 */
+    }
+
+    .fun-button {
+        display: inline-block; /* 버튼을 같은 줄에 표시 */
+        background-color: #f39c12;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin-left: 10px; /* 제목과 버튼 사이에 간격 추가 */
+        border-radius: 10px;
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .fun-button:hover {
+        background-color: #e67e22;
+    }
+
+    .close {
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        color: #e74c3c;
+        font-size: 70px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #c0392b;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* 이전/다음 버튼 위치 조정 */
+    .fc-prev-button {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .fc-next-button {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+</style>
+{% endblock %}

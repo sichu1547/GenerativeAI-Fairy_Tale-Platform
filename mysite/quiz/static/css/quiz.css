@@ -1,0 +1,267 @@
+@font-face {
+    font-family: 'Ownglyph_noocar-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_noocar-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Ownglyph_ryuttung-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_ryuttung-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.audio-buttons-label
+{
+    font-family: 'Pretendard-Regular', Arial, sans-serif;
+}
+
+.inner-audio-buttons {
+    display: flex;
+    flex-direction: row;
+}
+
+.audio-button {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-size: 13px;
+    background-color: #745cf9;  /* 보라색 배경 */
+    color: rgb(0, 0, 0);  /* 텍스트 색상 */
+    margin: 1px;
+    padding: 2px 6px;
+    width: 90%;
+    height: 25px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+}
+
+.audio-button-label {
+    font-family: 'Ownglyph_ryuttung-Rg', Arial, sans-serif;
+    font-size: 11px;
+    color: rgb(0, 0, 0);
+    margin: 0 3px;
+    display: flex;
+    flex-direction: columnn;
+}
+
+input[type="radio"][name="voice"] {
+    -webkit-appearance: none; /* 웹킷 브라우저에서 기본 스타일 제거 */
+    -moz-appearance: none; /* 모질라 브라우저에서 기본 스타일 제거 */
+    appearance: none; /* 기본 브라우저에서 기본 스타일 제거 */
+    width: 12px;
+    height: 12px;
+    border: 2px solid #000000;
+    border-radius: 50%;
+    outline: none; 
+    cursor: pointer;
+    margin: 0;
+}
+
+input[type="radio"][name="voice"]:checked {
+    border-color: #ffffff;
+    background-color: #745cf9;
+}
+
+
+
+.main-container {
+    background-image: url("../images/리드배경.jpg");
+    background-size: cover; /* 이미지가 화면 전체를 채우도록 조정 */
+    background-position: center; 
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;   
+    flex-wrap: wrap;
+    min-height: 95vh;
+    padding: 10px 0 10px 0;
+
+}
+
+#downloadLink {
+    font-size: 18px;
+    margin-left: 5px;
+}
+
+.quiz-book {
+    margin-bottom: 60px;
+    width: 40%;
+    min-width: 355px;
+    max-width: 1200px;
+    height: auto;
+    border: 15px solid #3b3012;
+    border-radius: 15px;
+    box-shadow: 5px 5px 10px black;
+    display: flex;
+    flex-direction: column; 
+    justify-content: space-between;
+    align-items: center; 
+}
+
+.quiz-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding: 15px;
+    margin-bottom: 0;
+}
+
+#quiz-mark {
+    font-family: 'Ownglyph_noocar-Rg';
+    font-size: 2.5em;
+}
+
+#quiz-result-mark {
+    font-family: 'Ownglyph_noocar-Rg';
+    font-size: 2.5em;
+    margin-right: 5px;
+}
+
+.quiz-h1 {
+    font-family: 'Ownglyph_noocar-Rg';
+    font-size: 3.7em;
+}
+
+.quiz-container {
+    background-image: url("../images/paper_texture.jpg");
+    background-size: cover; /* 이미지가 페이지 비율을 유지하며 최대 크기로 확장 */
+    background-position: center; 
+    background-repeat: no-repeat;
+    box-sizing: border-box !important;
+    width: 100%;
+    height: 100%;
+    font-family: 'Pretendard-Regular';
+    color: black;
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    justify-content: space-between;
+}
+
+.quiz-question {
+    font-size: 1.4em;
+    margin-bottom: 20px;
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+}
+.quiz-result {
+    font-size: 1.4em;
+    margin-bottom: 20px;
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+}
+.choices-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.choice-box {
+    background-color: #e8e3ff; ;
+    padding: 10px;
+    cursor: pointer;
+    user-select: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+}
+.choice-box:hover {
+    background-color: #D5CEFF;
+}
+.hidden-inputs {
+    display: none;
+}
+
+#quizForm2 {
+    display: flex;
+    justify-content: center;
+}
+
+.lower-buttons {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    margin-top: auto;
+}
+
+#lower-result-buttons {
+    justify-content: center;
+}
+
+#quiz-button {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-weight: normal;
+    font-size: 20px;
+    background-color: #745cf9;  /* 보라색 배경 */
+    color: rgb(255, 255, 255);  /* 텍스트 색상 */
+    margin: 2.5px;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 5px !important;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#quiz-button-2 {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    font-weight: normal;
+    font-size: 20px;
+    background-color: #745cf9;  /* 보라색 배경 */
+    color: rgb(255, 255, 255);  /* 텍스트 색상 */
+    margin: 5px;
+    padding: 10px 35px;
+    border: none;
+    border-radius: 5px !important;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* 그림자 효과 */
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#quiz-button:hover {
+    transform: scale(1.1); /* 호버 시 버튼이 105% 크기로 확대됨 */
+}
+
+.audio-buttons {
+    margin-top: 20px;
+}
+.inner-audio-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 10px;
+}
+.audio-button {
+    padding: 5px 10px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+
+@media (max-width: 1000px) {
+    #quiz-button-2{
+        margin: 2.5px;
+        padding: 10px 30px;
+    }
+}

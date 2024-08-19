@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load socialaccount %}
+<html lang="ko">
+<head>
+	<title>{% block title %}로그인</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+	<link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+</head>
+<style> 
+	.errorlist {
+		font-size: 0.8em;
+		color: #FF0000;
+		margin-top: -10px;
+		margin-bottom: 10px;
+	}
+</style>
+{% endblock %}
+{% block content %}
+<body style="background-color: #666666;">
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<form method="post" class="login100-form validate-form" id="loginForm">
+                    {% csrf_token%}
+					<span class="login100-form-title p-b-43">
+						로그인
+					</span>
+					
+					<div class="wrap-input100 validate-input" data-validate = "Valid email is required: ex@abc.xyz">
+						<input class="input100" type="text" name="username" id="username", value="{{ form.username.value|default:'' }}">
+						<span class="focus-input100"></span>
+						<span class="label-input100">아이디</span>
+					</div>
+					{% include 'registration/form_errors.html' with field=form.username %}
+
+					<div class="wrap-input100 validate-input" data-validate="Password is required">
+						<input class="input100" type="password" name="password" id="password">
+						<span class="focus-input100"></span>
+						<span class="label-input100">비밀번호</span>
+					</div>
+					{% include 'registration/form_errors.html' with field=form.password %}
+
+					<div class="flex-sb-m w-full p-t-3 p-b-32">
+						<div class="contact100-form-checkbox">
+							<input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
+							<label class="label-checkbox100" for="ckb1">
+								기억하기
+							</label>
+						</div>
+
+						<div>
+							<a href="{% url 'password_reset' %}" class="txt1">
+								비밀번호를 잊어버리셨나요?
+							</a>
+						</div>
+					</div>
+			
+					{% include 'registration/form_errors.html' %} <!-- 오류 검증 추가 -->
+
+					<div class="container-login100-form-btn">
+						<button type="submit" class="login100-form-btn">
+							로그인
+						</button>
+					</div>
+					
+					<div class="text-center p-t-46 p-b-20">
+						<span class="txt2">
+							SNS 계정으로 로그인
+						</span>
+					</div>
+
+					<div class="login100-form-social flex-c-m">
+                        <a href="{% provider_login_url 'google' %}" class="login100-form-social-item flex-c-m bg1 m-r-5">
+                            <img src="{% static 'images/icons/google_icon.png' %}" alt="Google Image" style="width: 20px; height: 20px;">
+                        </a>
+
+						<a href="{% provider_login_url 'naver' %}" class="login100-form-social-item flex-c-m bg2 m-r-5">
+                            <img src="{% static 'images/icons/naver_icon.png' %}" alt="Naver Image" style="width: 20px; height: 20px;">
+                        </a>
+
+                        <a href="{% provider_login_url 'kakao' %}" class="login100-form-social-item flex-c-m bg3 m-r-5">
+                            <img src="{% static 'images/icons/kakaotalk_icon.png' %}" alt="Kakaotalk Image" style="width: 18px; height: 18px;">
+                        </a>
+					</div>
+				</form>
+
+				<div class="login100-more">
+					<video width="100%" autoplay loop>
+						<source src="{% static 'images/영상2.mp4' %}" type="video/mp4">
+					  </video>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+
+	
+
+<!--===============================================================================================-->
+	<script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'vendor/animsition/js/animsition.min.js' %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'vendor/bootstrap/js/popper.js' %}"></script>
+	<script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'vendor/select2/select2.min.js' %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'vendor/daterangepicker/moment.min.js' %}"></script>
+	<script src="{% static 'vendor/daterangepicker/daterangepicker.js' %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'vendor/countdowntime/countdowntime.js' %}"></script>
+<!--===============================================================================================-->
+	<script src="{% static 'js/main.js' %}"></script>
+
+    <script>
+        $(document).ready(function() {
+            if (localStorage.getItem("rememberedUsername")) {
+                $("#username").val(localStorage.getItem("rememberedUsername"));
+                $("#ckb1").prop("checked", true);
+            }
+            $("#loginForm").on("submit", function(e) {
+                if ($("#ckb1").is(":checked")) {
+                    localStorage.setItem("rememberedUsername", $("#username").val());
+                } else {
+                    localStorage.removeItem("rememberedUsername");
+                }
+            });
+        });
+    </script>
+</body>
+{% endblock %}
+</html>

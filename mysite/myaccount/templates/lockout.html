@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+{% load socialaccount %}
+<html lang="ko">
+<head>
+	<title>{% block title %}계정 잠금</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+</head>
+{% endblock %}
+
+{% block content %}
+<body style="background-color: #666666;">
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<form method="post" class="login100-form validate-form">
+                    <span class="login100-form-title p-b-43"> 계정 잠김 </span>
+					<p>너무 많은 로그인 시도 실패로 인해 계정이 잠겼습니다.<br>나중에 다시 시도해 주세요.</p>
+					<div>
+						<a href="{% url 'login' %}" class="txt1">로그인 화면으로</a>
+					</div>
+				</form>
+				<div class="login100-more">
+					<video width="100%" autoplay loop>
+						<source src="{% static 'images/영상2.mp4' %}" type="video/mp4">
+					  </video>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+{% endblock %}
+</html>

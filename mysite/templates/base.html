@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="profile" href="https://gmpg.org/xfn/11">
+<link rel="pingback" href="https://colorlibhub.com/shapely/xmlrpc.php">
+{% load static %}
+<meta name="robots" content="noindex,nofollow" />
+
+<title>{% block title %}꿈을 꾸는 아이들 Mealkid{% endblock %}</title>
+
+<!-- Stylesheets -->
+<link rel="icon" type="image/png" href="{% static 'images/icons/favicon.ico' %}"/>
+<link rel="stylesheet" id="wp-block-library-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-includes/css/dist/block-library/style.min.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="mediaelement-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-includes/js/mediaelement/mediaelementplayer-legacy.min.css?ver=4.2.17" type="text/css" media="all" />
+<link rel="stylesheet" id="wp-mediaelement-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-includes/js/mediaelement/wp-mediaelement.min.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="bootstrap-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/css/bootstrap.min.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="font-awesome-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/plugins/elementor/assets/lib/font-awesome/css/font-awesome.min.css?ver=4.7.0" type="text/css" media="all" />
+<link rel="stylesheet" id="shapely-fonts-css" href="//fonts.googleapis.com/css?family=Raleway%3A100%2C300%2C400%2C500%2C600%2C700&amp;display=swap&amp;ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="flexslider-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/css/flexslider.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="shapely-style-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/style.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="owl.carousel-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/owl-carousel/owl.carousel.min.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="owl.carousel.theme-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/owl-carousel/owl.theme.default.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="jetpack_css-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/plugins/jetpack/css/jetpack.css?ver=13.6-a.5" type="text/css" media="all" />
+
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" id="jquery-core-js"></script>
+<link rel="https://api.w.org/" href="https://colorlibhub.com/shapely/wp-json/" />
+<link rel="alternate" type="application/json" href="https://colorlibhub.com/shapely/wp-json/wp/v2/pages/1863" />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://colorlibhub.com/shapely/xmlrpc.php?rsd" />
+<link rel="shortlink" href="https://wp.me/PcYi56-u3" />
+<link rel="alternate" type="application/json+oembed" href="https://colorlibhub.com/shapely/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fcolorlibhub.com%2Fshapely%2F" />
+<link rel="alternate" type="text/xml+oembed" href="https://colorlibhub.com/shapely/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fcolorlibhub.com%2Fshapely%2F&amp;format=xml" />
+
+<!-- Custom CSS -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+<style type="text/css" id="wp-custom-css">
+    
+</style>
+<style>
+    
+</style>
+</head>
+<body class="home page-template page-template-page-templates page-template-template-home page-template-page-templatestemplate-home-php page page-id-1863 has-sidebar-right elementor-default elementor-kit-2257">
+<div id="page" class="site">
+<a class="skip-link screen-reader-text" href="#content">Skip to content</a>
+
+<header id="masthead" class="site-header" role="banner">
+    
+    <div class="nav-container">
+        
+        <nav id="site-navigation" class="main-navigation" role="navigation">
+            <div class="container nav-bar">
+                <div class="flex-row">
+                    <div class="module left site-title-container">
+                        <a href="/" class="main-link"><span class="site-title">Meal kid</span></a>
+                    </div>
+                    <button class="module widget-handle mobile-toggle right visible-sm visible-xs">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <div class="module-group right">
+                        <div class="module left">
+                            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                                <ul id="menu" class="menu">
+                                    {% if user.is_authenticated %}
+                                        {% if request.path != '/myaccount/select_account/'%}
+                                            {% if request.session.selected_profile_name %}
+                                            <li>
+                                                <a href="{% url 'select_account' %}">
+                                                    <img src="{{ request.session.selected_profile_avatar }}" alt="Profile Image" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
+                                                    어서오세요, {{ request.session.selected_profile_name }}님!
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                            <li><a href="{% url 'reader:list' %}" id='readerbutton' class='gr'>읽기</a></li>
+                                            <li><a href="{% url 'generator:index' %}" id='genbutton' class='gr'>만들기</a></li>
+                                            <li><a href="{% url 'reader:search' %}?keyword=Generative" id='creatbutton' class='gr'>생성 동화</a></li>
+                                        {% endif %}
+                                        <li><a href="{% url 'mine:index' %}" id='servicebutton' class='gr'>서비스 소개</a></li> 
+                                        <li>
+                                            <a href="/" id="logout-link" class='gr'>로그아웃</a>
+                                            <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                                                {% csrf_token %}
+                                            </form>
+                                        </li>
+                                        {% if request.session.selected_profile_id %}
+                                        <li><a href="{% url 'profile_detail' request.session.selected_profile_id %}" id='userbutton' class='gr'>내 정보</a></li>
+                                        {% else %}
+                                            <li><a href="{% url 'profile' %}" id='userbutton' class='gr'>내 정보</a></li>
+                                        {% endif %}
+
+                                    {% else %}
+                                        <li><a href="{% url 'mine:index' %}" id='servicebutton' class='gr'>서비스 소개</a></li> 
+
+                                        {% if request.path != '/myaccount/login/'%}
+                                            <li><a href="{% url 'login' %}" id='loginbutton' class='gr'>로그인</a></li>
+                                        {% endif %}
+                                        <li><a href="{% url 'signup' %}" id='signupbutton' class='gr'>회원가입</a></li>
+                                    {% endif %}
+                                    {% if user.is_staff %}
+                                        <li><a href="/admin/">관리자 페이지</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<div id="content" class="main-container">
+    {% block content %}{% endblock %}
+</div>
+
+<footer id="colophon" class="site-footer footer bg-dark" role="contentinfo">
+    <div class="row">
+    </div>
+    <div class="row">
+        <div class="site-info col-sm-6">
+            <div class="footer-credits">
+                <ul>
+                    <li><a class="footer-credit1" href="{% url 'privacy_policy' %}">개인정보처리방침</a></li>
+                    <li>|</li>
+                    <li><a class="footer-credit2" href="{% url 'terms' %}">이용약관</a></li>
+                </ul>
+            </div>
+            <div class="copyright-text">
+                © 2024 MealKid. All rights reserved.
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<script type="text/javascript">
+    
+    jQuery(document).ready(function($) {
+        if ($(window).width() >= 767) {
+            $('.navbar-nav > li.menu-item > a').click(function() {
+                window.location = $(this).attr('href');
+            });
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/plugins/contact-form-7/includes/swv/js/index.js?ver=5.8" id="swv-js"></script>
+<script type="text/javascript" id="contact-form-7-js-extra">
+    var wpcf7 = {"api":{"root":"https:\/\/colorlibhub.com\/shapely\/wp-json\/","namespace":"contact-form-7\/v1"},"cached":"1"};
+</script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/plugins/contact-form-7/includes/js/index.js?ver=5.8" id="contact-form-7-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/skip-link-focus-fix.js?ver=20160115" id="shapely-skip-link-focus-fix-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-includes/js/imagesloaded.min.js?ver=5.0.0" id="imagesloaded-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-includes/js/masonry.min.js?ver=4.2.2" id="masonry-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-includes/js/jquery/jquery.masonry.min.js?ver=3.1.2b" id="jquery-masonry-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/flexslider.min.js?ver=20160222" id="flexslider-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/parallax.min.js?ver=20160115" id="shapely-parallax-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/owl-carousel/owl.carousel.min.js?ver=20160115" id="owl.carousel-js"></script>
+<script type="text/javascript" id="shapely-scripts-js-extra">
+    var ShapelyAdminObject = {"sticky_header":"1"};
+</script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/shapely-scripts.js?ver=20180423" id="shapely-scripts-js"></script>
+<script type="text/javascript" id="jetpack-stats-js-after">
+    _stq = window._stq || [];
+    _stq.push(["view", JSON.parse("{\"v\":\"ext\",\"blog\":\"191685220\",\"post\":\"1863\",\"tz\":\"0\",\"srv\":\"colorlibhub.com\",\"hp\":\"atomic\",\"ac\":\"3\",\"amp\":\"0\",\"j\":\"1:13.6-a.5\"}")]);
+    _stq.push(["clickTrackerInit", "191685220", "1863"]);
+</script>
+
+<script>
+
+
+// 현재 페이지의 URL에서 경로를 추출하는 함수
+function getPathPart(url, partIndex) {
+    // URL 객체를 생성하여 pathname을 얻습니다.
+    const parser = new URL(url);
+    const pathParts = parser.pathname.split('/').filter(part => part.length > 0); // 빈 문자열을 필터링하여 경로 부분 배열을 만듭니다.
+    return pathParts[partIndex - 1]; // partIndex가 1부터 시작한다고 가정
+}
+
+if (window.innerWidth) {
+    var pathPart = getPathPart(window.location.href, 1);
+    var secondpathPart = getPathPart(window.location.href, 2);
+    const readerIcon = document.getElementById("readerbutton");
+    const genIcon = document.getElementById("genbutton");
+    const creatIcon = document.getElementById("creatbutton");
+    const serviceIcon = document.getElementById("servicebutton");
+    const userIcon = document.getElementById("userbutton");
+    const signupIcon = document.getElementById("signupbutton");
+    
+    // 경로의 첫 번째 부분이 목표와 일치하는지 확인
+    if (pathPart === "reader") {
+        {% if keyword == 'Generative' %}
+        creatIcon.id = "label-background"; // 생성 동화
+        {% else %}
+        readerIcon.id = "label-background"; // 읽기
+        {% endif %}
+    } else if (pathPart === "review") {
+        readerIcon.id = "label-background";
+    } else if (pathPart === "quiz") {
+        readerIcon.id = "label-background";
+    } else if (pathPart === "generator") {
+        genIcon.id = "label-background"; // 만들기
+    } else if (pathPart === "intro") {
+        serviceIcon.id = "label-background"; // 서비스 소개
+    } else if (pathPart === "signup") {
+        signupIcon.id = "label-background"; // 회원가입
+    } else if (pathPart === "myaccount") {
+        userIcon.id = "label-background"; // 내 정보
+        if (secondpathPart == "login") {
+            loginIcon.id = "label-background"; // 로그인
+        }
+    }
+}
+
+    function showLoading() {
+        document.getElementById('loading').style.display = 'block';
+    }
+    document.getElementById('logout-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('logout-form').submit();
+    });
+
+</script>
+</body>
+</html>

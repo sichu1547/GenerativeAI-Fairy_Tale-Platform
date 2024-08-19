@@ -1,0 +1,181 @@
+@font-face {
+    font-family: 'Ownglyph_noocar-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_noocar-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ownglyph_ryuttung-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_ryuttung-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+html, body {
+    height: 100%; /* 전체 높이 차지 */
+    margin: 0;
+    padding: 0;
+}
+#id_title {
+    font-family: "Ownglyph_ryuttung-Rg", sans-serif;
+    font-size: 18px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
+}
+.review-container {
+    background: url("../images/배경.png") no-repeat center center;
+    background-size: cover;
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    height: 100%; /* 전체 높이 차지 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* 수직 가운데 정렬 */
+}
+.review-container h1 {
+    font-family: 'Ownglyph_noocar-Rg';
+    text-align: center;
+    margin-bottom: 20px !important;
+    color: black; /* 텍스트 색상 */
+    margin-bottom: 10px;
+    font-size: 40px; /* 절대 크기 */
+}
+.review-question {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.review-question label {
+    font-family: 'Ownglyph_noocar-Rg';
+    color: black; /* 텍스트 색상 */
+    margin-bottom: 5px;
+    font-size: 25px; /* 절대 크기 */
+    font-weight: normal;
+}
+
+.review-question textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    resize: none;
+    font-size: 25px; /* 절대 크기 */
+}
+
+.submit-button-container {
+    display: flex;
+    justify-content: center; /* 수평 가운데 정렬 */
+    width: 100%;
+    margin-top: 20px;
+}
+#submit-button {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    padding: 10px 20px;
+    background-color: #745cf9;
+    color: white;
+    border: none;
+    border-radius: 5px !important;
+    font-size: 20px;
+    width: 200px;
+    font-weight: normal;
+    display: flex;
+    align-items: center;    /* 수직 정렬 */
+    justify-content: center; /* 수평 정렬 */
+}
+#submit-button:hover {
+    background-color: #333333;
+}
+.review-middle {
+    display: flex; /* 부모 요소를 flex container로 설정 */
+    justify-content: space-between; /* 자식 요소들 사이에 균등한 간격 배분 */
+    gap: 10px; /* 자식 요소들 사이에 간격 설정 */
+}
+.review-middle textarea {
+    height: 500px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    resize: none;
+}
+.n {
+    text-shadow:
+    -1px -1px 0 #fff,   /* 왼쪽 위 */
+    1px -1px 0 #fff,    /* 오른쪽 위 */
+    -1px 1px 0 #fff,    /* 왼쪽 아래 */
+    1px 1px 0 #fff;     /* 오른쪽 아래 */
+}
+
+.canvas {
+    width: 100%; /* 화면 크기에 맞게 조정 */
+    height: 500px; /* 화면 크기에 맞게 조정 */
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
+}
+
+.controls {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.controls_btns {
+    display: flex;
+    justify-content: center; /* 가운데 정렬 */
+    gap: 10px; /* 버튼 사이에 10px 간격 추가 */
+    margin: 20px;
+}
+
+.controls__btns button {
+    font-family: 'Ownglyph_noocar-Rg' !important;
+    all: unset;
+    cursor: pointer;
+    background-color: white;
+    padding: 5px 0px;
+    width: 80px;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    color: rgba(0, 0, 0, 0.8);
+    text-transform: uppercase;
+    font-size: 18px;
+}
+
+.controls__btns button:active {
+    transform: scale(0.95);
+}
+
+.controls .controls__colors {
+    display: flex;
+    margin-top: 20px;
+}
+
+.controls__colors .controls__color {
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.068);
+}
+
+.controls .controls__range {
+    margin-bottom: 30px;
+}
+
+.controls__range {
+    display: flex;
+    flex-direction: row;
+    color: black;
+    font-size: 20px;
+}
+
+#jsRange {
+    margin: 0 10px;
+}

@@ -1,0 +1,153 @@
+.reader-container {
+    background-image: url("../images/리드배경.jpg");
+    background-size: cover; /* 이미지가 화면 전체를 채우도록 조정 */
+    background-position: center; 
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    min-height: 95vh;
+    padding: 10px 0 10px 0;
+}
+.button1{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%) translateY(0); /* 초기 위치 설정 */
+    top: -100px; /* 화면 밖에서 시작 */
+    opacity: 0; /* 처음에는 보이지 않음 */
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 10px;
+    font-family: 'Ownglyph_noocar-Rg', sans-serif;
+    transition: top 1s ease, left .7s ease, transform .5s ease, opacity .5s ease; /* 애니메이션 설정 */
+}
+.button1.falling {
+    background-image: url("../images/상자.png"); /* 떨어지는 동안의 이미지 설정 */
+    background-size: cover; /* 이미지 크기를 버튼 크기에 맞춤 */
+    background-position: center; /* 이미지 위치를 중앙으로 설정 */
+    width: 100px; /* 버튼의 너비 설정 */
+    height: 100px; /* 버튼의 높이 설정 */
+    border: none; /* 버튼 테두리 제거 */
+    color: black; /* 버튼 텍스트 색상 설정 */
+    font-size: 22px; /* 버튼 텍스트 크기 설정 */
+
+    text-indent: -9999px;
+}
+
+.button1.middle {
+    top: calc(60% + 20px);
+    opacity: 1; /* 보이도록 설정 */
+    transform: translateX(-50%) translateY(0); /* 중간 위치에서의 변환 설정 */
+}
+
+.button1.left-most {
+    left: calc(50% - 180px); /* 화면의 가장 왼쪽으로 이동 */
+    background-image: url("../images/그림형제.png");
+    background-size: cover; /* 이미지 크기를 버튼 크기에 맞춤 */
+    background-position: center; /* 이미지 위치를 중앙으로 설정 */
+    width: 150px; /* 버튼의 너비 설정 */
+    height: 150px; /* 버튼의 높이 설정 */
+    border-radius: 50%;
+    border: none; /* 버튼 테두리 제거 */
+    color: black; /* 버튼 텍스트 색상 설정 */
+    font-size: 22px; /* 버튼 텍스트 크기 설정 */
+    font-family: 'Ownglyph_noocar-Rg', sans-serif;
+    font-weight:normal;
+}
+.button1.left {
+    left: calc(50% - 60px); /* 화면의 왼쪽으로 이동 */
+    background-image: url("../images/이솝우화.png");
+    background-size: cover; /* 이미지 크기를 버튼 크기에 맞춤 */
+    background-position: center; /* 이미지 위치를 중앙으로 설정 */
+    width: 150px; /* 버튼의 너비 설정 */
+    height: 150px; /* 버튼의 높이 설정 */
+    border-radius: 50%;
+    border: none; /* 버튼 테두리 제거 */
+    color: black; /* 버튼 텍스트 색상 설정 */
+    font-size: 22px; /* 버튼 텍스트 크기 설정 */
+    font-family: 'Ownglyph_noocar-Rg', sans-serif;
+    font-weight:normal;
+}
+
+.button1.right {
+    left: calc(50% + 60px); /* 화면의 오른쪽으로 이동 */
+    background-image: url("../images/전래동화.png");
+    background-size: cover; /* 이미지 크기를 버튼 크기에 맞춤 */
+    background-position: center; /* 이미지 위치를 중앙으로 설정 */
+    width: 150px; /* 버튼의 너비 설정 */
+    height: 150px; /* 버튼의 높이 설정 */
+    border-radius: 50%;
+    border: none; /* 버튼 테두리 제거 */
+    color: black; /* 버튼 텍스트 색상 설정 */
+    font-size: 22px; /* 버튼 텍스트 크기 설정 */
+    font-family: 'Ownglyph_noocar-Rg', sans-serif;
+    font-weight:normal;
+}
+.button1.right-most {
+    left: calc(50% + 180px); /* 화면의 가장 오른쪽으로 이동 */ /* 중앙 정렬 해제 */
+    background-image: url("../images/샤를로페.png");
+    background-size: cover; /* 이미지 크기를 버튼 크기에 맞춤 */
+    background-position: center; /* 이미지 위치를 중앙으로 설정 */
+    width: 150px; /* 버튼의 너비 설정 */
+    height: 150px; /* 버튼의 높이 설정 */
+    border-radius: 50%;
+    border: none; /* 버튼 테두리 제거 */
+    color: black; /* 버튼 텍스트 색상 설정 */
+    font-size: 22px; /* 버튼 텍스트 크기 설정 */
+    font-family: 'Ownglyph_noocar-Rg', sans-serif;
+    font-weight:normal;
+}
+form {
+    display: flex;
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+.reader-title {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+
+}
+h1{
+    font-family: 'Ownglyph_noocar-Rg', sans-serif !important;
+    display: flex;
+    justify-content: center; /* 중앙 정렬 */
+    align-items: center;
+    position: relative; /* 상대적 위치 지정 */
+    color: white !important;
+}
+.font{
+    font-family: 'Ownglyph_noocar-Rg', sans-serif !important;
+}
+input{
+    justify-content: center !important; /* 중앙 정렬 */
+    align-items: center !important;
+    width: 300px !important; /* 원하는 너비로 설정 */
+}
+@font-face {
+    font-family: 'Ownglyph_noocar-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_noocar-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.hidden-text{
+    font-family: "Ownglyph_noocar-Rg";
+    align-items: center;
+    position: relative;
+    font-size: 18px;
+    color: #333;
+    text-align: center;
+    margin-top: 200px;
+    opacity: 0; /* 처음에는 보이지 않음 */
+    transition: opacity .5s ease; /* 투명도 전환 효과 */
+}
+
+.hidden-text.show {
+    opacity: 1; /* 보이도록 설정 */
+}

@@ -1,0 +1,39 @@
+services:
+  mealkid:
+    container_name: mealkid
+    build: .
+    volumes:
+      - ./mysite:/app
+    # working_dir: /home/ubuntu/mealkid
+    # command: > 
+    #    bash -c "python manage.py makemigrations 
+    #    && python manage.py makemigrations review
+    #    && python manage.py migrate
+    #    && python manage.py migrate --database=story
+    #    && python manage.py collectstatic --noinput
+    #    && python /home/ubuntu/mealkid/manage.py runserver 127.0.0.1:8000 "
+     # && gunicorn durumi.wsgi -b 0.0.0.0:8000 "
+    command: >
+      bash -c "
+      python manage.py collectstatic --noinput &&
+      gunicorn mysite.wsgi:application --bind 0.0.0.0:8000"
+    # command: python manage.py runserver 0.0.0.0:8000
+    # command: gunicorn mysite.wsgi:application --bind 0.0.0.0:8000
+    ports: 
+      - "8000:8000"
+    expose:
+      - 8000
+    # env_file:
+    #   - .env.dev
+
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./mysite/staticfiles:/app/staticfiles
+      - ./mysite/media:/app/media
+    depends_on:
+      - mealkid

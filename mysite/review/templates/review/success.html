@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+
+<a href="#">
+    <img class="in-title" alt="Portfolio Section" src="{% static 'images/소.jpg' %}" id="back-button">
+</a>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const backButton = document.getElementById("back-button");
+        backButton.addEventListener("click", function(event) {
+            event.preventDefault(); // 기본 클릭 동작 방지
+            window.history.back();  // 첫 번째 뒤로가기
+            window.history.back();
+        });
+    });
+</script>
+{% endblock %}

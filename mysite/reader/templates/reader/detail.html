@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}  
+<title>{{story.title}} 읽기</title>
+{% endblock %}
+
+{% block content %}
+    <h1> Here's STORY READER detail page </h1>
+    <h1> 제목: {{story.title}} </h1>
+    <hr>
+    내용: {{story.body}}<br><br>
+    <p>태그</p>
+    {% for tag in tag_list %}
+        #<a href = "#"> {{tag.name}} </a>
+    {% endfor %}
+{% endblock %}

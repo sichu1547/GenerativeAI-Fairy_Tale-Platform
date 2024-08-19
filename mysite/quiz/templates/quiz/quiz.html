@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+<html lang="ko">
+<head>
+    <title>{% block title %}퀴즈</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/quiz.css' %}">
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.getElementById("quizForm2");
+            form.addEventListener("submit", function(event) {
+                event.preventDefault();  // 폼 제출 기본 동작 방지
+                goBack();  // 브라우저 뒤로가기
+            });
+        });
+    </script>
+</head>{% endblock %}
+{% block content %}
+<body>
+    <div class="quiz-book">
+        <div class="quiz-container">
+            <div class="quiz-header">
+                <p class="quiz-h1" id="quiz-mark">❔</p>
+                <p class="quiz-h1">퀴즈</p>
+            </div>
+            <div class="quiz-question">
+                Q. {{ quizzes }}
+            </div>
+            <form id="quizForm" method="post">
+                {% csrf_token %}
+                <div class="choices-container">
+                    {% for choice in example %}
+                        <div class="choice-box" onclick="selectChoice('{{ choice }}')">{{ forloop.counter }}. {{ choice }}</div>
+                    {% endfor %}
+                </div>
+                <div class="hidden-inputs">
+                    <input type="hidden" id="answer" name="answer">
+                    <input type="hidden" name="correct_answer" value="{{ answer }}">
+                    <input type="hidden" name="keyword" value="{{ keyword }}">
+                </div>
+            </form>
+            <div class="lower-buttons">
+                <form id="quizForm2" method="get" action="#">
+                    <input type="hidden" name="keyword" value="{{ keyword }}">
+                    <button type="submit" id="quiz-button">본문으로</button>
+                </form>
+                <audio id="ttsAudio" controls>
+                    <source id="audioSource" src="?tts=true&voice=ko-KR-Standard-A&text=full" type="audio/mpeg">
+                    브라우저가 오디오 기능을 제공하지 않습니다
+                </audio>
+                <a href="?tts=true&voice=ko-KR-Standard-A&text=full" download="audio.mp3" id="downloadLink">⬇️</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        function selectChoice(value) {
+            document.getElementById('answer').value = value;
+            document.getElementById('quizForm').submit();
+        }
+
+        function playAudio() {
+            let selectedVoice = 'ko-KR-Standard-A'; // 기본 목소리 설정
+            const audioElement = document.getElementById('ttsAudio');
+            const sourceElement = document.getElementById('audioSource');
+            const downloadLink = document.getElementById('downloadLink');
+            
+            const ttsUrl = `?tts=true&voice=${selectedVoice}`;
+            sourceElement.src = ttsUrl;
+            audioElement.load();
+            // 다운로드 링크도 업데이트
+            downloadLink.href = ttsUrl;
+        }
+    </script>
+</body>
+</html>
+{% endblock %}
+ 
+ 

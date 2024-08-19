@@ -1,0 +1,74 @@
+
+.profile-list {
+    list-style: none;
+    padding: 0;
+}
+.profile-item {
+    margin-bottom: 10px;
+}
+.add-profile {
+    align-items: flex-start;
+}
+.file-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.blog-post {
+    margin-bottom: 20px;
+    background-color: #e8e3ff; ;
+    padding: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative; /* 상대 위치로 설정 */
+}
+.blog-post:hover {
+    background-color: #D5CEFF;
+}
+.blog-post a {
+    position: absolute; /* 절대 위치로 설정 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* 가장 앞에 위치하게 설정 */
+    text-decoration: none; /* 링크 밑줄 제거 */
+    color: inherit; /* 글자 색상 상속 */
+}
+.blog-post-title {
+    font-family: 'Ownglyph_ryuttung-Rg';
+    font-size: 1.4em;
+    z-index: 2;
+    color: #745cf9;
+}
+.blog-post-content {
+    font-size: 1em;
+    line-height: 1.5;
+    z-index: 2;
+    color: #745cf9;
+}
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+.pagination a, .pagination span {
+    font-family: 'Pretendard-Regular';
+    margin: 0 5px;
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #000;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+.pagination .active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+#info-a {
+    font-family: 'Pretendard-Regular';
+}

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="profile" href="https://gmpg.org/xfn/11">
+<link rel="pingback" href="https://colorlibhub.com/shapely/xmlrpc.php">
+<link rel="stylesheet" type="text/css" href="../static/base.css">
+
+<meta name="robots" content="noindex,nofollow" />
+
+<title>{% block title %}꿈을 꾸는 아이들 Mealkid{% endblock %}</title>
+
+<!-- Stylesheets -->
+<link rel="stylesheet" id="wp-block-library-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-includes/css/dist/block-library/style.min.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="mediaelement-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-includes/js/mediaelement/mediaelementplayer-legacy.min.css?ver=4.2.17" type="text/css" media="all" />
+<link rel="stylesheet" id="wp-mediaelement-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-includes/js/mediaelement/wp-mediaelement.min.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="bootstrap-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/css/bootstrap.min.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="font-awesome-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/plugins/elementor/assets/lib/font-awesome/css/font-awesome.min.css?ver=4.7.0" type="text/css" media="all" />
+<link rel="stylesheet" id="shapely-fonts-css" href="//fonts.googleapis.com/css?family=Raleway%3A100%2C300%2C400%2C500%2C600%2C700&amp;display=swap&amp;ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="flexslider-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/css/flexslider.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="shapely-style-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/style.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="owl.carousel-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/owl-carousel/owl.carousel.min.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="owl.carousel.theme-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/owl-carousel/owl.theme.default.css?ver=6.5.4" type="text/css" media="all" />
+<link rel="stylesheet" id="jetpack_css-css" href="https://149842022.v2.pressablecdn.com/shapely/wp-content/plugins/jetpack/css/jetpack.css?ver=13.6-a.5" type="text/css" media="all" />
+
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-includes/js/jquery/jquery.min.js?ver=3.7.1" id="jquery-core-js"></script>
+<link rel="https://api.w.org/" href="https://colorlibhub.com/shapely/wp-json/" />
+<link rel="alternate" type="application/json" href="https://colorlibhub.com/shapely/wp-json/wp/v2/pages/1863" />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://colorlibhub.com/shapely/xmlrpc.php?rsd" />
+<link rel="shortlink" href="https://wp.me/PcYi56-u3" />
+<link rel="alternate" type="application/json+oembed" href="https://colorlibhub.com/shapely/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fcolorlibhub.com%2Fshapely%2F" />
+<link rel="alternate" type="text/xml+oembed" href="https://colorlibhub.com/shapely/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fcolorlibhub.com%2Fshapely%2F&amp;format=xml" />
+
+<!-- Custom CSS -->
+<style type="text/css" id="wp-custom-css">
+span.dropdown-toggle.shapely-dropdown {
+    display: none;
+}
+ul.slides img {
+    width: auto;
+}
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+</style>
+</head>
+<body class="home page-template page-template-page-templates page-template-template-home page-template-page-templatestemplate-home-php page page-id-1863 has-sidebar-right elementor-default elementor-kit-2257">
+<div id="page" class="site">
+<header id="masthead" class="site-header" role="banner">
+    <div class="nav-container">
+        <nav id="site-navigation" class="main-navigation" role="navigation">
+            <div class="container nav-bar">
+                <div class="flex-row">
+                    <div class="module left site-title-container">
+                        <a href="/" class="main-link"><span class="site-title">Meal kid</span></a>
+                    </div>
+                    <button class="module widget-handle mobile-toggle right visible-sm visible-xs" onclick="toggleMenu()">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <div class="module-group right">
+                        <div class="module left">
+                            <div class="collapse navbar-collapse navbar-ex1-collapse" id="navbarMenu">
+                                <ul id="menu" class="menu">
+                                    <li><a href="{% url 'reader:list' %}">읽기</a></li>
+                                    <li><a href="{% url 'generator:index' %}">만들기</a></li>
+                                    <li><a href="{% url 'mine:index' %}">서비스 소개</a></li> 
+                                    {% if user.is_authenticated %}
+                                        <li>
+                                            <a href="/" id="logout-link">로그아웃</a>
+                                            <form id="logout-form" action="{% url 'logout' %}?next={{request.path}}" method="post" style="display: none;">
+                                                {% csrf_token %}
+                                            </form>
+                                        </li>
+                                        <li><a href="{% url 'profile' %}">내 정보</a></li>
+                                    {% else %}
+                                        <li><a href="{% url 'login' %}">로그인</a></li>
+                                        <li><a href="{% url 'signup' %}">회원가입</a></li>
+                                    {% endif %}
+                                    {% if user.is_staff %}
+                                        <li><a href="/admin/">관리자 페이지</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<div id="content" class="main-container">
+    {% block content %}{% endblock %}
+</div>
+
+<script type="text/javascript">
+    jQuery(document).ready(function($) {
+        if ($(window).width() >= 767) {
+            $('.navbar-nav > li.menu-item > a').click(function() {
+                window.location = $(this).attr('href');
+            });
+        }
+    });
+</script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/plugins/contact-form-7/includes/swv/js/index.js?ver=5.8" id="swv-js"></script>
+<script type="text/javascript" id="contact-form-7-js-extra">
+    var wpcf7 = {"api":{"root":"https:\/\/colorlibhub.com\/shapely\/wp-json\/","namespace":"contact-form-7\/v1"},"cached":"1"};
+</script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/plugins/contact-form-7/includes/js/index.js?ver=5.8" id="contact-form-7-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/skip-link-focus-fix.js?ver=20160115" id="shapely-skip-link-focus-fix-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-includes/js/imagesloaded.min.js?ver=5.0.0" id="imagesloaded-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-includes/js/masonry.min.js?ver=4.2.2" id="masonry-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-includes/js/jquery/jquery.masonry.min.js?ver=3.1.2b" id="jquery-masonry-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/flexslider.min.js?ver=20160222" id="flexslider-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/parallax.min.js?ver=20160115" id="shapely-parallax-js"></script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/owl-carousel/owl.carousel.min.js?ver=20160115" id="owl.carousel-js"></script>
+<script type="text/javascript" id="shapely-scripts-js-extra">
+    var ShapelyAdminObject = {"sticky_header":"1"};
+</script>
+<script type="text/javascript" src="https://149842022.v2.pressablecdn.com/shapely/wp-content/themes/shapely/assets/js/shapely-scripts.js?ver=20180423" id="shapely-scripts-js"></script>
+<script type="text/javascript" src="https://stats.wp.com/e-202426.js" id="jetpack-stats-js" data-wp-strategy="defer"></script>
+<script type="text/javascript" id="jetpack-stats-js-after">
+    _stq = window._stq || [];
+    _stq.push(["view", JSON.parse("{\"v\":\"ext\",\"blog\":\"191685220\",\"post\":\"1863\",\"tz\":\"0\",\"srv\":\"colorlibhub.com\",\"hp\":\"atomic\",\"ac\":\"3\",\"amp\":\"0\",\"j\":\"1:13.6-a.5\"}")]);
+    _stq.push(["clickTrackerInit", "191685220", "1863"]);
+</script>
+
+<script>
+    document.getElementById('logout-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('logout-form').submit();
+    });
+</script>
+</body>
+</html>

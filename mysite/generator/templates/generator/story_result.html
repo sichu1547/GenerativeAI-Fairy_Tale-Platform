@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% load static %}
+<html lang="ko">
+
+<head>
+    <title>{% block title %}최종 동화</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/generator.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+{% endblock %}
+
+{% block content %}
+<body>
+    <div class="story-container">
+        <div class="header">
+            <!-- <h1 class="story-title">📖 {{ title }}</h1> -->
+            <div class="tts-buttons">
+                <div class="inner-tts-buttons">
+                    <label for="options" class="voice-label">목소리 선택:  </label>
+                    <select id="options" name="voice" onchange="selectVoice(this.value)">
+                        <option value="ko-KR-Wavenet-A">밀키</option>
+                        <option value="ko-KR-Wavenet-B">밀순</option>
+                        <option value="ko-KR-Wavenet-C">밀동</option>
+                        <option value="ko-KR-Wavenet-D">밀찬</option>
+                    </select>
+                </div>
+                <button class="tts-button" onclick="readFullStory()">▶️ 전체 읽기</button>
+            </div>
+            <audio id="ttsAudio" controls>
+                <source id="audioSource" src="" type="audio/mpeg">
+                브라우저가 오디오 기능을 제공하지 않습니다
+            </audio>
+            <a href="?tts=true&voice=ko-KR-Wavenet-A&text=full" download="audio.mp3" id="downloadLink">⬇️</a>
+        </div>
+            <div class="book" id="final-book">
+            <div class="story-page" id="left-page">
+                <div class="story-image" id="story-image-left"></div>
+                <div id="left-text"></div>
+            </div>
+            <div class="story-page" id="right-page">
+                <div class="story-image" id="story-image-right"></div>
+                <div id="right-text"></div>
+            </div>
+        </div>
+        <div class="navigation" id="final-nav">
+            <button class="arrow-button" id="prev-btn" onclick="navigateStory(-1)">← 이전 페이지로</button>
+            <button class="arrow-button" id="next-btn" onclick="navigateStory(1)">다음 페이지로 →</button>
+        </div>
+    </div>
+    <script>
+        let currentPage = 0;
+        const generatedStories = JSON.parse(`{{ generated_story_parts|escapejs }}`);
+        const generatedImages = `{{ generated_images|safe }}`.split(',').map(img => img.replace(/[\[\]']/g, '').trim());
+        const totalParts = generatedStories.length;
+        const defaultImage = "{% static 'images/default_image.jpg' %}";
+
+        function displayPages() {
+            const leftText = document.getElementById('left-text');
+            const rightText = document.getElementById('right-text');
+            const leftImage = document.getElementById('story-image-left');
+            const rightImage = document.getElementById('story-image-right');
+
+            const leftIndex = currentPage * 2;
+            const rightIndex = leftIndex + 1;
+
+            const replaceNewlines = (text) => {
+                return text ? text.replace(/\n/g, '<br>') : '';
+            }; // 개행도 그대로 표현되도록 
+
+            leftText.innerHTML = leftIndex < totalParts ? `<p>${replaceNewlines(generatedStories[leftIndex])}</p>` : '';
+            rightText.innerHTML = rightIndex < totalParts ? `<p>${replaceNewlines(generatedStories[rightIndex])}</p>` : '';
+        
+            const isValidUrl = (url) => {
+                try {
+                    new URL(url);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            };
+
+            leftImage.innerHTML =''
+            rightImage.innerHTML =''
+
+            leftImage.innerHTML = isValidUrl(generatedImages[leftIndex]) ? `<img class="final-story-image" src="${generatedImages[leftIndex]}" alt="Generated Story Image">` : `<img class="final-story-image" src="${defaultImage}" alt="Generated Story Image">`;
+            if (rightIndex < totalParts) {
+                rightImage.innerHTML = isValidUrl(generatedImages[rightIndex]) ? `<img class="final-story-image" src="${generatedImages[rightIndex]}" alt="Generated Story Image">` : `<img class="final-story-image" src="${defaultImage}" alt="Generated Story Image">`
+            }
+
+            const prevButton = document.getElementById('prev-btn');
+            const nextButton = document.getElementById('next-btn');
+    
+            if (currentPage === 0) {
+                prevButton.classList.add('disabled');
+            } else {
+                prevButton.classList.remove('disabled');
+            }
+        
+            if (rightIndex === totalParts - 1) {
+                nextButton.classList.add('disabled');
+            } else {
+                nextButton.classList.remove('disabled');
+            }
+
+        }
+
+        function navigateStory(direction) {
+            currentPage += direction;
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= Math.ceil(totalParts / 2)) currentPage = Math.ceil(totalParts / 2) - 1;
+            displayPages();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            displayPages();
+        });
+
+
+        ///////////////////////// TTS /////////////////////////
+        let selectedVoice = 'ko-KR-Wavenet-A'; // 기본 목소리 설정
+        let audio;
+
+        // 목소리 선택
+        function selectVoice(voice) {
+            selectedVoice = voice;
+        }
+
+        // TTS 기능
+        function playAudio(voice, text) {
+            if (audio) {
+                audio.pause(); // 기존 오디오 정지
+                audio.currentTime = 0; // 기존 오디오 재생 위치 초기화
+            }
+
+            const audioElement = document.getElementById('ttsAudio');
+            const sourceElement = document.getElementById('audioSource');
+
+            // POST 요청으로 TTS 데이터 가져오기
+            $.ajax({
+                type: 'POST',
+                url: '{% url "generator:create_story" %}',  // create_story 뷰에 요청
+                data: {
+                    'voice': voice,
+                    'text': text,
+                    'final_story': `{{ final_story }}`,
+                    'tts': 'true',  // TTS 요청임을 알리기 위한 플래그
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function(blob) {
+                    const audioUrl = URL.createObjectURL(blob);
+                    sourceElement.src = audioUrl;
+                    audioElement.load();
+                    audioElement.play();
+                    audio = audioElement;
+                },
+                error: function(error) {
+                    console.error('TTS 요청 실패:', error);
+                }
+            });
+        }
+
+        // 전체 문장 읽기
+        function readFullStory() {
+            playAudio(selectedVoice, 'full');
+        }
+
+    </script>
+</body>
+{% endblock %}
+</html>

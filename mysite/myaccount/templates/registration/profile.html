@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+<html lang="ko">
+
+<head>
+    <title>{% block title %}내 정보</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
+</head>
+{% endblock %}
+
+{% block content %}
+<body>
+    <div class="my-container">
+        <div class="info-container">
+            <h2 class="profile-h2">👤내 정보</h2>
+            <p class="info-text">안녕하세요😊 <br>{{ user.username }}님!</p>
+            <p class="email-text">이메일: {{ user.email }}</p>
+            <a class="profile-select" href="{% url 'select_account' %}">➡️ 프로필 선택</a>
+        </div>
+        <div class="content-container">
+            <h2 class="profile-h2">🔑 내 계정</h2>
+            <h3 class="profile-h3" id="form-title">• 프로필 추가</h3>
+            <form id="profile-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="add-profile">
+                    <p class="id-name-p">
+                        <label class="id-name-label" for="id_name">이름 :</label>
+                        <input type="text" name="name" maxlength="255" required="" id="id_name">
+                    </p>
+                    <p class="id-avatar-p">
+                        <label class="id-avatar-label" for="id_avatar">프로필 사진 :</label>
+                        <input type="file" name="avatar" accept="image/*" id="id_avatar">
+                        <label class="id-avatar-label" for="id_avatar">※ 5MB이하의 이미지 파일만 등록 가능합니다.</label>
+                    </p>
+                    <button type="submit" id="save-button">저장하기</button>
+                </div>
+            </form>
+
+            <h3 class="profile-h3">• 내 프로필 목록</h3>
+            <ul class="profile-list">
+                {% for profile in profiles %}
+                <li class="profile-item">
+                    <img class="profile-img" 
+                        src="{% if profile.avatar %}{{ profile.avatar.url }}{% else %}{% static 'images/젖소.png' %}{% endif %}" 
+                        alt="Profile Image" width="50" height="50">
+                    <label class="profile-name">{{ profile.name }}</label>
+                    <button type="button" id="edit-button" onclick="location.href='{% url 'profile_detail' profile.id %}'">수정하기</button>
+                    <form method="post" action="{% url 'profile_delete' profile.pk %}" style="display:inline;" onsubmit="return confirm('정말로 삭제하시겠습니까?');">
+                        {% csrf_token %}
+                        <button type="submit" id="delete-button">삭제하기</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <script>
+        function editProfile(profileId, profileName) {
+            document.getElementById('id_name').value = profileName;
+            document.getElementById('profile-form').action = '/myaccount/profile/' + profileId + '/edit/';
+            document.getElementById('form-title').textContent = "• 프로필 수정";
+            document.getElementById('save-button').textContent = "업데이트";
+        }
+        window.onload = function() {
+            document.getElementById('profile-form').reset();
+            document.getElementById('form-title').textContent = "• 프로필 추가";
+            document.getElementById('save-button').textContent = "저장하기";
+            document.getElementById('profile-form').action = "/myaccount/profile/";
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            {% if messages %}
+                {% for message in messages %}
+                    alert("{{ message }}");
+                {% endfor %}
+            {% endif %}
+            {% if form.errors %}
+                let errors = [];
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        errors.push("{{ error|escapejs }}");
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    errors.push("{{ error|escapejs }}");
+                {% endfor %}
+                if (errors.length > 0) {
+                    alert(errors.join("\\n"));
+                }
+            {% endif %}
+        });
+    </script>
+</body>
+
+{% endblock %}
+</html>

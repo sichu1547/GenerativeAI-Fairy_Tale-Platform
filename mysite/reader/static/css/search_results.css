@@ -1,0 +1,236 @@
+@font-face {
+    font-family: 'Ownglyph_noocar-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_noocar-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Ownglyph_ryuttung-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_ryuttung-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+.search-results-container {
+    background-image: url("../images/리드배경.jpg");
+    background-size: cover; /* 이미지가 화면 전체를 채우도록 조정 */
+    background-position: center; 
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    min-height: 95vh;
+    padding: 10px 0 10px 0;
+    display:flex;
+    flex-direction: column;
+}
+
+.book{
+    display: inline-block;
+    margin-right: 10px; /* 옆 여백 조절 */
+    background-color: #ffffff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: 'Pretendard-Regular';
+}
+
+.h {
+    font-family: 'Ownglyph_noocar-Rg', cursive;
+    font-size: 60px;
+    color: white;
+    text-align: center;
+    padding: 15px 20px;
+    margin-top: 30px;
+    position: relative;
+    text-shadow: 5px 5px 4px rgb(59, 59, 58);
+    opacity: 0; /* 초기에 투명 상태로 시작 */
+    animation: fadeInUp 1s forwards; /* fadeInUp 애니메이션 적용 */
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0; /* 시작 시 투명 */
+        transform: translateY(20px); /* 시작 시 위로 이동 */
+    }
+    100% {
+        opacity: 1; /* 끝나면 불투명 */
+        transform: translateY(0); /* 원래 위치로 이동 */
+    }
+}
+
+.books {
+    padding: 20px;
+}
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 10px; /* 각 요소 사이에 여백을 주기 위해 추가 */
+    list-style: none; /* 리스트 스타일 제거 */
+}
+
+.container1 {
+    width: 260px;
+    height: 320px;
+    position: relative;
+    overflow: hidden; /* 요소 내부의 콘텐츠가 넘치는 경우를 방지하기 위해 추가 */
+}
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(105deg,
+        transparent 40%,
+        rgba(255, 219, 112, 0.8) 45%,
+        rgba(132, 50, 255 ,0.6) 50%,
+        transparent 54%);
+    filter: brightness(1.1) opacity(0.8);
+    mix-blend-mode: color-dodge;
+    background-size: 150% 150%;
+    background-position: 100%;
+    transition: all 0.3s;
+}
+.card {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    position: relative;
+}
+
+.book-title {
+    font-family: 'Pretendard-Regular';
+    color: black;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 5px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    pointer-events: none; /* 링크를 클릭할 수 없도록 설정 */
+}
+
+#preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url("../images/리드배경.jpg");
+    z-index: 9999;
+    display: none;
+}
+
+.curtain {
+    position: fixed;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background-image: url("../images/커튼.jpg");
+    background-size: cover;
+    z-index: 10000;
+}
+
+#curtain-left {
+    left: 0;
+    animation: curtainDown 1s forwards;
+}
+
+#curtain-right {
+    right: 0;
+    animation: curtainDown 1s forwards;
+}
+
+#loading-message {
+    position: absolute;
+    z-index: 10001;
+    font-size: 2em;
+    color: #000;
+}
+
+@keyframes curtainDown {
+    0% { top: -100%; }
+    100% { top: 0; }
+}
+
+.link-click-animation {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.link-click-animation::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    top: 0;
+    left: -100%;
+    transition: left 0.3s ease;
+    z-index: -1;
+}
+
+.link-click-animation:hover::before {
+    left: 0;
+}
+.star-rating {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 1.5em;
+    direction: ltr; 
+}
+
+.star {
+    width: 20px;
+    height: 20px;
+    margin-right: 2px;
+    background-image: url("../images/realstar.png");
+    background-size: cover;
+}
+
+.star.full {
+    background-image: url("../images/full-star.png");
+}
+
+.sorted_story{
+    position: absolute;
+    right: 0;
+    top: 200px; /* 필요에 따라 조정 가능 */
+    width: 200px; /* 필요에 따라 조정 가능 */
+}
+
+.sorted_method, #options {
+    font-family: 'Ownglyph_ryuttung-Rg';
+    font-size: 18px;
+    font-weight: normal;
+    color: #686868;
+}
+
+#options {
+    background: rgba(255, 255, 255);
+}
+
+.sorted_story {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

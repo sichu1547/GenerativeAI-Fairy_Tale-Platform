@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+<html lang="ko">
+<head>
+    <title>{% block title %}{{ title }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/story_detail.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+    #preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-image: url("{% static 'images/리드배경.jpg' %}");
+        z-index: 9999;
+    }
+
+    .curtain {
+        position: fixed;
+        top: 0;
+        width: 50%;
+        height: 100%;
+        background-image: url("{% static 'images/커튼.jpg' %}"); /* 커튼 이미지 경로 */
+        background-size: cover;
+        z-index: 10000;
+    }
+
+    #curtain-left {
+        left: 0;
+        animation: curtainDown 1s forwards;
+    }
+
+    #curtain-right {
+        right: 0;
+        animation: curtainDown 1s forwards;
+    }
+
+    #loading-message {
+        position: absolute;
+        z-index: 10001;
+        font-size: 2em;
+        color: #000;
+    }
+
+    @keyframes curtainOpen {
+        0% {
+            width: 50%;
+        }
+        100% {
+            width: 0;
+        }
+    }
+    .sticky-div {
+        display:none;
+        position: fixed;
+        right: 5%;
+        top: 50%;
+        width: 200px; /* 원하는 너비로 설정 */
+        height: 100%;
+    }
+    #loading {
+        display: none; /* 기본적으로 보이지 않게 설정 */
+    position: absolute; /* 절대 위치로 설정 */
+    top: 50%; /* 컨테이너의 세로 중앙 */
+    left: 50%; /* 컨테이너의 가로 중앙 */
+    transform: translate(-50%, -50%); /* 실제 중앙으로 이동 */
+    text-align: center; /* 내용 수평 중앙 정렬 */
+    }
+    
+    #loading img {
+        display: block; /* 이미지를 블록 요소로 설정 */
+        margin: 0 auto; /* 이미지를 수평으로 중앙에 배치 */
+    }
+    
+    #loading a {
+        display: block; /* 링크를 블록 요소로 설정 */
+        margin-top: 5px; /* 이미지와 링크 사이의 간격 설정 */
+        color: black; /* 링크 텍스트 색상을 검정색으로 설정 */
+        text-decoration: none; /* 링크의 밑줄 제거 */
+    }
+    .submitbutton {
+
+    }
+    </style>
+</head>{% endblock %}
+{% block content %}
+<body>
+    <div id="preloader">
+        <div id="curtain-left" class="curtain"></div>
+        <div id="curtain-right" class="curtain"></div>
+        <!--<div id="loading-message">Loading...</div>-->
+    </div>
+     
+    <div class="story-detail-container">
+       
+        <div class="header">
+            <h1 class="story-title">📖 {{ title }}</h1>
+            <div class="tts-buttons">
+                <div class="inner-tts-buttons">
+                    <label for="options" class="voice-label">목소리 선택:  </label>
+                    <select id="options" name="voice" onchange="selectVoice(this.value)">
+                        <option value="ko-KR-Wavenet-A">밀키</option>
+                        <option value="ko-KR-Wavenet-B">밀순</option>
+                        <option value="ko-KR-Wavenet-C">밀동</option>
+                        <option value="ko-KR-Wavenet-D">밀찬</option>
+                    </select>
+                </div>
+                <button class="tts-button" onclick="readFullStory()">▶️ 전체 읽기</button>
+            </div>
+            <audio id="ttsAudio" controls>
+                <source id="audioSource" src="" type="audio/mpeg">
+                브라우저가 오디오 기능을 제공하지 않습니다
+            </audio>
+            <a href="?tts=true&voice=ko-KR-Wavenet-A&text=full" download="audio.mp3" id="downloadLink">⬇️</a>
+        </div>
+       
+        <div class="center-container">
+            <button class="arrow-button" id="previous_button">←</button>
+            <div class="book">
+                <div class="left-page">
+                    <div id="loading" style="display: none;">
+                        <img src="{% static 'images/책넘기기.gif' %}" alt="Loading...">
+                        <a>생성중!</a>
+                    </div>   
+                    <div class="image-container" style="background-image: url('{{ image_urls.0 }}');"></div>
+                </div>
+                <div class="spine">
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                    <div class="spiral"></div>
+                </div>
+                <div class="right-page">
+                    <div class="text-container"></div>
+                </div>
+            </div>
+            <button class="arrow-button" id="next_button">→</button>
+        </div>
+        <form id="rating-form" method="post" action="{% url 'reader:rate_story' id %}?keyword={{ keyword }}">
+            {% csrf_token %}
+            <label for="starpoint"></label>
+            <div class="star-rating">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="1">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="2">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="3">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="4">
+                <img src="{% static 'images/realstar.png' %}" class="star" data-value="5">
+            </div>
+            <select id="number-select" name="starpoint" style="display: none;">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+            <button class="reader-button submitbutton">별점 저장</button>
+        </form>
+        <div class="buttons"> 
+            <button class="reader-button" id="prev_tale_button" onclick="prevPage({{ id }})">이전 동화</button>
+            <button class="reader-button" id="quiz_button" onclick="window.location.href='{% url 'reader:redirect_to_quiz' id %}?keyword={{ keyword }}'">퀴즈 시작</button>
+            <button class="reader-button" id="review_button" onclick="window.location.href='{% url 'review:write_review' id %}'">독후감 쓰기</button>
+            <button class="reader-button" id="recommend_button" onclick="recommend_tale({{ rec_id }})">추천 동화</button>
+            <button class="reader-button" id="next_tale_button" onclick="nextPage({{ id }})">다음 동화</button>
+        </div>
+    </div>
+  
+    <!-- 챗봇 -->
+    <button id="chat-button">
+        <img src="{% static 'images/젖소.png' %}" alt="챗봇"/>
+        <p class="tooltip">밀키에게 질문하기💡</p>
+    </button>
+    <div id="chat-popup" class="resizable">
+        <form id="chat-form">
+            <div id="chatbot-buttons">
+                <label id="chatbot-label">밀키에게 질문하기💡</label>
+                <button class="close-popup">✖️</button>
+            </div>
+                <div id="answer-container">
+                    <p class="message bot">「{{title}}」 에 대해 물어봐😊</p> <!-- 초기 메시지 -->
+                    <!-- 주고받은 질답 띄울 부분 -->
+                </div>
+
+                <input type="text" id="user-question" name="user-question" placeholder="질문을 입력하세요...">
+
+                <div id="chatbot-buttons">
+                    <button id="q-button" type="submit">질문하기</button>
+                    <button id="speech-button">🎙️</button>
+                </div>
+        </form>
+        <div class="resizer"></div> <!-- 리사이즈 핸들 추가 -->
+
+    </div>
+
+    
+    <script>
+        // 페이지 로드 후 실행되는 스크립트
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // 버튼 요소를 선택합니다.
+            const button = document.querySelector('.submitbutton');
+            
+            // 버튼에 클릭 이벤트 리스너를 추가합니다.
+            button.addEventListener('click', () => {
+                // 버튼 클릭 시 알림 팝업을 표시합니다.
+                alert('저장완료!');
+            });
+        });
+        let sentenceAudio = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.star');
+            const numberSelect = document.getElementById('number-select');
+            const form = document.getElementById('rating-form');
+            let rating = 0;
+        
+            stars.forEach((star, index) => {
+                star.addEventListener('mouseover', () => {
+                    fillStars(index);
+                });
+        
+                star.addEventListener('click', () => {
+                    rating = index + 1;
+                    numberSelect.value = rating; // 별점 값을 업데이트
+                    console.log(`Rating is ${rating}`);
+                });
+        
+                star.addEventListener('mouseout', () => {
+                    resetStars();
+                    fillStars(rating - 1);
+                });
+            });
+        
+            function fillStars(index) {
+                for (let i = 0; i <= index; i++) {
+                    stars[i].src = "{% static 'images/full-star.png' %}";
+                }
+            }
+        
+            function resetStars() {
+                stars.forEach(star => {
+                    star.src = "{% static 'images/realstar.png' %}";
+                });
+            }
+        });
+        const select = document.getElementById('number-select');
+ 
+        for (let i = 1; i <= 5; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            select.appendChild(option);
+        }
+
+        let currentPage = 0;
+        const sentences = {{ story|safe }};
+        let imageUrls = {{ image_urls|safe }};
+        const totalPages = sentences.length;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                $.ajax({
+                    url: "{% url 'reader:get_image_session' %}",
+                    method: "GET",
+                    success: function(response) {
+                        imageUrls = response.image_urls || [];
+                        console.log('Loaded image URLs from session:', imageUrls);
+                        imageUrls = cleanImageUrls(imageUrls);
+                        showPage(currentPage);
+                        generateImages(currentPage);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Ajax request failed:', textStatus, errorThrown);
+                    }                    
+                });
+            }, 1000);
+        });
+        function cleanImageUrls(imageUrls) {
+            const cleanedUrls = [];
+            for (let i = 0; i < imageUrls.length; i++) {
+                if (imageUrls[i]) {
+                    cleanedUrls.push(imageUrls[i]);
+                }
+            }
+            return cleanedUrls;
+        }
+        let selectedVoice = 'ko-KR-Wavenet-A'; // 기본 목소리 설정
+        const defaultImageUrl = "{% static 'images/default_image.jpg' %}"; // 기본 이미지 경로 설정
+   
+        function showPage(page) {
+            const leftPage = document.querySelector(".left-page .image-container");
+            const rightPage = document.querySelector(".right-page .text-container");
+            openCurtains();
+            imageUrls = cleanImageUrls(imageUrls);
+
+            const replaceNewlines = (text) => {
+                return text ? text.replace(/\n/g, '<br>') : '';
+            }; // 개행도 그대로 표현되도록 
+
+            leftPage.innerHTML = "";
+            rightPage.innerHTML = "";
+            leftPage.style.backgroundImage = ""; // 이전 배경이미지 clear
+            rightPage.innerHTML = `<p onclick="readSentence(${page})" id="sentence-${page}">${replaceNewlines(sentences[page])}</p>`;            
+
+            // 세션에서 가져온 이미지 URL을 사용
+            if (imageUrls[page]) { // 이미지 URL이 유효한지 확인
+                leftPage.style.backgroundImage = `url(${imageUrls[page]})`;     
+                $('#loading').hide();
+            }
+            else{
+                if(imageUrls[1] === "/static/images/default_image.jpg")
+                {
+                    leftPage.style.backgroundImage = `url(${defaultImageUrl})`; 
+                }                  
+                else
+                    $('#loading').show();
+            }
+
+            // 마지막 페이지에서만 rating-form, 하단 buttons 보이기
+            if (page >= totalPages - 1) {
+                document.getElementById('quiz_button').style.display = "inline-block";
+                document.getElementById('review_button').style.display = "inline-block";
+                document.getElementById('recommend_button').style.display = "inline-block";
+                document.getElementById('rating-form').style.display = "flex";
+                document.getElementById('next_tale_button').style.display = "inline-block";
+                document.getElementById('prev_tale_button').style.display = "inline-block";
+            } else {
+                document.getElementById('quiz_button').style.display = "none";
+                document.getElementById('review_button').style.display = "none";
+                document.getElementById('rating-form').style.display = "none";
+                document.getElementById('next_tale_button').style.display = "none";
+                document.getElementById('prev_tale_button').style.display = "none";
+                document.getElementById('recommend_button').style.display = "none";
+            }
+
+            const prevButton = document.getElementById('previous_button');
+            const nextButton = document.getElementById('next_button');
+
+            if (currentPage === 0) {
+                prevButton.classList.add('disabled');
+            } else {
+                prevButton.classList.remove('disabled');
+            }
+        
+            if (currentPage === totalPages - 1) {
+                nextButton.classList.add('disabled');
+            } else {
+                nextButton.classList.remove('disabled');
+            }            
+        }
+   
+        function turnPage(direction) {
+            const book = document.querySelector('.book');
+            
+            // 첫번째 페이지에서 앞으로 넘기려고 하는지 체크
+            if (direction === -1 && currentPage === 0) {
+                return;
+            }
+       
+            // 마지막 페이지에서 뒤로 넘기려고 하는지 체크
+            if (direction === 1 && (currentPage === totalPages - 1)) {
+                return;
+            }
+
+            if (direction === 1) {
+                book.classList.add('turn-right');
+                book.classList.remove('turn-left');
+            } else if (direction === -1) {
+                book.classList.add('turn-left');
+                book.classList.remove('turn-right');
+            }
+       
+            setTimeout(() => {
+                currentPage += direction;
+                if (currentPage < 0) currentPage = 0;
+                if (currentPage >= totalPages) currentPage = totalPages - 1;
+
+                // 현재 재생 중인 문단 읽기 오디오가 있다면 멈추기
+                if (sentenceAudio) {
+                    sentenceAudio.pause();
+                    sentenceAudio.currentTime = 0;
+                    sentenceAudio = null;
+                }
+
+                showPage(currentPage);
+                book.classList.remove('turn-right');
+                book.classList.remove('turn-left');
+            }, 500);
+        }
+   
+let currentImageIndex = 0;
+let concurrentRequests = 0;
+const maxConcurrentRequests = totalPages;
+
+function generateImages() {
+    while (concurrentRequests < maxConcurrentRequests && currentImageIndex < totalPages) {
+        if (!imageUrls[currentImageIndex]) {
+            concurrentRequests++;
+            $.ajax({
+                url: "{% url 'reader:generate_image' %}",
+                method: "GET",
+                data: { sentence: sentences[currentImageIndex] },
+                success: function(response) {
+                    const imageUrl = response.image_url || defaultImageUrl; // 기본 이미지 URL 설정
+                    console.log(imageUrl)
+                    imageUrls[currentImageIndex] = imageUrl;
+                    // 세션 업데이트 요청
+                    $.ajax({
+                        url: "{% url 'reader:update_image_session' %}",
+                        method: "POST",
+                        data: {
+                            image_urls: JSON.stringify(imageUrls),
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function() {
+                            {
+                                showPage(currentPage); // 현재 페이지가 업데이트 된 경우에만 페이지 업데이트
+                            }
+                        },
+                        error: function() {
+                            {
+                                console.log('imageUrl')
+                            }
+                        }
+                    });
+                },
+                error: function() {
+                    console.log('e')
+                    imageUrls[currentImageIndex] = defaultImageUrl; // 기본 이미지 URL 설정
+                    // 세션 업데이트 요청
+                    $.ajax({
+                        url: "{% url 'reader:update_image_session' %}",
+                        method: "POST",
+                        data: {
+                            image_urls: JSON.stringify(imageUrls),
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        success: function() {
+                            {
+                                showPage(currentPage); // 현재 페이지가 업데이트 된 경우에만 페이지 업데이트
+                            }
+                        }
+                    });
+                },
+                complete: function() {
+                    concurrentRequests--;
+                    generateImages(); // 다음 이미지를 생성
+                }
+            });
+            currentImageIndex++;
+        } else {
+            currentImageIndex++;
+        }
+    }
+}
+
+        function openCurtains() {
+            document.getElementById('curtain-left').style.animation = 'curtainOpen 1s forwards';
+            document.getElementById('curtain-right').style.animation = 'curtainOpen 1s forwards';
+            fadeOutPreloader();
+        }
+   
+        document.getElementById("previous_button").addEventListener("click", () => turnPage(-1));
+        document.getElementById("next_button").addEventListener("click", () => turnPage(1));
+
+        function fadeOutPreloader() {
+            var preloader = document.getElementById('preloader');
+            preloader.style.transition = 'opacity 1s ease';
+            preloader.style.opacity = '0';
+            setTimeout(function() {
+                preloader.style.display = 'none';
+            }, 1000);
+        }
+
+        // 목소리 선택
+        function selectVoice(voice) {
+            selectedVoice = voice;
+            updateDownloadLink();
+        }
+   
+        // TTS 음성파일 다운로드
+        function updateDownloadLink() {
+            const downloadLink = document.getElementById('downloadLink');
+            downloadLink.href = `?tts=true&voice=${selectedVoice}&text=full`;
+            downloadLink.download = "{{ title }}.mp3";
+        }
+   
+        // TTS 기능
+        function playAudio(voice) {
+            const audioElement = document.getElementById('ttsAudio');
+            const sourceElement = document.getElementById('audioSource');
+   
+            // 오디오 소스 URL 업데이트
+            const ttsUrl = `?tts=true&voice=${voice}`;
+            sourceElement.src = ttsUrl;
+            audioElement.load();
+            audioElement.play();
+        }
+   
+        // 문장 읽기(선택한 문장 읽기를 위한 로직)
+        function readSentence(index) {
+            const sentence = sentences[index];
+            const audioElement = document.getElementById('ttsAudio');
+            const sourceElement = document.getElementById('audioSource');
+   
+            // 오디오 소스 URL 업데이트
+            const ttsUrl = `?tts=true&voice=${selectedVoice}&text=${encodeURIComponent(sentence)}`;
+            sourceElement.src = ttsUrl;
+            audioElement.load();
+            audioElement.play();
+
+            // 새로운 오디오 객체로 업데이트
+            sentenceAudio = audioElement;
+   
+            // 모든 문장에서 하이라이트 제거
+            sentences.forEach((_, i) => {
+                const sentenceElement = document.getElementById(`sentence-${i}`);
+                if (sentenceElement) {
+                    sentenceElement.classList.remove('highlight');
+                }
+            });
+   
+            // 클릭된 문장에 하이라이트 추가
+            document.getElementById(`sentence-${index}`).classList.add('highlight');
+        }
+   
+        // 전체 문장 읽기
+        function readFullStory() {
+            const audioElement = document.getElementById('ttsAudio');
+            const sourceElement = document.getElementById('audioSource');
+   
+            // 오디오 소스 URL 업데이트
+            const ttsUrl = `?tts=true&voice=${selectedVoice}&text=full`;
+            sourceElement.src = ttsUrl;
+            audioElement.load();
+            audioElement.play();
+   
+            // 모든 문장에서 하이라이트 제거
+            sentences.forEach((_, i) => {
+                const sentenceElement = document.getElementById(`sentence-${i}`);
+                if (sentenceElement) {
+                    sentenceElement.classList.remove('highlight');
+                }
+            });
+        }
+ 
+        // 동화 추천하기
+        function recommend_tale(id) {
+            window.location.href = `/reader/story/${id}/`;
+        }
+ 
+        updateDownloadLink(); // 페이지 로드 시 다운로드 링크 초기화
+ 
+ 
+ 
+    ///////////////////////// new 챗봇script ///////////////////////////////////////
+    let audio; // 전역 변수로 오디오 객체 선언
+
+    $(document).ready(function() {
+        $('#chat-form').submit(function(event) {
+            event.preventDefault();
+            var question = $('#user-question').val();
+        
+            if (question.trim() === "") {
+                return;  // 빈 질문은 무시
+            }
+        
+            // 질문을 채팅 창에 추가
+            var questionElement = $('<p class="message me"></p>').text(question);
+            $('#answer-container').append(questionElement);
+            $('#user-question').val('');
+            $('#answer-container').scrollTop($('#answer-container')[0].scrollHeight); // 스크롤을 맨 아래로 이동
+        
+            var loadingMessage = $('<p class="message bot"></p>').text("생각 중이야.");
+            $('#answer-container').append(loadingMessage);
+            $('#answer-container').scrollTop($('#answer-container')[0].scrollHeight);
+
+            var dotCount = 1;
+            var loadingInterval = setInterval(function() {
+                dotCount = (dotCount % 3) + 1;
+                loadingMessage.text("생각 중이야" + ".".repeat(dotCount));
+            }, 500);
+        
+            
+            $.ajax({
+                type: 'POST',
+                url: '{% url "reader:answer_question" id %}',
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'question': question,
+                    'story_id': '{{ id }}',
+                    'profile_id' : '{{ profile.id }}'
+                },
+                dataType: 'json',
+                success: function(data) {
+
+                    loadingMessage.remove();
+
+                    // 질문에 대한 응답을 채팅 창에 추가
+                    var answerElement = $('<p class="message bot"></p>').text(data.answer);
+                    $('#answer-container').append(answerElement);
+                    $('#answer-container').scrollTop($('#answer-container')[0].scrollHeight); // 스크롤을 맨 아래로 이동
+
+                    // TTS 기능 추가
+                    if (data.audio_content) {
+                        playAudio(data.audio_content);
+                    }
+
+                    // 답변 클릭 시 음성 재생
+                    $('#answer').off('click').on('click', function() {
+                        playAudio(data.audio_content);
+                    });
+                }
+            });
+        });
+    
+       
+        $('#chat-button').click(function() {
+            $('#chat-popup').fadeToggle(300); // 나타나는 속도 300ms
+        });
+
+        $('.close-popup').click(function() {
+            $('#chat-popup').fadeOut(300); // 사라지는 속도 300ms
+            if (audio) {
+                audio.pause(); // 오디오 정지
+                audio.currentTime = 0; // 오디오 재생 위치 초기화
+            }
+        });
+       
+        // 음성 인식 시작
+        $('#speech-button').click(function() {
+            startRecognition();
+            $('#speech-button').html('🔴');  // 🎙️ 이모지를 🔴 이모지로 변경
+            $('#user-question').attr('placeholder', '녹음 중...'); 
+        });
+ 
+        function startRecognition() {
+            if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                var recognition = new SpeechRecognition();
+                recognition.lang = 'ko-KR';
+                recognition.start();
+ 
+                recognition.onresult = function(event) {
+                    var transcript = event.results[0][0].transcript;
+                    document.getElementById('user-question').value = transcript;
+                    $('#speech-button').html('🎙️');  // 🔴 이모지를 🎙️ 이모지로 변경
+                    $('#user-question').attr('placeholder', '질문을 입력하세요...');  // "녹음 중"을 "질문을 입력하세요..."로 변경
+                };
+ 
+                recognition.onerror = function(event) {
+                    console.error('Recognition error:', event.error);
+                    $('#speech-button').html('🎙️'); 
+                    $('#user-question').attr('placeholder', '질문을 입력하세요...'); 
+                };
+ 
+                recognition.onend = function() {
+                    console.log('Recognition ended');
+                    $('#speech-button').html('🎙️'); 
+                    $('#user-question').attr('placeholder', '질문을 입력하세요...'); 
+                };
+            } else {
+                alert('Speech recognition not supported in this browser');
+                $('#speech-button').html('🎙️');
+                $('#user-question').attr('placeholder', '질문을 입력하세요...'); 
+            }
+        }
+
+        // 질문 입력 필드에서 엔터 키를 누르면 질문하기 버튼을 클릭
+        $('#user-question').on('keypress', function(event) {
+            if (event.which === 13) { // Enter key code
+                event.preventDefault();
+                $('#q-button').click();
+            }
+        });
+
+    });
+
+    // new 챗봇 답변 읽기 TTS
+    function playAudio(audioContent) {
+        if (audio) {
+            audio.pause(); // 기존 오디오 정지
+            audio.currentTime = 0; // 기존 오디오 재생 위치 초기화
+        }
+
+        const audioBlob = new Blob([new Uint8Array(audioContent.split('').map(char => char.charCodeAt(0)))], { type: 'audio/mpeg' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        audio = new Audio(audioUrl);
+        audio.play();
+    }
+
+    ///////////////////////// 챗봇script ///////////////////////////////////////
+    document.addEventListener('DOMContentLoaded', (event) => {
+
+        var closeButton = document.querySelector('.close-popup');
+        closeButton.addEventListener('mouseover', function() {
+            closeButton.textContent = '❌'; // 마우스를 올렸을 때 텍스트 변경
+        });
+        closeButton.addEventListener('mouseout', function() {
+            closeButton.textContent = '✖️'; // 마우스를 내렸을 때 원래 텍스트로 복귀
+        });
+
+        const modal = document.getElementById("chatModal");
+        const openModalBtn = document.getElementById("openModalBtn");
+        const closeModalSpan = document.getElementsByClassName("close")[0];
+        const sendBtn = document.getElementById("sendBtn");
+        const chatInput = document.getElementById("chatInput");
+        const chatBody = document.getElementById("chatBody");
+   
+        openModalBtn.onclick = function() {
+            modal.style.display = "block";
+        }
+   
+        closeModalSpan.onclick = function() {
+            modal.style.display = "none";
+        }
+   
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+   
+        sendBtn.onclick = function() {
+            const message = chatInput.value.trim();
+            if (message !== "") {
+                // 사용자 메시지를 추가
+                const userMessageElement = document.createElement("div");
+                userMessageElement.textContent = "User: " + message;
+                chatBody.appendChild(userMessageElement);
+ 
+                // 챗봇 서버에 메시지를 전송하고 응답을 받음
+                fetch('/chatbot/api/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ question: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const botMessageElement = document.createElement("div");
+                    botMessageElement.textContent = "Bot: " + data.response;
+                    chatBody.appendChild(botMessageElement);
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                });
+ 
+                chatInput.value = "";
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+        }
+   
+        chatInput.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                sendBtn.click();
+            }
+        });        
+
+    });
+
+    // 챗봇 드래그 앤 드롭, 리사이즈
+    $(document).ready(function() {
+        var $chatPopup = $('#chat-popup');
+        var isDragging = false;
+        var startX, startY, initialMouseX, initialMouseY;
+
+    
+        // 드래그 앤 드롭 이벤트 핸들러
+        $chatPopup.on('mousedown', function(e) {
+            if ($(e.target).is('#user-question')) {
+                return; // #user-question에서 mousedown 이벤트가 발생하면 드래그를 시작하지 않음
+            }
+            isDragging = true;
+            startX = $chatPopup.offset().left;
+            startY = $chatPopup.offset().top;
+            initialMouseX = e.clientX;
+            initialMouseY = e.clientY;
+            $(document).on('mousemove.draggable', doDrag);
+            $(document).on('mouseup.draggable', stopDrag);
+            return false;
+        });
+    
+        function doDrag(e) {
+            if (isDragging) {
+                var dx = e.clientX - initialMouseX;
+                var dy = e.clientY - initialMouseY;
+                $chatPopup.css({
+                    top: startY + dy,
+                    left: startX + dx
+                });
+                e.preventDefault();
+            }
+        }
+    
+        function stopDrag() {
+            isDragging = false;
+            $(document).off('mousemove.draggable');
+            $(document).off('mouseup.draggable');
+        }
+    
+        // 리사이즈 이벤트 핸들러
+        var isResizing = false;
+        var initialWidth, initialHeight;
+    
+        $('.resizer').on('mousedown', function(e) {
+            isResizing = true;
+            initialWidth = $chatPopup.width();
+            initialHeight = $chatPopup.height();
+            initialMouseX = e.clientX;
+            initialMouseY = e.clientY;
+            $(document).on('mousemove.resizable', doResize);
+            $(document).on('mouseup.resizable', stopResize);
+            return false;
+        });
+    
+        function doResize(e) {
+            if (isResizing) {
+                var dx = e.clientX - initialMouseX;
+                var dy = e.clientY - initialMouseY;
+                $chatPopup.css({
+                    width: initialWidth + dx,
+                    height: initialHeight + dy
+                });
+    
+                e.preventDefault();
+            }
+        }
+    
+        function stopResize() {
+            isResizing = false;
+            $(document).off('mousemove.resizable');
+            $(document).off('mouseup.resizable');
+        }
+    });
+    
+    
+    var len_story = {{ len_story }};
+
+    
+    // 동화 이동하기
+    function prevPage(id) {
+        if (id == 01){
+            window.location.href = `/reader/story/${len_story}/`;
+        } else{
+            id = id - 1;
+            window.location.href = `/reader/story/${id}/`;
+        }
+    }
+
+    // 동화 이동하기
+    function nextPage(id) {
+        if (id == len_story){
+            window.location.href = `/reader/story/01/`;
+        } else{
+            id = id + 1;
+            window.location.href = `/reader/story/${id}/`;
+        }
+    }
+
+
+    </script>
+   
+</body>
+</html>
+{% endblock %}

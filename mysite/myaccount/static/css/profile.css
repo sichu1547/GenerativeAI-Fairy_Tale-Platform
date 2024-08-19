@@ -1,0 +1,266 @@
+@font-face {
+    font-family: 'Ownglyph_noocar-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_noocar-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'CookieRun-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/CookieRun-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ownglyph_ryuttung-Rg';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_ryuttung-Rg.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    min-height: 95vh;
+    margin: 0;
+    font-family: 'Pretendard-Regular', Arial, sans-serif; /* Fallback 폰트로 Arial, sans-serif를 지정 */
+}
+
+.main {
+    height: auto;
+    width: auto;
+}
+
+.profile-list {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 10px 10px 10px 10px;
+}
+
+.profile-item {
+    margin: 8px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    flex: 1 1 200px;
+    max-width: 195px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* 세로 방향으로 정렬하려면 column 사용 */
+}
+
+#save-button:hover, #edit-button:hover, #delete-button:hover {
+    background: #333333;
+}
+
+
+#save-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Pretendard-Regular';
+    background: #745cf9;
+    color: #fff;
+    font-weight: normal;
+    font-size: 12px;
+    height: 50px;
+    letter-spacing: 1px;
+    line-height: 48px;
+    min-width:150px;
+    width: 150px;
+    margin: 0 50px 30px 0;
+    border-radius: 5px !important;
+}
+
+#edit-button, #delete-button {
+    display: flex;
+    justify-content: center; /* 수평 가운데 정렬 */
+    align-items: center; /* 수직 가운데 정렬 */
+    font-family: 'Pretendard-Regular';
+    background: #745cf9;
+    border: 0;
+    color: #fff;
+    font-weight: normal;
+    font-size: 12px;
+    height: 40px;
+    letter-spacing: 1px;
+    line-height: 48px;
+    width: 150px;
+    margin: 2.5px;
+    border-radius: 5px !important;
+}
+
+.profile-h2, .profile-h3 {
+    font-family: 'Ownglyph_noocar-Rg', Arial, sans-serif;
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+}
+
+.profile-h2 {
+    font-size: 40px !important;
+}
+
+.profile-h3 {
+    font-size: 28px;
+    margin-top: 5px;
+}
+
+.info-container {
+    padding: 30px;
+    flex: 1 1 20%; /* Adjust the width as needed */
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background: #fff;
+    max-width: 250px;
+}
+
+.content-container {
+    flex: 1 1 75%; /* Take 75% of the width available */
+    max-width: 80%; /* Example maximum width */
+    padding: 30px;
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    background: #fff;
+}
+
+
+.my-container {
+    background-image: url("../images/mypage-bg.png");
+    background-size: cover; /* 이미지가 화면 전체를 채우도록 조정 */
+    background-position: center; 
+    background-repeat: no-repeat;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left; /* Center content horizontally */
+    max-width: 100%; /* Ensure it does not exceed the viewport width */
+    padding: 40px 150px;
+    min-height: 95vh;
+}
+
+
+.info-text, .email-text {
+    font-family: 'Ownglyph_ryuttung-Rg', Arial, sans-serif;
+    font-size: 18px;
+    white-space: pre-line;
+}
+
+.email-text {
+    margin-bottom: 80px;
+}
+
+.profile-img {
+    height: 70px;
+    width: 70px;
+    margin: 10px 0;
+    padding: 5px;
+}
+
+.id-name-label, .id-avatar-label {
+    font-family: 'Pretendard-Regular';
+}
+
+.add-profile {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between; /* Adjust spacing between items */
+    align-items: center; /* Center items vertically */
+    flex-wrap: wrap;
+}
+
+
+.profile-name {
+    font-family: 'Pretendard-Regular';
+    color: black;
+    width: 30%;
+}
+
+.profile-select-btn {
+    margin-top: 10px; /*TODO*/
+    margin-bottom: 10px; /*TODO*/
+}
+
+.profile-select {
+    font-family: 'Pretendard-Regular';
+    font-size: 16px;
+    color: black !important;
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+}
+
+.profile-select:hover {
+    color: gray !important;
+    word-break: keep-all; /* 글자 말고 단어 단위로 줄바꿈 되게 */
+}
+
+.id-name-p {
+    margin-right: 10px; /* Adjust spacing between elements */
+    margin-bottom: 0;
+}
+
+.id-avatar-p {
+    margin-right: 10px; /* Adjust spacing between elements */
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* #id_name {
+    width: 18vw;
+    margin-right: 20px;
+    margin-left: 10px;
+    min-width: 150px;
+} */
+
+#id_avatar {
+    font-family: 'Pretendard-Regular';
+    margin-top: 5px;
+}
+
+input[type=file]::file-selector-button {
+    font-family:'Pretendard-Regular';
+    font-size: 12px;
+    color: white;
+    border-radius:10px;
+    width: 80px;
+    height: 30px;
+    border: 0;
+    background: #745cf9;
+    cursor: pointer;
+}
+
+input[type=file]::file-selector-button:hover {
+    background: #333333;
+}
+
+
+@media (max-width: 1100px) {
+    .my-container {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: column;
+        justify-content: center; /* Center content horizontally */
+        max-width: 100%; /* Ensure it does not exceed the viewport width */
+        padding: 40px 50px;
+    }
+    .info-container {
+        max-width: 100%;
+        margin: 5px;
+        min-width: 250px;
+    }
+    .content-container {
+        max-width: 100%;
+        margin: 5px;
+        min-width: 250px;
+    }
+}

@@ -1,0 +1,7 @@
+{% if field.errors %}
+  <div id="{{ field.name }}-error" class="errorlist">
+    {% for error in field.errors %}
+      <div class="error-item"><strong>{{ field.label }}</strong> {{ error }}</div>
+    {% endfor %}
+  </div>
+{% endif %}

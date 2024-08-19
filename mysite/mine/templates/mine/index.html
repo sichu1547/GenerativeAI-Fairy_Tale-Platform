@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+<html lang="ko">
+<head>
+    <title>{% block title %}서비스 소개{% endblock %}</title>
+</head>
+{% block content %}
+<body>
+    <div class='service'>
+        <h1><img class="logo-img" src="{% static 'images/서비스로고.png' %}"></h1>
+        <div class='service-text'>
+            <hr class="custom-hr">
+            <p>Meal Kid는 직접 조리해야 완성되는 밀키트처럼 아이들이 직접 컨텐츠에 참여하여 창의력과 상상력을 키울 수 있는 개인 맞춤형 학습 경험을 제공하는 유아 동화 플랫폼입니다.</p><br>
+            <img src="{% static 'images/read.png' %}" alt="서비스1">
+            <p>1. 400여편의 동화를 음성으로 들을 수 있는 기능을 통해 아이들에게 책 읽기의 즐거움을 선사합니다.</p><br><br>
+            <img src="{% static 'images/chatbot.png' %}" alt="서비스2">
+            <p>2. 챗봇 '밀키'와 동화에 대한 질문과 답변을 주고받으면서 아이들의 호기심을 충족시켜줍니다.</p><br><br>
+            <img src="{% static 'images/gen1.png' %}" alt="서비스3">
+            <p>3. 아이들이 생각하는 내용을 직접 동화로 만들어보는 기능을 통해 상상력을 발휘할 수 있습니다.</p><br><br>
+            <img src="{% static 'images/quiz.png' %}" alt="서비스4">
+            <p>4. 동화를 읽은 후 퀴즈를 풀거나 독후감을 작성하며 학습을 강화합니다.</p>
+        </div>
+        
+        <div class='effect'>
+            <h1>기대 효과</h1>
+            <hr class="custom-hr">
+            <p>1. 상상력 및 창의력 항상 : 읽기, 생성, 질의응답 등 다양한 기능을 통해 상상력과 창의적 사고를 촉진시킵니다.</p>
+            <p>2. 개인 맞춤형 학습 경험 제공 : AI로 아이의 취향에 맞춘 동화를 추천하여 학습의 재미와 몰입도를 높일 수 있습니다.</p>
+            <p>3. 대화를 통한 언어 능력과 의사소통 능력 향상 : 챗봇 AI와의 대화를 통해 언어와 의사소통 능력을 자연스럽게 향상시킵니다.</p>
+            <p>4. 지속적 학습에 대한 동기 부여 및 성취감 제공 : 출석체크와 퀴즈를 통해 학습 참여와 성취감을 높입니다.</p>
+            <p>5. 편리한 사용성과 접근성 : Django 기반 웹 시스템으로 PC와 모바일에서 접근 가능합니다.</p>
+            <p>6. 유해한 콘텐츠로부터 보호 : 선별된 동화만 제공하여 유해 콘텐츠로부터 아이들을 보호합니다.</p>
+        </div>
+
+        <h1>팀원 소개</h1>
+        <hr class="custom-hr">
+        <div class="team-container">
+            <div class="team-member">
+                <img src="{% static 'images/정창민.png' %}" alt="팀원 1">
+                <p>정창민 (BE)</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/양원석.png' %}" alt="팀원 2">
+                <p>양원석 (BE)</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/최성민.jpg' %}" alt="팀원 3">
+                <p>최성민 (BE)</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/이혜빈.png' %}" alt="팀원 4">
+                <p>이혜빈 (AI)</p>
+            </div>
+            <div class="clearfix"></div>
+            <div class="team-member">
+                <img src="{% static 'images/김연송.png' %}" alt="팀원 5">
+                <p>김연송 (AI)</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/김가은.png' %}" alt="팀원 6">
+                <p>김가은 (AI)</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/서원준.jpg' %}" alt="팀원 7">
+                <p>서원준 (FE)</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'images/조유빈.png' %}" alt="팀원 8">
+                <p>조유빈 (FE)</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+<style>
+    @font-face {
+        font-family: 'Pretendard-Regular';
+        src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+        font-weight: 400;
+        font-style: normal;
+    }
+    
+    body {
+        background-color: #B9E9FF; /* 전체 페이지 배경색 */
+        color: #000000; /* 전체 텍스트 색상 */
+    }
+
+    p {
+        font-size: 20px !important;
+    }
+
+    .service{
+        font-family: 'Pretendard-Regular', sans-serif;
+    }
+    
+    h1 {
+        color: #000000; /* 제목 텍스트 색상 */
+        text-align: center;
+        margin: 70px 0 0 0;
+        font-weight: bold; /* 폰트 두께 */
+    }
+
+    .custom-hr {
+        width: 80%;
+        margin: 20px auto;
+        border-color: #000000; /* hr 테두리 색상 */
+    }
+
+    .service-text {
+        text-align: center;
+        padding: 20px;
+    }
+
+
+    .logo-img {
+        width: 70%; /* 원하는 크기로 조절 */
+        height: auto;
+        display: block;
+        margin: 0 auto; /* 가운데 정렬 */
+    }
+
+    .service-text img {
+        width: 60%; /* 원하는 크기로 조절 */
+        height: auto;
+        display: block;
+        margin: 20px auto; /* 가운데 정렬 및 위아래 간격 추가 */
+        border-radius: 15px; /* 이미지 자체의 둥근 테두리 */
+        background-color: white; /* 흰색 배경 */
+        padding: 10px; /* 흰색 배경 크기 조절 */
+        box-sizing: border-box; /* 패딩을 포함한 크기 조절 */
+    }
+
+    .effect {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .team-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .team-member {
+        width: 200px;
+        text-align: center;
+        margin: 10px;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .team-member img {
+        width: 200px;
+        height: 200px;
+        border-radius: 10%;
+        object-fit: cover;
+        border: 2px solid black;
+    }
+
+    .team-member p {
+        margin-top: 10px;
+        font-size: 1.2em;
+        color: #000000; /* 팀원 이름 텍스트 색상 */
+    }
+
+    .clearfix {
+        flex-basis: 100%;
+        height: 0;
+    }
+</style>
+
+{% endblock %}
+</html>
